@@ -1,0 +1,478 @@
+/* ============================================================
+   CHUKIPU — Global Design System
+   Mobile-first, iOS-inspired, Glassmorphism
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Design Tokens ── */
+:root {
+  /* Brand - Light Mode (Dark Brown) */
+  --brand-primary: #5c3a2f;
+  --brand-primary-rgb: 92, 58, 47;
+  --brand-secondary: #7a5244;
+  --brand-accent: #4a2b22;
+  --brand-gradient: linear-gradient(135deg, #5c3a2f 0%, #4a2b22 50%, #361f18 100%);
+  --brand-soft: linear-gradient(135deg, #e3d2cd 0%, #d4bbae 100%);
+
+  /* Light mode backgrounds */
+  --bg-primary: #E6DDCC;
+  --bg-secondary: #E6DDCC;
+  --bg-tertiary: #E6DDCC;
+  --surface: rgba(255, 255, 255, 0.90);
+  --surface-hover: rgba(255, 255, 255, 1);
+  --surface-strong: rgba(255, 255, 255, 0.96);
+  --surface-overlay: rgba(255, 255, 255, 0.60);
+
+  --text-primary: #614135;
+  --text-secondary: #77625c;
+  --text-tertiary: #8f7d78;
+  --text-on-brand: #ffffff;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(92, 58, 47, 0.12);
+  --glass-shadow: 0 8px 32px rgba(92, 58, 47, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --glass-blur: blur(24px) saturate(180%);
+
+  /* Nav */
+  --nav-bg: rgba(250, 250, 250, 0.82);
+  --nav-bg-solid: rgba(240, 240, 240, 0.97);
+  --nav-border: rgba(255, 255, 255, 0.7);
+  --nav-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 -8px 24px rgba(92, 58, 47, 0.08);
+
+  /* Cards */
+  --card-bg: rgba(255, 255, 255, 0.80);
+  --card-border: rgba(255, 255, 255, 0.9);
+  --card-shadow: 0 4px 24px rgba(92, 58, 47, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --card-shadow-hover: 0 8px 40px rgba(92, 58, 47, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  /* UI */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 999px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  --nav-height: 80px;
+  --nav-bottom-safe: max(env(safe-area-inset-bottom, 0px), 8px);
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-med: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.40s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Stars / ratings */
+  --star-color: #F5A623;
+}
+
+/* ── Dark Mode ── */
+[data-theme="dark"] {
+  /* Brand - Dark Mode (Original Pink/Red) */
+  --brand-primary: #CE8D8B;
+  --brand-primary-rgb: 206, 141, 139;
+  --brand-secondary: #CE8D8B;
+  --brand-accent: #CE8D8B;
+  --brand-gradient: linear-gradient(135deg, #CE8D8B 0%, #CE8D8B 50%, #CE8D8B 100%);
+  --brand-soft: linear-gradient(135deg, #CE8D8B 0%, #CE8D8B 100%);
+
+  --bg-primary: #13101A;
+  --bg-secondary: #1C1726;
+  --bg-tertiary: #231D30;
+  --surface: rgba(35, 28, 48, 0.78);
+  --surface-hover: rgba(45, 36, 62, 0.88);
+  --surface-strong: rgba(50, 42, 68, 0.92);
+  --surface-overlay: rgba(35, 28, 48, 0.65);
+
+  --text-primary: #F5F0F4;
+  --text-secondary: #C0A8C0;
+  --text-tertiary: #8073A0;
+  --text-on-brand: #ffffff;
+
+  --glass-bg: rgba(35, 28, 48, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.22);
+
+  --nav-bg: rgba(18, 14, 26, 0.88);
+  --nav-bg-solid: rgba(22, 17, 34, 0.97);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-shadow: 0 -1px 0 rgba(255, 255, 255, 0.05), 0 -8px 32px rgba(0, 0, 0, 0.4);
+
+  --card-bg: rgba(35, 28, 48, 0.85);
+  --card-border: rgba(255, 255, 255, 0.09);
+  --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.30), 0 1px 4px rgba(0, 0, 0, 0.15);
+  --card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Reset & Base ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+input,
+textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Base App Shell (Responsive) ── */
+.app-shell {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  transition: background var(--transition-slow);
+}
+
+/* Desktop behaviors can be added here without restricting max-width */
+@media (min-width: 768px) {
+  body {
+    background: var(--bg-primary);
+  }
+}
+
+/* ── Typography Helpers ── */
+.text-xs {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.text-sm {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.text-base {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.text-lg {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.text-xl {
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.text-2xl {
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.text-3xl {
+  font-size: 36px;
+  line-height: 1.15;
+}
+
+.font-light {
+  font-weight: 300;
+}
+
+.font-normal {
+  font-weight: 400;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-semi {
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-black {
+  font-weight: 800;
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+
+.text-brand {
+  color: var(--brand-primary);
+}
+
+/* ── Glass Utility ── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ── Scrollbar Hiding ── */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Keyframes ── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+@keyframes heartbeat {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  14% {
+    transform: scale(1.2);
+  }
+
+  28% {
+    transform: scale(1);
+  }
+
+  42% {
+    transform: scale(1.1);
+  }
+
+  70% {
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-med) both;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--transition-slow) both;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--transition-med) both;
+}
+
+/* ── Skeleton Loader ── */
+.skeleton {
+  background: linear-gradient(90deg,
+      var(--bg-tertiary) 25%,
+      var(--bg-secondary) 50%,
+      var(--bg-tertiary) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ── Page Container ── */
+.page {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: calc(var(--nav-height) + var(--nav-bottom-safe) + 16px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.page-no-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Section Padding ── */
+.section-padding {
+  padding: var(--space-lg) var(--space-md);
+}
+
+.section-padding-x {
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+}
+
+/* ── Button Base ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: var(--radius-full);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--brand-gradient);
+  color: white;
+  box-shadow: 0 4px 16px rgba(196, 86, 110, 0.36);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 24px rgba(196, 86, 110, 0.48);
+  transform: translateY(-1px);
+}
+
+.btn-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+}
+
+.btn-glass:hover {
+  background: var(--surface-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--brand-primary);
+}
+
+.btn-ghost:hover {
+  background: rgba(212, 116, 140, 0.08);
+}
+
+.btn-sm {
+  padding: 10px 18px;
+  font-size: 13px;
+}
+
+.btn-lg {
+  padding: 18px 32px;
+  font-size: 17px;
+}
+
+.btn-full {
+  width: 100%;
+}

@@ -1,0 +1,207 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg-primary);
+    transition: background var(--transition-slow);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) var(--space-md) var(--space-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.headerBtn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.pageTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.saveBtn {
+    background: none;
+    border: none;
+    color: var(--brand-primary);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.saveBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageContent {
+    padding-bottom: 90px;
+}
+
+/* ─── Avatar Section ─── */
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-xl) var(--space-md) var(--space-md);
+    animation: fadeIn var(--transition-slow) both;
+}
+
+.avatarWrap {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.avatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.avatarWrap:hover .avatarOverlay,
+.avatarWrap:active .avatarOverlay {
+    opacity: 1;
+}
+
+.changePhotoBtn {
+    margin-top: var(--space-sm);
+    background: none;
+    border: none;
+    color: var(--brand-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.changePhotoBtn:active {
+    opacity: 0.7;
+}
+
+/* ─── Fields ─── */
+.fieldsSection {
+    padding: var(--space-md) var(--space-lg);
+    animation: fadeIn var(--transition-slow) 0.1s both;
+}
+
+.field {
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.field:last-child {
+    border-bottom: none;
+}
+
+.fieldLabel {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
+}
+
+.fieldInput {
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: var(--text-primary);
+    font-family: inherit;
+    padding: 4px 0;
+}
+
+.fieldInput::placeholder {
+    color: var(--text-tertiary);
+}
+
+.usernameInputWrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.usernameAt {
+    font-size: 16px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.fieldTextarea {
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: var(--text-primary);
+    font-family: inherit;
+    padding: 4px 0;
+    resize: none;
+    line-height: 1.4;
+}
+
+.fieldTextarea::placeholder {
+    color: var(--text-tertiary);
+}
+
+.charCount {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 4px;
+}
+
+.error {
+    text-align: center;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 500;
+    padding: var(--space-md) var(--space-lg);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Utility classes (spacers, hidden elements, animation delays) ── */
+.spacer38 { width: 38px; flex-shrink: 0; }
+.spacer40 { width: 40px; flex-shrink: 0; }
+.hidden { display: none; }

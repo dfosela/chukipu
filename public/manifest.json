@@ -1,0 +1,16 @@
+{
+  "name": "Chukipu",
+  "short_name": "Chukipu",
+  "description": "Tu espacio compartido para vivir momentos únicos juntos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e8485a",
+  "icons": [
+    {
+      "src": "/logos/chukipu-logo-pink.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

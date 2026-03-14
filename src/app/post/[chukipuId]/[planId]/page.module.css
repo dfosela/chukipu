@@ -1,0 +1,321 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg-primary);
+}
+
+/* ─── Header ─── */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) var(--space-md) var(--space-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+}
+
+.backBtn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.headerTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ─── Content ─── */
+.content {
+    flex: 1;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+/* ─── Loading / Empty ─── */
+.loadingWrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl) 0;
+}
+
+.spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--card-border);
+    border-top-color: var(--brand-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.emptyState {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl);
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+/* ─── Post Header ─── */
+.postHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px var(--space-md);
+}
+
+.postUser {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.postUserAvatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.postUserInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.postUsername {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.postLocation {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.2;
+}
+
+/* ─── Image ─── */
+.imageWrap {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--card-bg);
+}
+
+.postImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.imagePlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: var(--space-xl);
+    background: var(--brand-gradient);
+    color: white;
+    text-align: center;
+}
+
+.placeholderCategory {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.8;
+}
+
+.placeholderTitle {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+/* ─── Actions ─── */
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px var(--space-md);
+}
+
+.actionsLeft {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.actionBtn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s;
+}
+
+.actionBtn:active {
+    transform: scale(0.85);
+}
+
+/* ─── Likes ─── */
+.likes {
+    padding: 0 var(--space-md) 4px;
+}
+
+.likesCount {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ─── Caption ─── */
+.caption {
+    padding: 2px var(--space-md) 8px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.captionUsername {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.captionText {
+    color: var(--text-primary);
+}
+
+/* ─── Comments ─── */
+.commentsSection {
+    padding: 4px var(--space-md) 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.commentItem {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.commentAvatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.commentBody {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.commentUser {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.commentText {
+    color: var(--text-primary);
+}
+
+.commentTime {
+    display: block;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+}
+
+/* ─── Timestamp ─── */
+.timestamp {
+    padding: 0 var(--space-md) 8px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+/* ─── Comment Input ─── */
+.commentInputWrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px var(--space-md);
+    border-top: 1px solid var(--card-border);
+}
+
+.commentInputAvatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.commentInput {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.commentInput::placeholder {
+    color: var(--text-tertiary);
+}
+
+.commentSendBtn {
+    background: none;
+    border: none;
+    color: var(--brand-primary);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.commentSendBtn:disabled {
+    opacity: 0.5;
+}
+
+/* ─── Keyframes ─── */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* -- Utility classes (spacers, hidden elements, animation delays) -- */
+.spacer38 { width: 38px; flex-shrink: 0; }
+.spacer40 { width: 40px; flex-shrink: 0; }
+.hidden { display: none; }

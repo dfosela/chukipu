@@ -1,0 +1,89 @@
+'use client';
+
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { auth } from '../lib/firebase';
+import { firebaseGet } from '../lib/firebaseMethods';
+import { UserProfile } from '../types/firestore';
+
+interface AuthContextType {
+    user: FirebaseUser | null;
+    profile: UserProfile | null;
+    loading: boolean;
+    refreshProfile: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({
+    user: null,
+    profile: null,
+    loading: true,
+    refreshProfile: async () => {},
+});
+
+export const useAuth = () => useContext(AuthContext);
+
+const PUBLIC_ROUTES = ['/login'];
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [user, setUser] = useState<FirebaseUser | null>(null);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            try {
+                if (firebaseUser) {
+                    setUser(firebaseUser);
+                    const userProfile = await firebaseGet<UserProfile>(`users/${firebaseUser.uid}`);
+                    setProfile(userProfile);
+                } else {
+                    setUser(null);
+                    setProfile(null);
+                }
+            } catch (error) {
+                console.error('Error fetching user profile inside AuthProvider:', error);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    const refreshProfile = async () => {
+        if (user) {
+            const userProfile = await firebaseGet<UserProfile>(`users/${user.uid}`);
+            setProfile(userProfile);
+        }
+    };
+
+    useEffect(() => {
+        if (loading) return;
+
+        const isPublic = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
+
+        if (!user && !isPublic) {
+            router.replace('/login');
+        } else if (user && pathname === '/login') {
+            router.replace('/');
+        }
+    }, [user, loading, pathname, router]);
+
+    if (loading) {
+        return null;
+    }
+
+    const isPublic = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
+    if (!user && !isPublic) {
+        return null;
+    }
+
+    return (
+        <AuthContext.Provider value={{ user, profile, loading, refreshProfile }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};

@@ -1,0 +1,518 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg-primary);
+  transition: background var(--transition-slow);
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top, 10px) + 12px) var(--space-md) 12px;
+  background: var(--bg-primary);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transform: translateY(0);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), background var(--transition-slow);
+  will-change: transform;
+}
+
+.headerHidden {
+  transform: translateY(-110%);
+}
+
+.navMainIcon {
+  height: 50px;
+  width: auto;
+}
+
+.notificationBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.notificationBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.notificationBtn:active {
+  transform: scale(0.95);
+}
+
+.notificationBadge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  background: var(--brand-primary);
+  border-radius: 50%;
+  border: 1.5px solid var(--bg-primary);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Main area ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainEmpty {
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-lg);
+}
+
+/* ── Feed Wrapper ── */
+.feedWrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 72px);
+  padding-bottom: calc(var(--nav-height) + var(--nav-bottom-safe) + 16px);
+}
+
+/* ── Section header ── */
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-md) var(--space-md);
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.sectionSub {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.dateBadge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-primary);
+  background: rgba(212, 116, 140, 0.12);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(212, 116, 140, 0.20);
+  white-space: nowrap;
+}
+
+/* ── Next Plan Card (hero-style) ── */
+.nextPlanCard {
+  margin: 0 var(--space-md);
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  animation: slideUp var(--transition-slow) both;
+}
+
+.nextPlanCard:active {
+  transform: scale(0.98);
+}
+
+.nextPlanImageWrap {
+  position: relative;
+  aspect-ratio: 16 / 10;
+}
+
+.nextPlanImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.nextPlanCard:hover .nextPlanImage {
+  transform: scale(1.03);
+}
+
+.nextPlanPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nextPlanOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.0) 20%,
+      rgba(0, 0, 0, 0.5) 65%,
+      rgba(0, 0, 0, 0.8) 100%);
+}
+
+.nextPlanContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nextPlanCategory {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.nextPlanTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+}
+
+.nextPlanDate,
+.nextPlanLocation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 2px;
+}
+
+/* ── Feed cards (Instagram-style) ── */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0;
+}
+
+.feedCard {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  animation: slideUp var(--transition-slow) both;
+}
+
+.feedCard:active {
+  background: var(--bg-secondary);
+}
+
+/* Feed card header */
+.feedCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--space-md) 8px;
+}
+
+.feedCardChukipu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedCardDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.feedCardChukipuName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.feedCardCategory {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Feed card image */
+.feedCardImageWrap {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.feedCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.feedCard:hover .feedCardImage {
+  transform: scale(1.02);
+}
+
+.feedCardPlaceholder {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Feed card body */
+.feedCardBody {
+  padding: 12px var(--space-md) 16px;
+}
+
+.feedCardTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.feedCardMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.feedCardMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.feedCardGenre {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid;
+}
+
+.feedCardCompleted {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #52c788;
+}
+
+/* ── Loading more ── */
+.loadingMore {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+/* ── Empty State ── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  text-align: center;
+  animation: fadeIn 0.6s 0.2s both;
+  padding: var(--space-xl);
+}
+
+.emptyIcon {
+  width: 96px;
+  height: 96px;
+  border-radius: 28px;
+  background: rgba(212, 116, 140, 0.10);
+  border: 1px solid rgba(212, 116, 140, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-primary);
+  margin-bottom: 8px;
+}
+
+.emptyTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+}
+
+.emptyDesc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+.emptyBtn {
+  margin-top: 8px;
+}
+
+/* ── Header logo wrappers ── */
+.headerLogoWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerLogoCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Dynamic color / delay helpers (use CSS custom properties) ── */
+.feedCard {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  animation: slideUp var(--transition-slow) both;
+  animation-delay: var(--delay, 0s);
+}
+
+.nextPlanPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cat-bg, rgba(232, 116, 154, 0.13));
+}
+
+.nextPlanCategory {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cat-color, #e8749a);
+}
+
+.feedCardDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cat-color, #e8749a);
+}
+
+.feedCardCategory {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--cat-color, #e8749a);
+}
+
+.feedCardPlaceholder {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cat-bg, rgba(232, 116, 154, 0.06));
+}
+
+.feedCardGenre {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid;
+  color: var(--cat-color, #e8749a);
+  border-color: var(--cat-border, rgba(232, 116, 154, 0.3));
+}
+
+/* ── Recommended Section ── */
+.recommendedSection {
+  margin-top: 24px;
+}
+
+.recommendedCategoryHeader {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-md) 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  gap: 8px;
+}
+
+.recommendedCategoryIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(232, 116, 154, 0.1);
+  color: #e8749a;
+}
+
+.recommendedScrollContainer {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 0 var(--space-md) 24px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.recommendedScrollContainer::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+.recommendedCardWrapper {
+  flex: 0 0 auto;
+  width: 280px;
+  scroll-snap-align: start;
+}
+
+/* Reuse the nextPlanCard styling but remove the side margins for the scroller */
+.recommendedCardWrapper .nextPlanCard {
+  margin: 0;
+  height: 100%;
+}

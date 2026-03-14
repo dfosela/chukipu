@@ -1,0 +1,189 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg-primary);
+    transition: background var(--transition-slow);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) var(--space-md) var(--space-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.headerBtn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.pageTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.pageContent {
+    padding-top: var(--space-lg);
+    padding-bottom: 90px;
+}
+
+.section {
+    padding: 0 var(--space-md) var(--space-xl);
+    animation: fadeIn var(--transition-slow) 0.1s both;
+}
+
+.sectionTitle {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+    padding-left: 8px;
+}
+
+/* FAQ Accordion */
+.faqList {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.faqItem {
+    border-bottom: 1px solid var(--border-soft);
+    background: transparent;
+}
+
+.faqItem:last-child {
+    border-bottom: none;
+}
+
+.faqQuestion {
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+    /* Hide standard arrow */
+    gap: 12px;
+}
+
+.faqQuestion::-webkit-details-marker {
+    display: none;
+}
+
+.faqIcon {
+    color: var(--text-tertiary);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.faqItem[open] .faqIcon {
+    transform: rotate(180deg);
+}
+
+.faqAnswer {
+    padding: 0 16px 16px 16px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    animation: slideDown 0.3s ease;
+}
+
+/* Contact Card */
+.contactCard {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.contactIconWrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(var(--brand-primary-rgb), 0.1);
+    color: var(--brand-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.contactTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.contactText {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.contactBtn {
+    background: var(--brand-gradient);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 99px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    width: 100%;
+}
+
+.contactBtn:active {
+    opacity: 0.8;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* ── Utility classes (spacers, hidden elements, animation delays) ── */
+.spacer38 { width: 38px; flex-shrink: 0; }
+.spacer40 { width: 40px; flex-shrink: 0; }
+.hidden { display: none; }

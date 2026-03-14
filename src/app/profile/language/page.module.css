@@ -1,0 +1,114 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg-primary);
+    transition: background var(--transition-slow);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) var(--space-md) var(--space-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.headerBtn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.pageTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.pageContent {
+    padding-top: var(--space-lg);
+    padding-bottom: 90px;
+}
+
+.section {
+    padding: 0 var(--space-md) var(--space-xl);
+    animation: fadeIn var(--transition-slow) 0.1s both;
+}
+
+.sectionTitle {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+    padding-left: 8px;
+}
+
+.languageList {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.languageBtn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.languageBtn:last-child {
+    border-bottom: none;
+}
+
+.languageBtn:active {
+    background: rgba(var(--brand-primary-rgb), 0.05);
+}
+
+.languageName {
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.activeName {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.checkIcon {
+    color: var(--brand-primary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* ── Utility classes (spacers, hidden elements, animation delays) ── */
+.spacer38 { width: 38px; flex-shrink: 0; }
+.spacer40 { width: 40px; flex-shrink: 0; }
+.hidden { display: none; }

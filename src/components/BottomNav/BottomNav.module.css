@@ -1,0 +1,149 @@
+.nav {
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 398px;
+    height: 68px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    background: var(--nav-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--nav-border);
+    border-radius: 34px;
+    box-shadow: var(--nav-shadow);
+    z-index: 1000;
+
+    transition: all var(--transition-slow);
+}
+
+.navItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    border: none;
+    background: none;
+    position: relative;
+    transition: all var(--transition-fast);
+    min-width: 56px;
+}
+
+.navItem:active {
+    transform: scale(0.90);
+}
+
+.iconWrapper {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navIcon {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2px;
+    transition: transform var(--transition-spring);
+    color: var(--text-tertiary);
+    opacity: 0.8;
+}
+
+.navMainIcon {
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.15));
+    transition: transform var(--transition-spring);
+    color: var(--text-on-brand);
+}
+
+.navItemMain {
+    margin-top: -24px;
+    background: var(--brand-gradient);
+    border: 3px solid var(--bg-primary);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.navItemMain .navLabel {
+    display: none;
+}
+
+.navItemMain .activeBackground {
+    display: none;
+}
+
+.navItemMain:active {
+    transform: scale(0.92);
+}
+
+.navItem.active .navIcon {
+    color: var(--brand-primary);
+    opacity: 1;
+    stroke-width: 2.2;
+}
+
+.navLabel {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 0.01em;
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+}
+
+.navItem.active .navLabel {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.activeDot {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    opacity: 0;
+    transition: opacity var(--transition-fast), transform var(--transition-spring);
+    display: none;
+}
+
+.navItem.active .activeDot {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+}
+
+.activeBackground {
+    position: absolute;
+    inset: 0;
+    background: rgba(120, 120, 120, 0.08);
+    /* Generic subtle overlay */
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all var(--transition-spring);
+}
+
+.navItem.active .activeBackground {
+    opacity: 1;
+    transform: scale(1);
+}

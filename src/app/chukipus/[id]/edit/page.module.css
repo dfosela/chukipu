@@ -1,0 +1,328 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) var(--space-md) var(--space-md);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.backBtn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.backBtn:active {
+    transform: scale(0.92);
+}
+
+.title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+    gap: var(--space-md);
+    overflow-y: auto;
+}
+
+/* Photo Section */
+.photoSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: var(--space-lg);
+}
+
+.photoPreviewWrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    border: 2px dashed var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    overflow: hidden;
+    animation: scaleIn 0.4s var(--transition-spring) both;
+}
+
+.photoPreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photoPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    opacity: 0.6;
+}
+
+.photoUploadBtn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+}
+
+.photoUploadBtn:hover {
+    transform: scale(1.1);
+}
+
+.photoUploadBtn:active {
+    transform: scale(0.9);
+}
+
+.photoHint {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* Input */
+.inputWrap {
+    width: 100%;
+    position: relative;
+    margin-bottom: auto;
+}
+
+.inputLabel {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    margin-left: 4px;
+}
+
+.input {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 16px var(--space-md);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(212, 116, 140, 0.12);
+}
+
+.input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.charCount {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+/* Privacy Toggle */
+.privacySetting {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    background: var(--surface);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-md);
+}
+
+.privacyInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: var(--space-md);
+}
+
+.privacyTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.privacyDesc {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.toggleSwitch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.toggleInput {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggleSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--text-tertiary);
+    transition: .3s;
+    border-radius: 30px;
+}
+
+.toggleSlider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleInput:checked+.toggleSlider {
+    background-color: var(--brand-primary);
+}
+
+.toggleInput:checked+.toggleSlider:before {
+    transform: translateX(22px);
+}
+
+/* Buttons */
+.saveBtn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-full);
+    background: var(--brand-gradient);
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(196, 86, 110, 0.40);
+    transition: all var(--transition-fast);
+}
+
+.saveBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(196, 86, 110, 0.50);
+}
+
+.saveBtn:active {
+    transform: scale(0.98);
+}
+
+.saveBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.deleteBtn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-full);
+    background: rgba(232, 72, 90, 0.1);
+    color: #e8485a;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid rgba(232, 72, 90, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all var(--transition-fast);
+    margin-top: var(--space-sm);
+}
+
+.deleteBtn:hover {
+    background: rgba(232, 72, 90, 0.15);
+}
+
+.deleteBtn:active {
+    transform: scale(0.98);
+}
+
+/* -- Utility classes (spacers, hidden elements, animation delays) -- */
+.spacer38 {
+    width: 38px;
+    flex-shrink: 0;
+}
+
+.spacer40 {
+    width: 40px;
+    flex-shrink: 0;
+}
+
+.hidden {
+    display: none;
+}

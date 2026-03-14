@@ -1,0 +1,1732 @@
+.btnBase {
+    padding: 0.875rem 2rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.btnPrimary {
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #000;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.btnPrimary:hover {
+    background-color: #CE8D8B;
+    border-color: #CE8D8B;
+}
+
+.btnSecondary {
+    background-color: transparent;
+    color: #000;
+    border: 1px solid #000;
+}
+
+.btnSecondary:hover {
+    background-color: rgba(206, 141, 139, 0.05);
+    border-color: #CE8D8B;
+    color: #CE8D8B;
+}
+
+.container {
+    min-height: 100vh;
+    background-color: #fff;
+    color: #000;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.container ::selection {
+    background-color: rgba(206, 141, 139, 0.2);
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 50;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 500ms;
+    border-bottom-width: 1px;
+}
+
+.navScrolled {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-color: #EAEAEA;
+}
+
+.navNotScrolled {
+    background-color: transparent;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-color: transparent;
+}
+
+.navContent {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 55;
+}
+
+.navLinksCenter {
+    display: none;
+}
+
+@media (min-width: 860px) {
+    .navLinksCenter {
+        display: flex;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        align-items: center;
+    }
+}
+
+.navRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .navRight {
+        gap: 1rem;
+    }
+}
+
+.logo {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logoDot {
+    color: #CE8D8B;
+}
+
+.navLinks {
+    display: none;
+    column-gap: 3rem;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+    .navLinks {
+        display: flex;
+    }
+}
+
+.navLink {
+    position: relative;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.navLink:hover {
+    color: #CE8D8B;
+}
+
+.navLinkUnderline {
+    position: absolute;
+    bottom: -0.25rem;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #CE8D8B;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.navLink:hover .navLinkUnderline {
+    width: 100%;
+}
+
+.btnNav {
+    display: flex;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    font-size: 0.75rem !important;
+}
+
+@media (min-width: 640px) {
+    .btnNav {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+        padding-top: 0.625rem !important;
+        padding-bottom: 0.625rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+.heroSection {
+    position: relative;
+    padding-top: 12rem;
+    padding-bottom: 8rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 10;
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    pointer-events: none;
+}
+
+.heroPreTitle {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.2rem;
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+.heroTitle {
+    font-size: 4rem;
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    margin-bottom: 2rem;
+    color: #000;
+}
+
+@media (min-width: 768px) {
+    .heroTitle {
+        font-size: 5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .heroTitle {
+        font-size: 5.5rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .heroTitle {
+        font-size: 6.5rem;
+    }
+}
+
+.heroTitleHighlight {
+    color: #000;
+}
+
+.heroDesc {
+    font-size: 1.25rem;
+    color: #4b5563;
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3.5rem;
+    font-weight: 400;
+    line-height: 1.625;
+}
+
+@media (min-width: 768px) {
+    .heroDesc {
+        font-size: 1.5rem;
+    }
+}
+
+.heroBr {
+    display: none;
+}
+
+.heroTitleDesktop {
+    display: none;
+}
+
+.heroTitleMobile {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .heroBr {
+        display: block;
+    }
+
+    .heroTitleDesktop {
+        display: block;
+    }
+
+    .heroTitleMobile {
+        display: none;
+    }
+}
+
+.heroButtons {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (min-width: 640px) {
+    .heroButtons {
+        flex-direction: row;
+    }
+}
+
+.heroBtnMain {
+    padding: 1rem 2.5rem !important;
+    background-color: #111827 !important;
+    border-radius: 9999px !important;
+    color: #fff !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-size: 1rem !important;
+    border: none !important;
+    box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.heroBtnMain:hover {
+    background-color: #CE8D8B !important;
+}
+
+.heroBtnSecondary {
+    padding: 1rem 2.5rem !important;
+    border-radius: 9999px !important;
+    color: #111827 !important;
+    background-color: transparent !important;
+    border: 1px solid #d1d5db !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-size: 1rem !important;
+}
+
+.heroBtnSecondary:hover {
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+}
+
+.aboutSection {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    background-color: #FDF2F2;
+    overflow: hidden;
+}
+
+.aboutContainer {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.aboutGridWrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .aboutGridWrapper {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .aboutGridWrapper {
+        gap: 6rem;
+    }
+}
+
+.aboutContent {
+    max-width: 32rem;
+}
+
+.aboutTitle {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+    color: #000;
+}
+
+@media (min-width: 768px) {
+    .aboutTitle {
+        font-size: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .aboutTitle {
+        font-size: 3.5rem;
+    }
+}
+
+.aboutDesc {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: #4b5563;
+}
+
+.mockupCardWrapperLarge {
+    display: flex;
+    justify-content: center;
+}
+
+.mockupCardLarge {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+}
+
+.mockupImage {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 9/19;
+    object-fit: cover;
+}
+
+.emotionSection {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    background-color: #fff;
+}
+
+.emotionContainer {
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.emotionText {
+    font-size: 1.875rem;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+}
+
+@media (min-width: 768px) {
+    .emotionText {
+        font-size: 2.5rem;
+        line-height: 1.2;
+    }
+}
+
+@media (min-width: 1024px) {
+    .emotionText {
+        font-size: 3rem;
+        line-height: 1.1;
+    }
+}
+
+@media (min-width: 1280px) {
+    .emotionText {
+        font-size: 3.75rem;
+        line-height: 1;
+    }
+}
+
+.emotionSpan {
+    color: #CE8D8B;
+    font-style: italic;
+    position: relative;
+    display: inline-block;
+}
+
+.emotionUnderline {
+    position: absolute;
+    bottom: -0.25rem;
+    left: 0;
+    height: 4px;
+    background-color: #CE8D8B;
+}
+
+.howSection {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-color: #FDF2F2;
+}
+
+@media (min-width: 768px) {
+    .howSection {
+        padding: 4rem 2rem;
+    }
+}
+
+.howContainer {
+    max-width: 64rem;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .howContainer {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.howLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.howHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.howSubtitle {
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #ce8d8b;
+}
+
+.howMainTitle {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 500;
+    color: #1e293b;
+    letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+    .howMainTitle {
+        font-size: 2.25rem;
+        line-height: 2.5rem;
+    }
+}
+
+.howMainTitleLight {
+    color: #94a3b8;
+}
+
+.howStepsWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stepBtn {
+    width: 100%;
+    text-align: left;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    transition: all 200ms ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: transparent;
+    border: none;
+}
+
+.stepBtnActive {
+    background-color: #fff;
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    transform: translateX(0.25rem);
+}
+
+.stepBtnInactive {
+    opacity: 0.7;
+}
+
+.stepBtnInactive:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+}
+
+.stepIconWrap {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 200ms ease;
+    flex-shrink: 0;
+}
+
+.stepIconWrapActive {
+    background-color: #ce8d8b;
+    color: #fff;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.stepIconWrapInactive {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+}
+
+.stepTextWrap {
+    flex: 1;
+}
+
+.stepTitleActive {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.stepTitleInactive {
+    font-weight: 600;
+    color: #475569;
+}
+
+.stepDesc {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-top: 0.125rem;
+}
+
+.stepArrow {
+    width: 1rem;
+    height: 1rem;
+    color: #ce8d8b;
+}
+
+.howRight {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mockupContainer {
+    position: relative;
+}
+
+.mockupBlur {
+    position: absolute;
+    inset: 0;
+    filter: blur(100px);
+    border-radius: 9999px;
+    opacity: 0.3;
+    background-color: #ce8d8b;
+}
+
+.phoneFrame {
+    position: relative;
+    width: 280px;
+    height: 580px;
+    background-color: #1a1a1a;
+    border-radius: 48px;
+    padding: 10px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 4px solid #1e293b;
+}
+
+.phoneNotch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6rem;
+    height: 1.25rem;
+    background-color: #1e293b;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    z-index: 10;
+}
+
+.phoneScreen {
+    width: 100%;
+    height: 100%;
+    background-color: #f8fafc;
+    border-radius: 38px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.phoneStatusBar {
+    height: 2rem;
+    padding: 1rem 1.5rem 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.phoneStatusLeft {
+    height: 0.375rem;
+    width: 2rem;
+    background-color: #cbd5e1;
+    border-radius: 9999px;
+}
+
+.phoneStatusRight {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.phoneStatusDotEmpty {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+    border: 2px solid #cbd5e1;
+}
+
+.phoneStatusDotFull {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+    background-color: #cbd5e1;
+}
+
+.phoneContentWrapper {
+    flex: 1;
+    margin-top: 1rem;
+}
+
+.phoneProfileBar {
+    padding: 0 1.5rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.phoneAvatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.5rem;
+    background-color: #ce8d8b;
+}
+
+.phoneNameLine {
+    height: 0.5rem;
+    width: 4rem;
+    background-color: #1e293b;
+    border-radius: 9999px;
+}
+
+.phoneBottomBar {
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.phoneHomeIndicator {
+    width: 6rem;
+    height: 0.375rem;
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+}
+
+.animateFadeIn {
+    animation: fadeIn 300ms ease-in-out;
+}
+
+.step1Content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 1rem;
+    position: relative;
+}
+
+.mockAltHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.mockAltLogo {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #ce8d8b;
+    border-radius: 0.5rem;
+    opacity: 0.5;
+}
+
+.mockAltHeaderIcon {
+    width: 2rem;
+    height: 2rem;
+    background-color: #cbd5e1;
+    border-radius: 9999px;
+    opacity: 0.8;
+}
+
+.mockAltTitleArea {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.mockAltTitleLine {
+    height: 1.25rem;
+    width: 70%;
+    background-color: #1e293b;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.mockAltTitleLineShort {
+    height: 1.25rem;
+    width: 40%;
+    background-color: #1e293b;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.mockAltSubtitleLine {
+    height: 0.75rem;
+    width: 30%;
+    background-color: #94a3b8;
+    border-radius: 4px;
+}
+
+.mockAltBadge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3rem;
+    height: 1.5rem;
+    background-color: rgba(206, 141, 139, 0.2);
+    border: 1px solid rgba(206, 141, 139, 0.5);
+    border-radius: 1rem;
+}
+
+.mockAltMainCard {
+    background-color: #f1f5f9;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.mockAltCardImage {
+    height: 8rem;
+    background-color: #e2e8f0;
+}
+
+.mockAltCardContent {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mockAltCardCategory {
+    height: 0.5rem;
+    width: 25%;
+    background-color: #ce8d8b;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+}
+
+.mockAltCardTitle {
+    height: 1rem;
+    width: 60%;
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.mockAltCardLocation {
+    height: 0.75rem;
+    width: 40%;
+    background-color: #94a3b8;
+    border-radius: 4px;
+    margin-top: 0.25rem;
+}
+
+.mockAltBottomNav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4.5rem;
+    background-color: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 0.5rem;
+    margin: 0 -0.5rem;
+    /* Extend past padding */
+}
+
+.mockAltNavIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.mockAltNavIconCenter {
+    width: 3rem;
+    height: 3rem;
+    background-color: #ce8d8b;
+    border-radius: 9999px;
+    transform: translateY(-0.5rem);
+    border: 4px solid #fff;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.step2Content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 1rem;
+    position: relative;
+}
+
+.mockAltHeaderCentered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1rem;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.mockAltHeaderBackIcon {
+    position: absolute;
+    left: 0;
+    width: 2rem;
+    height: 2rem;
+    background-color: #cbd5e1;
+    border-radius: 9999px;
+    opacity: 0.5;
+}
+
+.mockAltHeaderTitle {
+    width: 50%;
+    height: 1rem;
+    background-color: #f1f5f9;
+    border-radius: 4px;
+}
+
+.mockAltInviteArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    flex: 1;
+}
+
+.mockAltInviteIconWrap {
+    width: 6rem;
+    height: 6rem;
+    border: 2px solid rgba(206, 141, 139, 0.3);
+    border-radius: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mockAltInviteIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #ce8d8b;
+    border-radius: 0.5rem;
+}
+
+.mockAltInviteTitle {
+    height: 1.5rem;
+    width: 90%;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+}
+
+.mockAltInviteInputBox {
+    width: 100%;
+    height: 4rem;
+    background-color: #fff;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #e2e8f0;
+    margin-top: 0.5rem;
+}
+
+.mockAltInviteInputChar {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+    background-color: #cbd5e1;
+}
+
+.mockAltInviteButtonWrap {
+    position: absolute;
+    bottom: 2rem;
+    left: 1rem;
+    right: 1rem;
+}
+
+.mockAltInviteButton {
+    height: 3.5rem;
+    width: 100%;
+    background-color: rgba(206, 141, 139, 0.2);
+    border: 1px solid rgba(206, 141, 139, 0.5);
+    border-radius: 1rem;
+}
+
+.step3Content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    background-color: #f8fafc;
+}
+
+.mockAltChukipuTop {
+    background-color: #e2e8f0;
+    padding: 1rem 1rem 1.5rem 1rem;
+    border-bottom-left-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+    margin: 0 -0.5rem;
+    /* pull out to edges */
+}
+
+.mockAltHeaderMenuIcon {
+    position: absolute;
+    right: 0;
+    width: 2rem;
+    height: 2rem;
+    background-color: #cbd5e1;
+    border-radius: 9999px;
+    opacity: 0.8;
+}
+
+.mockAltChukipuTitleWrap {
+    margin-top: 4rem;
+}
+
+.mockAltChukipuTitle {
+    height: 1.5rem;
+    width: 70%;
+    background-color: #f1f5f9;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.mockAltChukipuSubtitle {
+    height: 0.75rem;
+    width: 40%;
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.mockAltActionBtns {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1.5rem 0.5rem;
+}
+
+.mockAltBtnPrimary {
+    flex: 2;
+    height: 3rem;
+    background-color: rgba(206, 141, 139, 0.2);
+    border: 1px solid rgba(206, 141, 139, 0.5);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
+.mockAltBtnSecondary {
+    flex: 1;
+    height: 3rem;
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+}
+
+.mockAltListSection {
+    padding: 0 0.5rem;
+    flex: 1;
+}
+
+.mockAltListHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+}
+
+.mockAltListDot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: #ce8d8b;
+    border-radius: 9999px;
+}
+
+.mockAltListTitle {
+    height: 1rem;
+    width: 30%;
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.mockAltListCount {
+    position: absolute;
+    right: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+}
+
+.mockAltListItem {
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mockAltListItemImg {
+    width: 4rem;
+    height: 4rem;
+    background-color: #e2e8f0;
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+}
+
+.mockAltListItemText {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mockAltListItemTitle {
+    height: 1rem;
+    width: 70%;
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.mockAltListItemSub {
+    height: 0.5rem;
+    width: 40%;
+    background-color: #f1f5f9;
+    border-radius: 4px;
+}
+
+.featuresSection {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+/* ── Ticker wrapper ── */
+.featuresTicker {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding: 64px 0;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.featuresTrack {
+    display: flex;
+    align-items: center;
+    width: max-content;
+}
+
+.featuresSet {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    padding-right: 3rem;
+    animation: featureScrollLeft 60s linear infinite;
+}
+
+/* Se pausa SOLO al hacer hover sobre un corazón concreto */
+.featuresTrack:has(.heartItem:hover) .featuresSet {
+    animation-play-state: paused;
+}
+
+@keyframes featureScrollLeft {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* ── Heart item ── */
+.heartItem {
+    flex: 0 0 auto;
+    width: 200px;
+    /* Tamaño del cuadro delimitador fijo que actúa como margen interno constante */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+.heartItem:hover {
+    z-index: 50;
+}
+
+.heartWrapper {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform;
+}
+
+/* Corazón SVG relleno */
+.heartBg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 4px 16px rgba(206, 141, 139, 0.35));
+    transition: filter 0.5s ease;
+}
+
+/* Icono de categoría centrado */
+.heartCategoryIcon {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Contenido oculto por defecto */
+.heartContent {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem 1.4rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.1s;
+    pointer-events: none;
+}
+
+.heartContentTitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.3rem 0;
+    line-height: 1.2;
+}
+
+.heartContentDesc {
+    font-size: 0.46rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+    margin: 0;
+    font-weight: 300;
+}
+
+/* ── Hover states ── */
+.heartItem:hover .heartWrapper {
+    transform: scale(2.2);
+}
+
+.heartItem:hover .heartBg {
+    filter: none;
+}
+
+.heartItem:hover .heartCategoryIcon {
+    opacity: 0;
+    transform: scale(0.4);
+}
+
+.heartItem:hover .heartContent {
+    opacity: 1;
+}
+
+
+.ctaSection {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.ctaContainer {
+    max-width: 64rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    position: relative;
+}
+
+.ctaTitle {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+    .ctaTitle {
+        font-size: 2.75rem;
+        line-height: 1.1;
+    }
+}
+
+@media (min-width: 1024px) {
+    .ctaTitle {
+        font-size: 3.75rem;
+        line-height: 1;
+    }
+}
+
+.logoCta {
+    font-size: 3rem;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+}
+
+@media (min-width: 768px) {
+    .logoCta {
+        font-size: 5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .logoCta {
+        font-size: 5.5rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .logoCta {
+        font-size: 6.5rem;
+    }
+}
+
+.ctaTags {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.ctaDecor1 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateY(-50%) translateX(50%);
+    width: 16rem;
+    height: 16rem;
+    border: 1px solid rgba(206, 141, 139, 0.1);
+    border-radius: 9999px;
+}
+
+.ctaDecor2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(50%) translateX(-50%);
+    width: 24rem;
+    height: 24rem;
+    border: 1px solid rgba(206, 141, 139, 0.1);
+    border-radius: 9999px;
+}
+
+.footer {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    border-top: 1px solid #F5F5F5;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.footerContainer {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+}
+
+@media (min-width: 768px) {
+    .footerContainer {
+        flex-direction: row;
+    }
+}
+
+
+.heroTitleBottom {
+    display: block;
+    margin-top: 1.5rem;
+}
+
+.heroTitleHighlight {
+    display: inline-block;
+    background-color: #CE8D8B;
+    color: #fff;
+    opacity: 0.8;
+    line-height: 1.2;
+    vertical-align: middle;
+}
+
+.footerLinks {
+    display: flex;
+    gap: 2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.footerLink {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.footerLink:hover {
+    color: #000;
+}
+
+.footerCopyright {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+/* ── Canvas particles ── */
+.particlesCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.8;
+}
+
+/* ── Logo image sizes ── */
+.navLogoImg {
+    height: 32px;
+    width: auto;
+}
+
+/* ── Hero anchor (removes text-decoration) ── */
+.heroAnchor {
+    text-decoration: none;
+}
+
+/* ── Filter chevron (animatable) ── */
+.filterChevron {
+    transition: transform 0.3s ease;
+}
+
+.filterChevronOpen {
+    transform: rotate(180deg);
+}
+
+.filterChevronClosed {
+    transform: rotate(0deg);
+}
+
+/* ── Explore card animation delay ── */
+.card {
+    animation-delay: var(--delay, 0s);
+}
+
+.userCard {
+    animation-delay: var(--delay, 0s);
+}
+
+/* ---- RESPONSIVE OVERRIDES & ADDITIONS ---- */
+
+@media (max-width: 767px) {
+    .heroSection {
+        padding-top: 8rem;
+        padding-bottom: 4rem;
+    }
+
+    .heroTitle {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .heroDesc {
+        font-size: 1.125rem;
+        margin-bottom: 2.5rem;
+        line-height: 1.5;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .aboutSection {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .aboutTitle {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .aboutDesc {
+        font-size: 1rem;
+    }
+
+    .aboutGridWrapper {
+        gap: 3rem;
+    }
+
+    .emotionSection {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+
+    .emotionText {
+        font-size: 1.5rem;
+        line-height: 1.4;
+    }
+
+    .howSection {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .howGridWrapper {
+        gap: 3rem;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .featuresSection {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .featuresTicker {
+        padding: 48px 0;
+    }
+
+    .ctaSection {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .ctaTitle {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .logoCta {
+        font-size: 2.5rem;
+    }
+
+    .btnNav {
+        display: none !important;
+    }
+
+    .footerContainer {
+        gap: 2rem;
+    }
+
+    .footerLinks {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+    }
+}
+
+/* Base styles missing from initial CSS */
+
+.mockupScreen {
+    width: 100%;
+    height: 100%;
+    background-color: #f9fafb;
+    border-radius: 2rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.mockupHeader {
+    padding: 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #fff;
+}
+
+.mockupAvatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background-color: #e5e7eb;
+    flex-shrink: 0;
+}
+
+.mockupStatus {
+    width: 60%;
+    height: 1rem;
+    border-radius: 9999px;
+    background-color: #e5e7eb;
+}
+
+.mockupBody,
+.mockupBodyAlt {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: #f9fafb;
+}
+
+.mockupContentBlockLarge {
+    width: 100%;
+    height: 10rem;
+    border-radius: 1rem;
+    background-color: #e5e7eb;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.mockupContentBlockSmall {
+    width: 100%;
+    height: 4rem;
+    border-radius: 1rem;
+    background-color: #e5e7eb;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.mockupContentBlockMedium {
+    width: 80%;
+    height: 1.5rem;
+    border-radius: 0.5rem;
+    background-color: #e5e7eb;
+}
+
+.mockupHeroImage {
+    width: 100%;
+    height: 45%;
+    background-color: #d1d5db;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.mobileMenuBtn {
+    display: block;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+@media (min-width: 768px) {
+    .mobileMenuBtn {
+        display: none;
+    }
+}
+
+.mobileMenuOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.98);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.mobileNavLink {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #000;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+}

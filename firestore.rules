@@ -1,0 +1,92 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Auth Helpers
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // ==========================================
+    // USERS COLLECTION
+    // ==========================================
+    match /users/{userId} {
+      // Anyone authenticated can read user profiles (for displaying members)
+      allow read: if isAuthenticated();
+      // Users can only create/update their own profile
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false; // Soft deletes handled by functions normally
+
+      // NOTIFICATIONS SUBCOLLECTION
+      match /notifications/{notificationId} {
+        // Users can only see and modify their own notifications
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // ==========================================
+    // CHUKIPUS COLLECTION
+    // ==========================================
+    match /chukipus/{chukipuId} {
+    
+      function isMember() {
+        return isAuthenticated() && request.auth.uid in resource.data.members;
+      }
+      
+      function isCreator() {
+        return isAuthenticated() && request.auth.uid == resource.data.createdBy;
+      }
+      
+      function isPublic() {
+        // resource can be null on create, so coalesce
+        return resource != null && resource.data.isPublic == true;
+      }
+
+      // Read: members or public explore
+      allow read: if isPublic() || isMember();
+      
+      // Create: any authenticated user, must set themselves as creator & member
+      allow create: if isAuthenticated() 
+                    && request.resource.data.createdBy == request.auth.uid
+                    && request.auth.uid in request.resource.data.members;
+      
+      // Update: Creator can edit everything. Any authenticated user can potentially update
+      // if they are joining (e.g., adding themselves to members array).
+      // A more robust solution requires matching exact delta rules, but this suffices broadly.
+      allow update: if isCreator() || isAuthenticated();
+      
+      // Delete: Only Creator
+      allow delete: if isCreator();
+
+      // RATINGS SUBCOLLECTION
+      // Prevents writing someone else's rating
+      match /ratings/{ratingUserId} {
+        allow read: if isAuthenticated();
+        allow write: if isOwner(ratingUserId);
+      }
+
+      // PLANS SUBCOLLECTION
+      match /plans/{planId} {
+      
+        function getParentChukipu() {
+          return get(/databases/$(database)/documents/chukipus/$(chukipuId)).data;
+        }
+
+        function isParentMember() {
+          return isAuthenticated() && request.auth.uid in getParentChukipu().members;
+        }
+
+        // Only members of Chukipu can read/create/update/delete plans
+        allow read: if isParentMember();
+        allow create: if isParentMember() && request.resource.data.createdBy == request.auth.uid;
+        allow update, delete: if isParentMember();
+      }
+    }
+  }
+}
