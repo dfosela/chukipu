@@ -1522,40 +1522,37 @@
 /* ---- RESPONSIVE OVERRIDES & ADDITIONS ---- */
 
 @media (max-width: 767px) {
+
+    /* ── Hero ── */
     .heroSection {
         padding-top: 8rem;
         padding-bottom: 4rem;
     }
 
     .heroTitle {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
+        font-size: 2.75rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.05;
     }
 
     .heroDesc {
-        font-size: 1.125rem;
+        font-size: 1.0625rem;
         margin-bottom: 2.5rem;
-        line-height: 1.5;
+        line-height: 1.6;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
 
+    /* ── About ── */
     .aboutSection {
-        padding-top: 4rem;
-        padding-bottom: 4rem;
-    }
-
-    .aboutTitle {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .aboutDesc {
-        font-size: 1rem;
+        padding-top: 3.5rem;
+        padding-bottom: 3.5rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
     }
 
     .aboutGridWrapper {
-        gap: 3rem;
+        gap: 2rem;
     }
 
     /* Texto primero, mockup después en mobile */
@@ -1567,33 +1564,122 @@
         order: 1;
     }
 
+    /* Texto centrado y sin max-width fija en mobile */
+    .aboutContent {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .aboutTitle {
+        font-size: 1.875rem;
+        line-height: 1.2;
+        margin-bottom: 0.875rem;
+    }
+
+    .aboutDesc {
+        font-size: 1rem;
+        line-height: 1.75;
+        color: #6b7280;
+    }
+
+    /* Mockup más compacto en mobile */
+    .mockupCardWrapperLarge {
+        padding-top: 1rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .mockupCardLarge {
+        max-width: 180px;
+        margin: 0 auto;
+        border-radius: 1.25rem;
+        overflow: hidden;
+        box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.18);
+    }
+
+    /* ── Emotion ── */
     .emotionSection {
-        padding-top: 5rem;
-        padding-bottom: 5rem;
+        padding-top: 3.5rem;
+        padding-bottom: 3.5rem;
     }
 
     .emotionContainer {
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
 
     .emotionText {
         font-size: 1.375rem;
-        line-height: 1.6;
+        line-height: 1.65;
         letter-spacing: -0.01em;
+        text-align: center;
     }
 
+    /* ── How ── */
     .howSection {
-        padding-top: 4rem;
-        padding-bottom: 4rem;
+        min-height: auto;
+        padding: 3rem 1.25rem;
     }
 
-    .howGridWrapper {
-        gap: 3rem;
-        display: flex;
-        flex-direction: column-reverse;
+    .howContainer {
+        gap: 2.5rem;
     }
 
+    .howLeft {
+        padding-left: 0;
+        padding-right: 0;
+        gap: 1.25rem;
+    }
+
+    .howHeader {
+        text-align: center;
+    }
+
+    .howMainTitle {
+        font-size: 1.625rem;
+        line-height: 1.25;
+    }
+
+    /* Steps como tarjetas mobile */
+    .stepBtn {
+        padding: 1rem 1.25rem;
+        border-radius: 1rem;
+        border: 1px solid #f1f5f9;
+        background-color: #fff;
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .stepBtnActive {
+        border-color: rgba(206, 141, 139, 0.35);
+        box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
+        transform: none;
+    }
+
+    .stepBtnInactive:hover {
+        background-color: #fff;
+    }
+
+    /* Mockup de teléfono escalado para mobile */
+    .howRight {
+        justify-content: center;
+    }
+
+    .phoneFrame {
+        width: 200px;
+        height: 415px;
+        border-radius: 38px;
+        padding: 8px;
+    }
+
+    .phoneNotch {
+        width: 4.5rem;
+        height: 1rem;
+    }
+
+    .phoneScreen {
+        border-radius: 30px;
+    }
+
+    /* ── Features ── */
     .featuresSection {
         padding-top: 3rem;
         padding-bottom: 3rem;
@@ -1603,13 +1689,15 @@
         padding: 48px 0;
     }
 
+    /* ── CTA ── */
     .ctaSection {
         padding-top: 4rem;
         padding-bottom: 4rem;
     }
 
     .ctaTitle {
-        font-size: 2rem;
+        font-size: 1.875rem;
+        line-height: 1.2;
         margin-bottom: 1.5rem;
     }
 
@@ -1617,6 +1705,7 @@
         font-size: 2.5rem;
     }
 
+    /* ── Footer ── */
     .footerContainer {
         gap: 2rem;
     }
