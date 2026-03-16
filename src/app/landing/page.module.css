@@ -1558,14 +1558,29 @@
         gap: 3rem;
     }
 
+    /* Texto primero, mockup después en mobile */
+    .aboutGridWrapper > div:first-child {
+        order: 2;
+    }
+
+    .aboutGridWrapper > div:last-child {
+        order: 1;
+    }
+
     .emotionSection {
         padding-top: 5rem;
         padding-bottom: 5rem;
     }
 
+    .emotionContainer {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+
     .emotionText {
-        font-size: 1.5rem;
-        line-height: 1.4;
+        font-size: 1.375rem;
+        line-height: 1.6;
+        letter-spacing: -0.01em;
     }
 
     .howSection {
@@ -1600,10 +1615,6 @@
 
     .logoCta {
         font-size: 2.5rem;
-    }
-
-    .btnNav {
-        display: none !important;
     }
 
     .footerContainer {
