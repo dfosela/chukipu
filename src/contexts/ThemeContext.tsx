@@ -22,9 +22,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem('chukipu-theme') as Theme | null;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initial = saved ?? (prefersDark ? 'dark' : 'light');
-    setTheme(initial);
     document.documentElement.setAttribute('data-theme', initial);
-    setMounted(true);
+    setTimeout(() => {
+      setTheme(initial);
+      setMounted(true);
+    }, 0);
   }, []);
 
   const toggleTheme = () => {

@@ -13,12 +13,6 @@
     "test:coverage": "vitest run --coverage",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "vitest related --run"
-    ]
-  },
   "dependencies": {
     "firebase": "^12.9.0",
     "framer-motion": "^12.34.3",

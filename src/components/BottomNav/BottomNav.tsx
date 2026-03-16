@@ -6,7 +6,7 @@ import styles from './BottomNav.module.css';
 const navItems = [
     {
         label: 'Inicio',
-        path: '/',
+        path: '/application',
         icon: (active: boolean) => (
             <svg viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" className={styles.navIcon}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -16,7 +16,7 @@ const navItems = [
     },
     {
         label: 'Explorar',
-        path: '/explore',
+        path: '/application/explore',
         icon: (active: boolean) => (
             <svg viewBox="0 0 24 24" fill={active ? 'none' : 'none'} stroke="currentColor" className={styles.navIcon}>
                 <circle cx="11" cy="11" r="8" strokeLinecap="round" />
@@ -27,7 +27,7 @@ const navItems = [
     },
     {
         label: 'Acción',
-        path: '/action',
+        path: '/application/action',
         isMain: true,
         icon: (active: boolean) => (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className={styles.navMainIcon} strokeWidth="2.5" strokeLinecap="round">
@@ -38,7 +38,7 @@ const navItems = [
     },
     {
         label: 'Chukipus',
-        path: '/chukipus',
+        path: '/application/chukipus',
         icon: (active: boolean) => (
             <svg viewBox="0 0 24 24" fill={active ? 'none' : 'none'} stroke="currentColor" className={styles.navIcon}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 0 0 0 6.364L12 20.364l7.682-7.682a4.5 4.5 0 0 0-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 0 0-6.364 0z" />
@@ -48,7 +48,7 @@ const navItems = [
     },
     {
         label: 'Perfil',
-        path: '/profile',
+        path: '/application/profile',
         icon: (active: boolean) => (
             <svg viewBox="0 0 24 24" fill={active ? 'none' : 'none'} stroke="currentColor" className={styles.navIcon}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -65,8 +65,8 @@ export default function BottomNav() {
     return (
         <nav className={styles.nav}>
             {navItems.map((item) => {
-                const isActive = pathname === item.path || (item.path !== '/' && pathname.startsWith(item.path));
-                // @ts-ignore
+                const isActive = pathname === item.path || (item.path !== '/application' && pathname.startsWith(item.path));
+                // @ts-expect-error isMain is a custom field not in the base type
                 const isMain = item.isMain;
 
                 return (

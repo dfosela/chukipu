@@ -264,7 +264,7 @@ export default function App() {
             window.matchMedia('(display-mode: standalone)').matches ||
             (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
         if (isStandalone) {
-            router.replace('/');
+            router.replace('/application');
             return;
         }
 
