@@ -11,6 +11,7 @@ import {
     firebaseBatchUpdate,
     firebaseRemove,
     uploadFile,
+    deleteFile,
 } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { Plan, PlanMedia } from '@/types/firestore';
@@ -189,11 +190,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
         try {
             await firebaseRemove(`planMedia/${planId}/${item.id}`);
-            await fetch('/api/delete', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: item.url }),
-            });
+            await deleteFile(item.url);
         } catch (err) {
             console.error('Error deleting media:', err);
             // Revert on failure even after undo window

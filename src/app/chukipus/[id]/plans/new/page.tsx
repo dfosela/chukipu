@@ -8,100 +8,236 @@ import { useAuth } from '@/contexts/AuthContext';
 import { sendNotification } from '@/lib/notifications';
 import { Chukipu } from '@/types/firestore';
 
-const CATEGORY_CONFIG: Record<string, {
+type ExtraFieldDef = {
+    key: string;
     label: string;
+    required?: boolean;
+    type: 'text' | 'number' | 'textarea' | 'time' | 'chips';
+    options?: string[];
+    placeholder?: string;
+    maxLength?: number;
+};
+
+type CategoryConfig = {
+    label: string;
+    category: string;
     titleLabel: string;
     titlePlaceholder: string;
-    category: string;
     genres?: string[];
+    genresLabel?: string;
+    genresRequired?: boolean;
     showDuration?: boolean;
-    showLocation?: boolean;
+    durationLabel?: string;
     durationPlaceholder?: string;
+    showLocation?: boolean;
+    locationLabel?: string;
+    locationRequired?: boolean;
     locationPlaceholder?: string;
-}> = {
+    showDate?: boolean;
+    dateLabel?: string;
+    dateRequired?: boolean;
+    dateType?: 'date' | 'datetime';
+    showDateEnd?: boolean;
+    dateEndLabel?: string;
+    extraFields?: ExtraFieldDef[];
+};
+
+const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
     peliculas: {
         label: 'Nueva Película',
         titleLabel: 'Título de la película',
         titlePlaceholder: 'Ej: Interstellar',
         category: 'Película',
         genres: ['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia ficción', 'Romance', 'Animación', 'Thriller', 'Documental', 'Fantasía', 'Musical', 'Aventura'],
+        genresLabel: 'Género',
+        genresRequired: true,
         showDuration: true,
-        showLocation: true,
+        durationLabel: 'Duración',
         durationPlaceholder: 'Ej: 2h 15min',
+        showLocation: true,
+        locationLabel: 'Dónde verla',
         locationPlaceholder: 'Ej: Cine, Casa, Netflix...',
+        showDate: true,
+        dateLabel: 'Fecha y hora',
+        dateType: 'datetime',
+        showDateEnd: false,
     },
     viajes: {
         label: 'Nuevo Viaje',
         titleLabel: 'Destino',
         titlePlaceholder: 'Ej: París, Japón...',
         category: 'Viaje',
-        showDuration: true,
-        showLocation: false,
-        durationPlaceholder: 'Ej: 5 días',
+        showDate: true,
+        dateLabel: 'Fecha de inicio',
+        dateRequired: true,
+        dateType: 'datetime',
+        showDateEnd: true,
+        dateEndLabel: 'Fecha de fin',
+        extraFields: [
+            { key: 'budget', label: 'Presupuesto', type: 'text', placeholder: 'Ej: 500€', maxLength: 40 },
+            { key: 'transport', label: 'Transporte', type: 'text', placeholder: 'Ej: Avión, Tren, Coche...', maxLength: 60 },
+            { key: 'accommodation', label: 'Alojamiento', type: 'text', placeholder: 'Ej: Hotel, Airbnb, Camping...', maxLength: 60 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
     },
     comidas: {
         label: 'Nueva Comida',
-        titleLabel: 'Nombre del sitio o plato',
+        titleLabel: 'Lugar / Restaurante',
         titlePlaceholder: 'Ej: Ramen Shifu',
         category: 'Comida',
-        showLocation: true,
-        locationPlaceholder: 'Ej: Calle Mayor 12, Madrid',
+        genres: ['Desayuno', 'Almuerzo', 'Cena', 'Aperitivo', 'Merienda', 'Brunch', 'Picoteo'],
+        genresLabel: 'Tipo de comida',
+        genresRequired: true,
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'cuisineType', label: 'Tipo de cocina', type: 'text', placeholder: 'Ej: Italiana, Japonesa...', maxLength: 40 },
+            { key: 'price', label: 'Precio aproximado', type: 'text', placeholder: 'Ej: 20€', maxLength: 20 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
     },
     escapadas: {
         label: 'Nueva Escapada',
         titleLabel: 'Destino',
         titlePlaceholder: 'Ej: Sierra de Gredos',
         category: 'Escapada',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateRequired: true,
+        dateType: 'datetime',
+        showDateEnd: false,
         showDuration: true,
-        showLocation: true,
-        durationPlaceholder: 'Ej: Fin de semana',
-        locationPlaceholder: 'Ej: Ávila',
+        durationLabel: 'Duración',
+        durationPlaceholder: 'Ej: Fin de semana, 3 días...',
+        extraFields: [
+            { key: 'transport', label: 'Transporte', type: 'text', placeholder: 'Ej: Coche, Tren...', maxLength: 60 },
+            { key: 'accommodation', label: 'Alojamiento', type: 'text', placeholder: 'Ej: Hotel, Casa rural...', maxLength: 60 },
+            { key: 'budget', label: 'Presupuesto', type: 'text', placeholder: 'Ej: 200€', maxLength: 40 },
+            { key: 'activities', label: 'Actividades planeadas', type: 'textarea', placeholder: 'Ej: Senderismo, visita al pueblo...', maxLength: 300 },
+        ],
     },
     deportes: {
         label: 'Nuevo Deporte',
-        titleLabel: 'Actividad',
-        titlePlaceholder: 'Ej: Partido de pádel',
+        titleLabel: 'Deporte',
+        titlePlaceholder: 'Ej: Pádel, Fútbol, Running...',
         category: 'Deporte',
         showLocation: true,
+        locationLabel: 'Lugar',
+        locationRequired: true,
         locationPlaceholder: 'Ej: Polideportivo, Parque...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'duration', label: 'Duración', type: 'text', placeholder: 'Ej: 1h 30min', maxLength: 20 },
+            { key: 'level', label: 'Nivel', type: 'chips', options: ['Amateur', 'Intermedio', 'Profesional'] },
+            { key: 'players', label: 'Participantes', type: 'text', placeholder: 'Ej: Juan, María, Pedro...', maxLength: 100 },
+        ],
     },
     cenas: {
         label: 'Nueva Cena',
-        titleLabel: 'Nombre del restaurante o cena',
-        titlePlaceholder: 'Ej: Cena japonesa',
+        titleLabel: 'Restaurante / Lugar',
+        titlePlaceholder: 'Ej: Restaurante Sakura',
         category: 'Cena',
-        showLocation: true,
-        locationPlaceholder: 'Ej: Restaurante Sakura',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateRequired: true,
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'foodType', label: 'Tipo de comida', type: 'text', placeholder: 'Ej: Japonesa, Italiana...', maxLength: 40 },
+            { key: 'people', label: 'Número de personas', type: 'number', placeholder: 'Ej: 4' },
+            { key: 'price', label: 'Precio estimado', type: 'text', placeholder: 'Ej: 30€ por persona', maxLength: 40 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
     },
     cocina: {
         label: 'Cocina en Casa',
-        titleLabel: 'Receta o plato',
+        titleLabel: 'Receta / Plato',
         titlePlaceholder: 'Ej: Pizza casera',
         category: 'Cocina en casa',
+        genres: ['Desayuno', 'Comida', 'Cena', 'Aperitivo', 'Postre', 'Snack', 'Merienda'],
+        genresLabel: 'Tipo de comida',
+        genresRequired: true,
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'prepTime', label: 'Tiempo de preparación', type: 'text', placeholder: 'Ej: 30 min', maxLength: 30 },
+            { key: 'difficulty', label: 'Dificultad', type: 'chips', options: ['Fácil', 'Media', 'Difícil'] },
+            { key: 'ingredients', label: 'Ingredientes principales', type: 'textarea', placeholder: 'Ej: Harina, tomate, mozzarella...', maxLength: 300 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 200 },
+        ],
     },
     gaming: {
         label: 'Nuevo Gaming',
-        titleLabel: 'Nombre del juego',
+        titleLabel: 'Videojuego',
         titlePlaceholder: 'Ej: It Takes Two',
         category: 'Gaming',
-        genres: ['Aventura', 'Acción', 'RPG', 'Estrategia', 'Puzzle', 'Deportes', 'Terror', 'Simulación', 'Plataformas', 'Cooperativo'],
+        genres: ['PC', 'PlayStation', 'Xbox', 'Nintendo Switch', 'Mobile', 'Otro'],
+        genresLabel: 'Plataforma',
+        genresRequired: true,
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'duration', label: 'Duración de la sesión', type: 'text', placeholder: 'Ej: 2h', maxLength: 20 },
+            { key: 'gameMode', label: 'Modo de juego', type: 'chips', options: ['Solo', 'Multijugador local', 'Online'] },
+            { key: 'players', label: 'Amigos / Jugadores', type: 'text', placeholder: 'Ej: Juan, María...', maxLength: 100 },
+        ],
     },
     'juegos-de-mesa': {
         label: 'Nuevo Juego de Mesa',
-        titleLabel: 'Nombre del juego',
+        titleLabel: 'Juego de mesa',
         titlePlaceholder: 'Ej: Catan, Cluedo...',
         category: 'Juego de mesa',
+        showLocation: true,
+        locationLabel: 'Lugar',
+        locationPlaceholder: 'Ej: Casa, Bar de juegos...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
         showDuration: true,
-        durationPlaceholder: 'Ej: 1h - 2h',
+        durationLabel: 'Duración',
+        durationPlaceholder: 'Ej: 2h',
+        extraFields: [
+            { key: 'players', label: 'Número de jugadores', type: 'number', placeholder: 'Ej: 4', required: true },
+            { key: 'winner', label: 'Ganador', type: 'text', placeholder: 'Ej: Nombre del ganador', maxLength: 60 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
     },
     cultura: {
         label: 'Nueva Cultura',
         titleLabel: 'Evento o lugar',
         titlePlaceholder: 'Ej: Museo del Prado',
         category: 'Cultura',
-        genres: ['Museo', 'Teatro', 'Concierto', 'Exposición', 'Festival', 'Monumento', 'Tour'],
+        genres: ['Museo', 'Teatro', 'Concierto', 'Exposición', 'Festival', 'Monumento', 'Tour', 'Cine', 'Ópera'],
+        genresLabel: 'Tipo de actividad',
+        genresRequired: true,
         showLocation: true,
+        locationLabel: 'Lugar / Ciudad',
+        locationRequired: true,
         locationPlaceholder: 'Ej: Madrid, Barcelona...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'price', label: 'Precio', type: 'text', placeholder: 'Ej: 12€', maxLength: 20 },
+            { key: 'company', label: 'Compañía', type: 'text', placeholder: 'Ej: Con quién vas', maxLength: 80 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
     },
     lectura: {
         label: 'Nueva Lectura',
@@ -109,6 +245,18 @@ const CATEGORY_CONFIG: Record<string, {
         titlePlaceholder: 'Ej: El Principito',
         category: 'Lectura',
         genres: ['Novela', 'Ciencia ficción', 'Fantasía', 'Romance', 'Thriller', 'No ficción', 'Biografía', 'Poesía', 'Cómic', 'Ensayo'],
+        genresLabel: 'Género',
+        genresRequired: false,
+        showDate: true,
+        dateLabel: 'Fecha de inicio',
+        dateType: 'date',
+        showDateEnd: true,
+        dateEndLabel: 'Fecha de finalización',
+        extraFields: [
+            { key: 'author', label: 'Autor', type: 'text', placeholder: 'Ej: Antoine de Saint-Exupéry', required: true, maxLength: 80 },
+            { key: 'pages', label: 'Número de páginas', type: 'number', placeholder: 'Ej: 280' },
+            { key: 'rating', label: 'Valoración', type: 'chips', options: ['★', '★★', '★★★', '★★★★', '★★★★★'] },
+        ],
     },
 };
 
@@ -127,11 +275,14 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
     const [location, setLocation] = useState('');
     const [date, setDate] = useState('');
     const [dateEnd, setDateEnd] = useState('');
+    const [details, setDetails] = useState<Record<string, string>>({});
     const [isCreating, setIsCreating] = useState(false);
+
+    const setDetail = (key: string, val: string) =>
+        setDetails(prev => ({ ...prev, [key]: val }));
 
     const handleCreate = async () => {
         if (!title.trim() || !user) return;
-        if (config.genres && !genre) return;
         setIsCreating(true);
 
         try {
@@ -152,6 +303,7 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                     location: location.trim(),
                     date,
                     dateEnd,
+                    details,
                     completed: false,
                     createdBy: user.uid,
                     showInProfile: false,
@@ -161,7 +313,6 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                 [`chukipus/${chukipuId}/planCount`]: currentCount + 1,
             });
 
-            // Notify all other members
             if (chukipuSnap && chukipuSnap.members) {
                 const membersToNotify = chukipuSnap.members.filter((uid: string) => uid !== user.uid);
                 await Promise.all(membersToNotify.map((uid: string) =>
@@ -174,7 +325,6 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                 ));
             }
 
-            // Navigate to the plan detail view instead of back to the chukipu
             router.push(`/chukipus/${chukipuId}/plans/${planId}`);
         } catch (err) {
             console.error('Error creating plan:', err);
@@ -183,7 +333,71 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
         }
     };
 
-    const isValid = title.trim() && (!config.genres || genre);
+    const requiredExtras = config.extraFields?.filter(f => f.required) ?? [];
+    const optionalExtras = config.extraFields?.filter(f => !f.required) ?? [];
+
+    const isValid =
+        title.trim().length > 0 &&
+        (!config.genres || config.genresRequired === false || genre.length > 0) &&
+        (!config.locationRequired || location.trim().length > 0) &&
+        (!config.dateRequired || date.length > 0) &&
+        requiredExtras.every(f => (details[f.key] || '').trim().length > 0);
+
+    const renderExtraField = (field: ExtraFieldDef) => {
+        const value = details[field.key] || '';
+        const setVal = (v: string) => setDetail(field.key, v);
+
+        return (
+            <div key={field.key} className={styles.fieldGroup}>
+                <label className={styles.fieldLabel}>
+                    {field.label}
+                    {!field.required && <span className={styles.optional}> (opcional)</span>}
+                </label>
+                {field.type === 'chips' ? (
+                    <div className={styles.chipsWrap}>
+                        {field.options!.map(opt => (
+                            <button
+                                key={opt}
+                                type="button"
+                                className={`${styles.chip} ${value === opt ? styles.chipSelected : ''}`}
+                                onClick={() => setVal(value === opt ? '' : opt)}
+                            >
+                                {opt}
+                            </button>
+                        ))}
+                    </div>
+                ) : field.type === 'textarea' ? (
+                    <textarea
+                        placeholder={field.placeholder}
+                        value={value}
+                        onChange={e => setVal(e.target.value)}
+                        className={styles.textarea}
+                        maxLength={field.maxLength}
+                        rows={3}
+                    />
+                ) : field.type === 'time' ? (
+                    <input
+                        type="time"
+                        value={value}
+                        onChange={e => setVal(e.target.value)}
+                        className={styles.input}
+                    />
+                ) : (
+                    <input
+                        type={field.type === 'number' ? 'number' : 'text'}
+                        placeholder={field.placeholder}
+                        value={value}
+                        onChange={e => setVal(e.target.value)}
+                        className={styles.input}
+                        maxLength={field.maxLength}
+                        min={field.type === 'number' ? 1 : undefined}
+                    />
+                )}
+            </div>
+        );
+    };
+
+    const inputDateType = config.dateType === 'date' ? 'date' : 'datetime-local';
 
     return (
         <div className={styles.container}>
@@ -220,10 +434,16 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                     </div>
                 </div>
 
-                {/* Genre chips (only if category has genres) */}
+                {/* Required extra fields (shown right after title) */}
+                {requiredExtras.map(renderExtraField)}
+
+                {/* Genre / type chips */}
                 {config.genres && (
                     <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>Género</label>
+                        <label className={styles.fieldLabel}>
+                            {config.genresLabel || 'Género'}
+                            {config.genresRequired === false && <span className={styles.optional}> (opcional)</span>}
+                        </label>
                         <div className={styles.chipsWrap}>
                             {config.genres.map(g => (
                                 <button
@@ -239,53 +459,49 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                     </div>
                 )}
 
-                {/* Duration (optional, depending on category) */}
-                {config.showDuration && (
-                    <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>Duración <span className={styles.optional}>(opcional)</span></label>
-                        <input
-                            type="text"
-                            placeholder={config.durationPlaceholder || 'Ej: 2h'}
-                            value={duration}
-                            onChange={e => setDuration(e.target.value)}
-                            className={styles.input}
-                            maxLength={20}
-                        />
-                    </div>
-                )}
-
-                {/* Location (optional, depending on category) */}
+                {/* Location */}
                 {config.showLocation && (
                     <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>Lugar <span className={styles.optional}>(opcional)</span></label>
+                        <label className={styles.fieldLabel}>
+                            {config.locationLabel || 'Lugar'}
+                            {!config.locationRequired && <span className={styles.optional}> (opcional)</span>}
+                        </label>
                         <input
                             type="text"
                             placeholder={config.locationPlaceholder || 'Ej: Madrid'}
                             value={location}
                             onChange={e => setLocation(e.target.value)}
                             className={styles.input}
-                            maxLength={40}
+                            maxLength={60}
                         />
                     </div>
                 )}
 
                 {/* Date */}
-                <div className={styles.fieldGroup}>
-                    <label className={styles.fieldLabel}>Fecha y hora <span className={styles.optional}>(opcional)</span></label>
-                    <input
-                        type="datetime-local"
-                        value={date}
-                        onChange={e => setDate(e.target.value)}
-                        className={styles.input}
-                    />
-                </div>
+                {config.showDate !== false && (
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>
+                            {config.dateLabel || 'Fecha y hora'}
+                            {!config.dateRequired && <span className={styles.optional}> (opcional)</span>}
+                        </label>
+                        <input
+                            type={inputDateType}
+                            value={date}
+                            onChange={e => setDate(e.target.value)}
+                            className={styles.input}
+                        />
+                    </div>
+                )}
 
                 {/* End date */}
-                {date && (
+                {config.showDateEnd && date && (
                     <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>Fecha de fin <span className={styles.optional}>(opcional, si dura más de 1 día)</span></label>
+                        <label className={styles.fieldLabel}>
+                            {config.dateEndLabel || 'Fecha de fin'}
+                            <span className={styles.optional}> (opcional)</span>
+                        </label>
                         <input
-                            type="datetime-local"
+                            type={inputDateType}
                             value={dateEnd}
                             onChange={e => setDateEnd(e.target.value)}
                             className={styles.input}
@@ -294,7 +510,30 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                     </div>
                 )}
 
-                {/* Create button */}
+                {/* Duration */}
+                {config.showDuration && (
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>
+                            {config.durationLabel || 'Duración'}
+                            <span className={styles.optional}> (opcional)</span>
+                        </label>
+                        <input
+                            type="text"
+                            placeholder={config.durationPlaceholder || 'Ej: 2h'}
+                            value={duration}
+                            onChange={e => setDuration(e.target.value)}
+                            className={styles.input}
+                            maxLength={30}
+                        />
+                    </div>
+                )}
+
+                {/* Optional extra fields */}
+                {optionalExtras.map(renderExtraField)}
+            </div>
+
+            {/* Sticky footer with create button */}
+            <div className={styles.footer}>
                 <button
                     className={styles.createBtn}
                     disabled={!isValid || isCreating}

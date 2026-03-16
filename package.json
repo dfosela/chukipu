@@ -20,8 +20,6 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.995.0",
-    "@smithy/node-http-handler": "^4.4.10",
     "firebase": "^12.9.0",
     "framer-motion": "^12.34.3",
     "lucide-react": "^0.575.0",

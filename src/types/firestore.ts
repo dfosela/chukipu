@@ -49,6 +49,7 @@ export interface Plan {
     location: string;
     date: string;
     dateEnd: string;
+    details?: Record<string, string>;
     completed: boolean;
     createdBy: string;
     showInProfile?: boolean;

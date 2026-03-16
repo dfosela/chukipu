@@ -1,5 +1,7 @@
 import { ref, get, set, update, remove, push, DataSnapshot } from 'firebase/database';
-import { db } from './firebase';
+import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { db, storage } from './firebase';
+import { convertToWebP } from './convertToWebP';
 
 // ─── CRUD genérico ──────────────────────────────────────────
 
@@ -114,19 +116,31 @@ export function firebasePushId(path: string): string {
     return push(ref(db, path)).key!;
 }
 
-// ─── Upload (Cloudflare R2) ─────────────────────────────────
+// ─── Upload / Delete (Firebase Storage) ────────────────────
 
 export async function uploadFile(file: File, folder: string = 'uploads', fileName?: string): Promise<string> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('folder', folder);
-    if (fileName) formData.append('fileName', fileName);
+    const optimized = await convertToWebP(file);
+    const ext = optimized.name.split('.').pop() || 'bin';
+    const safeFolder = folder.replace(/\/+$/, '');
+    const safeCustomName = fileName?.replace(/^\/+/, '');
 
-    const res = await fetch('/api/upload', { method: 'POST', body: formData });
-    const data = await res.json();
-    if (!res.ok) {
-        console.error('Upload error details:', data);
-        throw new Error(data.error || 'Upload failed');
-    }
-    return data.url;
+    const key = safeCustomName
+        ? `${safeFolder}/${safeCustomName}.${ext}`
+        : `${safeFolder}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+
+    const fileRef = storageRef(storage, key);
+    await uploadBytes(fileRef, optimized);
+    return getDownloadURL(fileRef);
+}
+
+/**
+ * Elimina un archivo de Firebase Storage a partir de su download URL.
+ * Si la URL no pertenece a Firebase Storage, ignora silenciosamente.
+ */
+export async function deleteFile(url: string): Promise<void> {
+    const match = url.match(/\/o\/(.+?)(?:\?|$)/);
+    if (!match) return;
+    const path = decodeURIComponent(match[1]);
+    const fileRef = storageRef(storage, path);
+    await deleteObject(fileRef);
 }
