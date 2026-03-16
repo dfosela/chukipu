@@ -29,6 +29,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </AuthProvider>
         </ThemeProvider>
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+              navigator.serviceWorker.register('/sw.js');
+            });
+          }
+          // Capture install prompt as early as possible (before React mounts)
+          window.__pwaInstallPrompt = null;
+          window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            window.__pwaInstallPrompt = e;
+            console.log('[PWA] beforeinstallprompt capturado globalmente ✅');
+            window.dispatchEvent(new Event('pwaInstallReady'));
+          });
+        `}} />
       </body>
     </html>
   );

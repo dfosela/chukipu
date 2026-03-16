@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, useAnimation, AnimatePresence, Variants } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
@@ -24,7 +25,7 @@ import styles from './page.module.css';
 
 // --- Reusable Components ---
 
-const FadeIn = ({ children, delay = 0, direction = 'up' }: any) => {
+const FadeIn = ({ children, delay = 0, direction = 'up' }: { children: React.ReactNode; delay?: number; direction?: string }) => {
     const controls = useAnimation();
     const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
@@ -57,12 +58,13 @@ const FadeIn = ({ children, delay = 0, direction = 'up' }: any) => {
     );
 };
 
-const Button = ({ children, variant = 'primary', className = '' }: any) => {
+const Button = ({ children, variant = 'primary', className = '', onClick }: { children: React.ReactNode; variant?: string; className?: string; onClick?: () => void }) => {
     return (
         <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className={`${styles.btnBase} ${variant === 'primary' ? styles.btnPrimary : styles.btnSecondary} ${className}`}
+            onClick={onClick}
         >
             {children}
         </motion.button>
@@ -81,7 +83,7 @@ const HeartParticles = () => {
 
         let animationFrameId: number;
         let particles: Particle[] = [];
-        let mouse = { x: -1000, y: -1000 };
+        const mouse = { x: -1000, y: -1000 };
 
         const resize = () => {
             canvas.width = window.innerWidth;
@@ -161,26 +163,26 @@ const HeartParticles = () => {
             }
 
             update() {
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-                let forceDirectionX = dx / distance;
-                let forceDirectionY = dy / distance;
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const forceDirectionX = dx / distance;
+                const forceDirectionY = dy / distance;
                 const maxDistance = 200;
-                let force = (maxDistance - distance) / maxDistance;
-                let directionX = forceDirectionX * force * this.density;
-                let directionY = forceDirectionY * force * this.density;
+                const force = (maxDistance - distance) / maxDistance;
+                const directionX = forceDirectionX * force * this.density;
+                const directionY = forceDirectionY * force * this.density;
 
                 if (distance < maxDistance) {
                     this.speedX -= directionX * 0.5;
                     this.speedY -= directionY * 0.5;
                 } else {
                     if (this.x !== this.baseX) {
-                        let dx = this.x - this.baseX;
+                        const dx = this.x - this.baseX;
                         this.speedX += dx / 80;
                     }
                     if (this.y !== this.baseY) {
-                        let dy = this.y - this.baseY;
+                        const dy = this.y - this.baseY;
                         this.speedY += dy / 80;
                     }
                 }
@@ -251,8 +253,59 @@ const HeartParticles = () => {
 // --- Main App Component ---
 
 export default function App() {
+    const router = useRouter();
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
+    const [deferredPrompt, setDeferredPrompt] = useState<Event & { prompt: () => void; userChoice: Promise<{ outcome: string }> } | null>(null);
+
+    useEffect(() => {
+        // If already running as installed PWA, redirect to the app
+        const isStandalone =
+            window.matchMedia('(display-mode: standalone)').matches ||
+            (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+        if (isStandalone) {
+            router.replace('/');
+            return;
+        }
+
+        type PwaWindow = Window & { __pwaInstallPrompt?: Event & { prompt: () => void; userChoice: Promise<{ outcome: string }> } };
+        const w = window as PwaWindow;
+
+        const applyPrompt = () => {
+            if (w.__pwaInstallPrompt) {
+                console.log('[PWA] beforeinstallprompt capturado ✅ - el botón de instalar está listo');
+                setDeferredPrompt(w.__pwaInstallPrompt);
+            }
+        };
+
+        // Check if already captured before React mounted, on next tick to avoid react-compiler warning
+        const timerId = setTimeout(() => {
+            if (w.__pwaInstallPrompt) {
+                console.log('[PWA] beforeinstallprompt ya estaba capturado ✅');
+            } else {
+                console.log('[PWA] Esperando evento pwaInstallReady...');
+            }
+            applyPrompt();
+        }, 0);
+
+        window.addEventListener('pwaInstallReady', applyPrompt);
+        return () => {
+            clearTimeout(timerId);
+            window.removeEventListener('pwaInstallReady', applyPrompt);
+        };
+    }, [router]);
+
+    const handleInstall = async () => {
+        if (!deferredPrompt) {
+            console.warn('[PWA] El botón fue pulsado pero beforeinstallprompt aún no se ha disparado. Posibles causas: la app ya está instalada, el SW aún no está activo, o Chrome está esperando más engagement del usuario.');
+            return;
+        }
+        console.log('[PWA] Lanzando diálogo de instalación...');
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`[PWA] El usuario eligió: ${outcome}`);
+        if (outcome === 'accepted') setDeferredPrompt(null);
+    };
 
     const steps = [
         {
@@ -418,7 +471,7 @@ export default function App() {
 
                     {/* Right: CTA */}
                     <div className={styles.navRight}>
-                        <Button className={styles.btnNav}>Obtener la app</Button>
+                        <Button className={styles.btnNav} onClick={handleInstall}>Obtener la app</Button>
                     </div>
                 </div>
             </nav>
@@ -599,7 +652,7 @@ export default function App() {
                                         <div className={styles.heartWrapper}>
                                             <Heart className={styles.heartBg} fill="#CE8D8B" stroke="#CE8D8B" />
                                             <div className={styles.heartCategoryIcon}>
-                                                {React.cloneElement(feature.icon as React.ReactElement, { size: 40, strokeWidth: 1.5, color: '#ffffff' } as any)}
+                                                {React.cloneElement(feature.icon as React.ReactElement<{ size?: number; strokeWidth?: number; color?: string }>, { size: 40, strokeWidth: 1.5, color: '#ffffff' })}
                                             </div>
                                             <div className={styles.heartContent}>
                                                 <h4 className={styles.heartContentTitle}>{feature.title}</h4>
@@ -627,6 +680,12 @@ export default function App() {
                         <div className={styles.logoCta}>
                             CHUKIPU<span className={styles.logoDot}>.</span>
                         </div>
+                    </FadeIn>
+                    <FadeIn delay={0.4}>
+                        <Button variant="primary" onClick={handleInstall}>
+                            <Download size={18} style={{ marginRight: 8 }} />
+                            Obtener la app
+                        </Button>
                     </FadeIn>
                 </div>
             </section>

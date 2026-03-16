@@ -8,8 +8,24 @@ import { firebaseGetList } from '@/lib/firebaseMethods';
 vi.mock('next/navigation', () => ({
     useRouter: () => ({
         push: vi.fn(),
+        replace: vi.fn(),
     }),
 }));
+
+// Mock matchMedia to simulate standalone PWA mode so the page renders
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+        matches: query === '(display-mode: standalone)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    })),
+});
 
 // Mock Contexts
 vi.mock('@/contexts/AuthContext', () => ({
@@ -35,11 +51,11 @@ vi.mock('@/lib/firebaseMethods', () => ({
 describe('HomePage', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        (useAuth as any).mockReturnValue({
+        vi.mocked(useAuth).mockReturnValue({
             user: null,
             loading: false,
-        });
-        (firebaseGetList as any).mockResolvedValue([]);
+        } as ReturnType<typeof useAuth>);
+        vi.mocked(firebaseGetList).mockResolvedValue([]);
     });
 
     it('renders the empty state when no authenticated user is present', () => {
@@ -49,21 +65,21 @@ describe('HomePage', () => {
     });
 
     it('renders loading state when authLoading is true', () => {
-        (useAuth as any).mockReturnValue({
+        vi.mocked(useAuth).mockReturnValue({
             user: null,
             loading: true,
-        });
+        } as ReturnType<typeof useAuth>);
         render(<HomePage />);
         expect(screen.getByText('Cargando...')).toBeInTheDocument();
     });
 
     it('renders plans if a user is logged in and has plans', async () => {
-        (useAuth as any).mockReturnValue({
+        vi.mocked(useAuth).mockReturnValue({
             user: { uid: 'user123' },
             loading: false,
-        });
+        } as ReturnType<typeof useAuth>);
 
-        (firebaseGetList as any).mockImplementation(async (collection: string) => {
+        vi.mocked(firebaseGetList).mockImplementation(async (collection: string) => {
             if (collection === 'users') {
                 return [];
             }

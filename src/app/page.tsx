@@ -3,6 +3,17 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+
+function useIsStandalone() {
+  const [result] = useState(() => {
+    if (typeof window === 'undefined') return { ready: false, isStandalone: false };
+    const isStandalone =
+      (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches) ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+    return { ready: true, isStandalone };
+  });
+  return result;
+}
 import BottomNav from '@/components/BottomNav/BottomNav';
 import { firebaseGetList } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
@@ -82,6 +93,7 @@ function getNextPlan(plans: FeedPlan[]): FeedPlan | null {
 const BATCH_SIZE = 6;
 
 export default function HomePage() {
+  const { ready, isStandalone } = useIsStandalone();
   const [allPlans, setAllPlans] = useState<FeedPlan[]>([]);
   const [recommendedPlansByCategory, setRecommendedPlansByCategory] = useState<Record<string, FeedPlan[]>>({});
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
@@ -93,6 +105,13 @@ export default function HomePage() {
   const feedRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const [headerVisible, setHeaderVisible] = useState(true);
+
+  // Redirect to landing if opened in a browser (not as installed PWA)
+  useEffect(() => {
+    if (ready && !isStandalone) {
+      router.replace('/landing');
+    }
+  }, [ready, isStandalone, router]);
 
   useEffect(() => {
     async function fetchPlans() {
@@ -210,6 +229,9 @@ export default function HomePage() {
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [loadMore]);
+
+  // Don't render app content until standalone check is done (avoids flash before redirect)
+  if (!ready || !isStandalone) return null;
 
   const nextPlan = getNextPlan(allPlans);
   const feedPlans = allPlans

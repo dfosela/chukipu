@@ -3,13 +3,29 @@
   "short_name": "Chukipu",
   "description": "Tu espacio compartido para vivir momentos únicos juntos",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#e8485a",
+  "screenshots": [
+    {
+      "src": "/img/muckup1.png",
+      "sizes": "353x709",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Chukipu App"
+    }
+  ],
   "icons": [
     {
-      "src": "/logos/chukipu-logo-pink.png",
-      "sizes": "any",
+      "src": "/logos/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/icon-512.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
