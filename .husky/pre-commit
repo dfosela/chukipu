@@ -1,1 +1,5 @@
+#!/bin/sh
+# Skip if bash is not available (e.g. GitHub Desktop)
+command -v bash >/dev/null 2>&1 || exit 0
+export PATH="/usr/bin:$PATH"
 npx lint-staged

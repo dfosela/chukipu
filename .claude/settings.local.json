@@ -17,7 +17,8 @@
       "Bash(xargs:*)",
       "Bash(find:*)",
       "Bash(npx vitest:*)",
-      "Bash(npx lint-staged:*)"
+      "Bash(npx lint-staged:*)",
+      "Bash(xxd)"
     ]
   }
 }

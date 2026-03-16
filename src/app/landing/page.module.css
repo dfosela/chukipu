@@ -1439,7 +1439,13 @@
 
 .heroTitleBottom {
     display: block;
-    margin-top: 1.5rem;
+    margin-top: 0;
+}
+
+@media (min-width: 768px) {
+    .heroTitleBottom {
+        margin-top: 1.5rem;
+    }
 }
 
 .heroTitleHighlight {
