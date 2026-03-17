@@ -81,7 +81,7 @@ export default function InvitarPage({ params }: { params: Promise<{ id: string }
             type: 'invite',
             title: 'Invitación a Chukipu',
             body: `${user.displayName || 'Alguien'} te ha invitado a unirte al Chukipu "${chukipu.name}"`,
-            relatedId: chukipu.id, // we can use this to show the code in the notification if needed
+            relatedId: chukipu.inviteCode,
         });
     };
 

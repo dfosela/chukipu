@@ -92,6 +92,18 @@ export default function NotificationsPage() {
         await update(notifRef, { read: true });
     };
 
+    const handleJoinInvite = async (notif: Notification) => {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        if (!notif.read) {
+            const notifRef = ref(db, `users/${user.uid}/notifications/${notif.id}`);
+            await update(notifRef, { read: true });
+        }
+
+        router.push(`/application/chukipus/join?code=${notif.relatedId}`);
+    };
+
     return (
         <div className={styles.container}>
             {/* Header */}
@@ -149,6 +161,14 @@ export default function NotificationsPage() {
                                 </p>
                                 <p className={styles.text}>{notif.body}</p>
                                 <span className={styles.time}>{formatDate(notif.createdAt)}</span>
+                                {notif.type === 'invite' && notif.relatedId && (
+                                    <button
+                                        className={styles.joinBtn}
+                                        onClick={(e) => { e.stopPropagation(); handleJoinInvite(notif); }}
+                                    >
+                                        Unirse
+                                    </button>
+                                )}
                             </div>
 
                             {/* Unread dot */}

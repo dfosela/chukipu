@@ -150,6 +150,24 @@
     text-align: center;
 }
 
+.joinBtn {
+    margin-top: 8px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: var(--brand-primary);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: opacity var(--transition-fast);
+}
+
+.joinBtn:active {
+    opacity: 0.8;
+}
+
 .emptyIcon {
     color: var(--text-tertiary);
     opacity: 0.5;
