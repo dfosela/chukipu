@@ -23,7 +23,8 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-const PUBLIC_ROUTES = ['/application/login', '/landing', '/'];
+const PUBLIC_ROUTES = ['/application/login', '/landing'];
+const ROOT_ROUTE = '/';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -63,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         if (loading) return;
 
-        const isPublic = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
+        const isPublic = pathname === ROOT_ROUTE || PUBLIC_ROUTES.some(route => pathname.startsWith(route));
 
         if (!user && !isPublic) {
             router.replace('/application/login');
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return null;
     }
 
-    const isPublic = PUBLIC_ROUTES.some(route => pathname.startsWith(route));
+    const isPublic = pathname === ROOT_ROUTE || PUBLIC_ROUTES.some(route => pathname.startsWith(route));
     if (!user && !isPublic) {
         return null;
     }
