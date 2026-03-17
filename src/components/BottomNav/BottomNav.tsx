@@ -66,7 +66,6 @@ export default function BottomNav() {
         <nav className={styles.nav}>
             {navItems.map((item) => {
                 const isActive = pathname === item.path || (item.path !== '/application' && pathname.startsWith(item.path));
-                // @ts-expect-error isMain is a custom field not in the base type
                 const isMain = item.isMain;
 
                 return (

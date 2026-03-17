@@ -116,7 +116,7 @@ function ChukipuCard({
 }) {
     const memberUids = Array.isArray(chukipu.members)
         ? chukipu.members
-        : chukipu.members ? Object.keys(chukipu.members).filter(k => (chukipu.members as Record<string, boolean>)[k]) : [];
+        : chukipu.members ? Object.keys(chukipu.members as unknown as Record<string, boolean>).filter(k => (chukipu.members as unknown as Record<string, boolean>)[k]) : [];
 
     return (
         <div
