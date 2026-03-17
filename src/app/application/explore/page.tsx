@@ -45,6 +45,7 @@ const categoryColors: Record<string, string> = {
 export default function ExplorePage() {
     const router = useRouter();
     const { user } = useAuth();
+    const [hasUnread, setHasUnread] = useState(false);
     const [saved, setSaved] = useState<Set<string>>(new Set());
     const [search, setSearch] = useState('');
     const [activeTab, setActiveTab] = useState<'chukipus' | 'personas'>('chukipus');
@@ -57,6 +58,18 @@ export default function ExplorePage() {
     const [usersLoaded, setUsersLoaded] = useState(false);
     const [publicPlansByCategory, setPublicPlansByCategory] = useState<Record<string, FeedPlan[]>>({});
     const [plansLoading, setPlansLoading] = useState(true);
+
+    useEffect(() => {
+        if (!user) return;
+        const notifRef = ref(db, `users/${user.uid}/notifications`);
+        const unsub = onValue(notifRef, (snap) => {
+            const data = snap.val();
+            if (!data) { setHasUnread(false); return; }
+            const unread = Object.values(data as Record<string, { read: boolean }>).some(n => !n.read);
+            setHasUnread(unread);
+        });
+        return () => unsub();
+    }, [user]);
 
     // Realtime listener: chukipus
     useEffect(() => {
@@ -221,7 +234,7 @@ export default function ExplorePage() {
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                     </svg>
-                    <span className={styles.notificationBadge}></span>
+                    {hasUnread && <span className={styles.notificationBadge}></span>}
                 </button>
             </header>
 
