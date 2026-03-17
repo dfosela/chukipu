@@ -48,6 +48,17 @@ vi.mock('@/lib/firebaseMethods', () => ({
     firebaseGetList: vi.fn(),
 }));
 
+// Mock Firebase database (used for unread notifications badge)
+vi.mock('@/lib/firebase', () => ({
+    db: {},
+    auth: {},
+}));
+
+vi.mock('firebase/database', () => ({
+    ref: vi.fn(),
+    onValue: vi.fn((_ref, cb) => { cb({ val: () => null }); return vi.fn(); }),
+}));
+
 describe('HomePage', () => {
     beforeEach(() => {
         vi.clearAllMocks();
