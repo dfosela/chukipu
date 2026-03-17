@@ -8,6 +8,8 @@ import { firebaseGetList } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { Chukipu, Plan, UserProfile } from '@/types/firestore';
 import { useTheme } from '@/contexts/ThemeContext';
+import { ref, onValue } from 'firebase/database';
+import { db } from '@/lib/firebase';
 
 interface FeedPlan extends Plan {
   chukipuName: string;
@@ -93,6 +95,19 @@ export default function HomePage() {
   const feedRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const [headerVisible, setHeaderVisible] = useState(true);
+  const [hasUnread, setHasUnread] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const notifRef = ref(db, `users/${user.uid}/notifications`);
+    const unsub = onValue(notifRef, (snap) => {
+      const data = snap.val();
+      if (!data) { setHasUnread(false); return; }
+      const unread = Object.values(data as Record<string, { read: boolean }>).some(n => !n.read);
+      setHasUnread(unread);
+    });
+    return () => unsub();
+  }, [user]);
 
   useEffect(() => {
     async function fetchPlans() {
@@ -248,7 +263,7 @@ export default function HomePage() {
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
-            <span className={styles.notificationBadge}></span>
+            {hasUnread && <span className={styles.notificationBadge}></span>}
           </button>
         </div>
       </header>
