@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
-import { ref, onValue, update } from 'firebase/database';
+import { ref, onValue, update, get } from 'firebase/database';
 import { auth, db } from '@/lib/firebase';
 import styles from './page.module.css';
 
@@ -16,6 +16,8 @@ interface Notification {
     relatedId: string;
     createdAt: number;
 }
+
+type InviteStatus = 'available' | 'joined' | 'deleted';
 
 function formatDate(timestamp: number): string {
     const now = Date.now();
@@ -41,9 +43,9 @@ export default function NotificationsPage() {
     const router = useRouter();
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(true);
+    const [inviteStatuses, setInviteStatuses] = useState<Record<string, InviteStatus>>({});
 
     useEffect(() => {
-        // Wait for auth state, then subscribe to notifications
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
             if (!user) {
                 setLoading(false);
@@ -52,7 +54,7 @@ export default function NotificationsPage() {
 
             const notificationsRef = ref(db, `users/${user.uid}/notifications`);
 
-            const unsubscribeDb = onValue(notificationsRef, (snapshot) => {
+            const unsubscribeDb = onValue(notificationsRef, async (snapshot) => {
                 const data = snapshot.val();
 
                 if (!data) {
@@ -68,14 +70,45 @@ export default function NotificationsPage() {
                     })
                 );
 
-                // Sort by createdAt descending (newest first)
                 list.sort((a, b) => b.createdAt - a.createdAt);
-
                 setNotifications(list);
                 setLoading(false);
+
+                // Check invite statuses
+                const inviteNotifs = list.filter(n => n.type === 'invite' && n.relatedId);
+                if (inviteNotifs.length === 0) return;
+
+                const chukipusSnap = await get(ref(db, 'chukipus'));
+                const chukipusData = chukipusSnap.val() as Record<string, { inviteCode: string; members?: string[] | Record<string, boolean> }> | null;
+
+                const statuses: Record<string, InviteStatus> = {};
+
+                for (const notif of inviteNotifs) {
+                    if (!chukipusData) {
+                        statuses[notif.id] = 'deleted';
+                        continue;
+                    }
+
+                    const chukipu = Object.values(chukipusData).find(
+                        c => c.inviteCode === notif.relatedId
+                    );
+
+                    if (!chukipu) {
+                        statuses[notif.id] = 'deleted';
+                        continue;
+                    }
+
+                    const members = chukipu.members;
+                    const isMember = Array.isArray(members)
+                        ? members.includes(user.uid)
+                        : members ? Object.keys(members).includes(user.uid) : false;
+
+                    statuses[notif.id] = isMember ? 'joined' : 'available';
+                }
+
+                setInviteStatuses(statuses);
             });
 
-            // Cleanup DB listener when auth user changes
             return () => unsubscribeDb();
         });
 
@@ -102,6 +135,35 @@ export default function NotificationsPage() {
         }
 
         router.push(`/application/chukipus/join?code=${notif.relatedId}`);
+    };
+
+    const renderInviteButton = (notif: Notification) => {
+        const status = inviteStatuses[notif.id];
+
+        if (status === 'joined') {
+            return (
+                <button className={styles.joinBtn} disabled>
+                    Unido
+                </button>
+            );
+        }
+
+        if (status === 'deleted') {
+            return (
+                <button className={styles.joinBtn} disabled>
+                    No disponible
+                </button>
+            );
+        }
+
+        return (
+            <button
+                className={styles.joinBtn}
+                onClick={(e) => { e.stopPropagation(); handleJoinInvite(notif); }}
+            >
+                Unirse
+            </button>
+        );
     };
 
     return (
@@ -161,14 +223,7 @@ export default function NotificationsPage() {
                                 </p>
                                 <p className={styles.text}>{notif.body}</p>
                                 <span className={styles.time}>{formatDate(notif.createdAt)}</span>
-                                {notif.type === 'invite' && notif.relatedId && (
-                                    <button
-                                        className={styles.joinBtn}
-                                        onClick={(e) => { e.stopPropagation(); handleJoinInvite(notif); }}
-                                    >
-                                        Unirse
-                                    </button>
-                                )}
+                                {notif.type === 'invite' && notif.relatedId && renderInviteButton(notif)}
                             </div>
 
                             {/* Unread dot */}
