@@ -6,8 +6,8 @@
   "scope": "/application/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#e8485a",
+  "background_color": "#13101A",
+  "theme_color": "#13101A",
   "screenshots": [
     {
       "src": "/img/muckup1.png",
@@ -19,14 +19,15 @@
   ],
   "icons": [
     {
-      "src": "/logos/icon-192.png",
+      "src": "/logos/chukipuPWA_Android.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/logos/icon-512.png",
+      "src": "/logos/chukipuPWA_Apple.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

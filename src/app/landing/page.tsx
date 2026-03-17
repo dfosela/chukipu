@@ -681,12 +681,6 @@ export default function App() {
                             CHUKIPU<span className={styles.logoDot}>.</span>
                         </div>
                     </FadeIn>
-                    <FadeIn delay={0.4}>
-                        <Button variant="primary" onClick={handleInstall}>
-                            <Download size={18} style={{ marginRight: 8 }} />
-                            Obtener la app
-                        </Button>
-                    </FadeIn>
                 </div>
             </section>
 
