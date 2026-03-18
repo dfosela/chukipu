@@ -214,6 +214,31 @@ export default function ChukipuDetailPage({
     }
   };
 
+  const handleToggleLike = async (plan: Plan) => {
+    if (!user) return;
+    const currentLikes = plan.likes || [];
+    const isLiked = currentLikes.includes(user.uid);
+    const newLikes = isLiked
+      ? currentLikes.filter((uid) => uid !== user.uid)
+      : [...currentLikes, user.uid];
+    const newCount = newLikes.length;
+    setPlans((prev) =>
+      prev.map((p) =>
+        p.id === plan.id ? { ...p, likes: newLikes, likesCount: newCount } : p,
+      ),
+    );
+    try {
+      await firebaseUpdate(`plans/${plan.id}`, { likes: newLikes, likesCount: newCount });
+    } catch (err) {
+      console.error(err);
+      setPlans((prev) =>
+        prev.map((p) =>
+          p.id === plan.id ? { ...p, likes: currentLikes, likesCount: currentLikes.length } : p,
+        ),
+      );
+    }
+  };
+
   return (
     <div className={styles.container}>
       {/* Hero image */}
@@ -459,6 +484,7 @@ export default function ChukipuDetailPage({
                           router.push(`/application/chukipus/${id}/plans/${plan.id}`)
                         }
                         isCreator={user?.uid === plan.createdBy}
+                        currentUserId={user?.uid}
                         onTogglePin={(e) => {
                           e.stopPropagation();
                           handleTogglePin(plan);
@@ -466,6 +492,10 @@ export default function ChukipuDetailPage({
                         onToggleCompleted={(e) => {
                           e.stopPropagation();
                           handleToggleCompleted(plan);
+                        }}
+                        onToggleLike={(e) => {
+                          e.stopPropagation();
+                          handleToggleLike(plan);
                         }}
                       />
                     ))}
@@ -487,75 +517,103 @@ function PlanCard({
   delay,
   onClick,
   isCreator,
+  currentUserId,
   onTogglePin,
   onToggleCompleted,
+  onToggleLike,
 }: {
   plan: Plan;
   color: string;
   delay: number;
   onClick: () => void;
   isCreator?: boolean;
+  currentUserId?: string;
   onTogglePin?: (e: React.MouseEvent) => void;
   onToggleCompleted?: (e: React.MouseEvent) => void;
+  onToggleLike?: (e: React.MouseEvent) => void;
 }) {
+  const isLiked = !!currentUserId && (plan.likes || []).includes(currentUserId);
+  const likeCount = plan.likesCount || 0;
+
   return (
     <div
       className={styles.planCard}
       style={{ "--delay": `${delay}s` } as React.CSSProperties}
       onClick={onClick}
     >
-      {isCreator && (
-        <div className={styles.cardActions}>
-          <button
-            className={`${styles.cardActionBtn} ${plan.completed ? styles.cardActionDone : ""}`}
-            onClick={onToggleCompleted}
-            aria-label={
-              plan.completed ? "Marcar como pendiente" : "Marcar como hecho"
-            }
-            title={
-              plan.completed ? "Marcar como pendiente" : "Marcar como hecho"
-            }
+      <div className={styles.cardActions}>
+        <button
+          className={`${styles.cardLikeBtn} ${isLiked ? styles.cardLikeBtnLiked : ""}`}
+          onClick={onToggleLike}
+          aria-label={isLiked ? "Quitar like" : "Dar like"}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill={isLiked ? "currentColor" : "none"}
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          {likeCount > 0 && <span className={styles.cardLikeCount}>{likeCount}</span>}
+        </button>
+        {isCreator && (
+          <>
+            <button
+              className={`${styles.cardActionBtn} ${plan.completed ? styles.cardActionDone : ""}`}
+              onClick={onToggleCompleted}
+              aria-label={
+                plan.completed ? "Marcar como pendiente" : "Marcar como hecho"
+              }
+              title={
+                plan.completed ? "Marcar como pendiente" : "Marcar como hecho"
+              }
             >
-              <circle cx="12" cy="12" r="10" fill={plan.completed ? "currentColor" : "none"} />
-              <polyline points="9 12 11 14 15 10" stroke={plan.completed ? "#166534" : "currentColor"} strokeWidth="2.5" />
-            </svg>
-          </button>
-          <button
-            className={`${styles.cardActionBtn} ${plan.showInProfile ? styles.cardActionPinned : ""}`}
-            onClick={onTogglePin}
-            aria-label={
-              plan.showInProfile ? "Quitar del perfil" : "Fijar en el perfil"
-            }
-            title={
-              plan.showInProfile ? "Quitar del perfil" : "Fijar en el perfil"
-            }
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill={plan.showInProfile ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" fill={plan.completed ? "currentColor" : "none"} />
+                <polyline points="9 12 11 14 15 10" stroke={plan.completed ? "#166534" : "currentColor"} strokeWidth="2.5" />
+              </svg>
+            </button>
+            <button
+              className={`${styles.cardActionBtn} ${plan.showInProfile ? styles.cardActionPinned : ""}`}
+              onClick={onTogglePin}
+              aria-label={
+                plan.showInProfile ? "Quitar del perfil" : "Fijar en el perfil"
+              }
+              title={
+                plan.showInProfile ? "Quitar del perfil" : "Fijar en el perfil"
+              }
             >
-              <line x1="12" y1="17" x2="12" y2="22" />
-              <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z" />
-            </svg>
-          </button>
-        </div>
-      )}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill={plan.showInProfile ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="17" x2="12" y2="22" />
+                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z" />
+              </svg>
+            </button>
+          </>
+        )}
+      </div>
       <div className={styles.planContent}>
         <h3 className={styles.planTitle}>{plan.title}</h3>
         <p className={styles.planDesc}>{plan.description}</p>

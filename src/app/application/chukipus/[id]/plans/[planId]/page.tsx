@@ -139,6 +139,8 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
     const isCreator = user?.uid === plan.createdBy;
     const catColor = categoryColors[plan.category] ?? 'var(--brand-primary)';
+    const isLiked = !!user && (plan.likes || []).includes(user.uid);
+    const likeCount = plan.likesCount || 0;
 
     const handleTogglePin = async () => {
         if (!isCreator || isPinning) return;
@@ -164,6 +166,23 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
         } catch (err) {
             console.error(err);
             setPlan(prev => prev ? { ...prev, completed: !newVal } : prev);
+        }
+    };
+
+    const handleToggleLike = async () => {
+        if (!user) return;
+        const currentLikes = plan.likes || [];
+        const isLiked = currentLikes.includes(user.uid);
+        const newLikes = isLiked
+            ? currentLikes.filter(uid => uid !== user.uid)
+            : [...currentLikes, user.uid];
+        const newCount = newLikes.length;
+        setPlan(prev => prev ? { ...prev, likes: newLikes, likesCount: newCount } : prev);
+        try {
+            await firebaseUpdate(`plans/${planId}`, { likes: newLikes, likesCount: newCount });
+        } catch (err) {
+            console.error(err);
+            setPlan(prev => prev ? { ...prev, likes: currentLikes, likesCount: currentLikes.length } : prev);
         }
     };
 
@@ -309,6 +328,16 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                                     Pendiente
                                 </>
                             )}
+                        </button>
+                        <button
+                            className={`${styles.likeBtn} ${isLiked ? styles.likeBtnLiked : ''}`}
+                            onClick={handleToggleLike}
+                            aria-label={isLiked ? 'Quitar like' : 'Dar like'}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill={isLiked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                            {likeCount > 0 && <span>{likeCount}</span>}
                         </button>
                     </div>
 

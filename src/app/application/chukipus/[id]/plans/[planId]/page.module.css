@@ -153,6 +153,32 @@
     margin-bottom: var(--space-md);
 }
 
+.likeBtn {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-tertiary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.likeBtn:active {
+    transform: scale(0.95);
+}
+
+.likeBtnLiked {
+    color: var(--brand-primary);
+    background: rgba(var(--brand-primary-rgb), 0.1);
+    border-color: rgba(var(--brand-primary-rgb), 0.25);
+}
+
 .categoryBadge {
     padding: 5px 12px;
     border-radius: var(--radius-full);

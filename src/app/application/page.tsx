@@ -341,6 +341,14 @@ export default function HomePage() {
                       </div>
                     )}
                     <div className={styles.nextPlanOverlay} />
+                    {(nextPlan.likesCount || 0) > 0 && (
+                      <div className={styles.planLikeBadge}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                        <span>{nextPlan.likesCount}</span>
+                      </div>
+                    )}
                     <div className={styles.nextPlanContent}>
                       <span className={styles.nextPlanCategory} style={{ '--cat-color': categoryColors[nextPlan.category] || '#e8749a' } as React.CSSProperties}>
                         {nextPlan.category.toUpperCase()}
@@ -415,6 +423,14 @@ export default function HomePage() {
                                   </div>
                                 )}
                                 <div className={styles.nextPlanOverlay} />
+                                {(plan.likesCount || 0) > 0 && (
+                                  <div className={styles.planLikeBadge}>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                    </svg>
+                                    <span>{plan.likesCount}</span>
+                                  </div>
+                                )}
                                 <div className={styles.nextPlanContent} style={{ padding: 16 }}>
                                   <span className={styles.nextPlanCategory} style={{ '--cat-color': categoryColors[plan.category] || '#e8749a' } as React.CSSProperties}>
                                     {plan.category.toUpperCase()}
