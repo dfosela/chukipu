@@ -13,10 +13,6 @@
     align-items: center;
     margin: calc(10px + env(safe-area-inset-top, 0px)) 0 0;
     padding: 16px var(--space-md);
-    background: transparent;
-    position: sticky;
-    top: 10px;
-    z-index: 100;
 }
 
 .notificationBtn {
