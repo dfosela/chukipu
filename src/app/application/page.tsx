@@ -57,28 +57,19 @@ function formatPlanDate(dateStr: string, dateEndStr?: string): string {
 }
 
 function getNextPlan(plans: FeedPlan[]): FeedPlan | null {
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const todayEnd = todayStart + 86400000;
+  if (plans.length === 0) return null;
+  const now = new Date().getTime();
 
-  // Plans with dates, not completed
-  const upcoming = plans
-    .filter(p => p.date && !p.completed)
-    .map(p => ({ ...p, dateMs: new Date(p.date).getTime() }));
+  // Plans with dates, sorted by proximity to now (ascending absolute diff)
+  const withDates = plans
+    .filter(p => p.date)
+    .map(p => ({ ...p, dateMs: new Date(p.date).getTime() }))
+    .sort((a, b) => Math.abs(a.dateMs - now) - Math.abs(b.dateMs - now));
 
-  // First: plan happening today
-  const todayPlan = upcoming.find(p => p.dateMs >= todayStart && p.dateMs < todayEnd);
-  if (todayPlan) return todayPlan;
+  if (withDates.length > 0) return withDates[0];
 
-  // Next: nearest future plan
-  const futurePlans = upcoming
-    .filter(p => p.dateMs >= now.getTime())
-    .sort((a, b) => a.dateMs - b.dateMs);
-  if (futurePlans.length > 0) return futurePlans[0];
-
-  // Fallback: most recently created incomplete plan
-  const incomplete = plans.filter(p => !p.completed).sort((a, b) => b.createdAt - a.createdAt);
-  return incomplete[0] || null;
+  // Fallback: random plan (none have dates)
+  return plans[Math.floor(Math.random() * plans.length)];
 }
 
 const BATCH_SIZE = 6;
