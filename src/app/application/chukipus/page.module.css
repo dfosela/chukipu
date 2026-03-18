@@ -90,7 +90,7 @@
 
 .searchBar:focus-within {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(212, 116, 140, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-primary-rgb), 0.10);
 }
 
 .searchIcon {
@@ -342,7 +342,7 @@
 
 .modalInputWrap:focus-within {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(212, 116, 140, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-primary-rgb), 0.10);
 }
 
 .modalInput {
@@ -406,7 +406,7 @@
     width: 88px;
     height: 88px;
     border-radius: 24px;
-    background: rgba(212, 116, 140, 0.10);
+    background: rgba(var(--brand-primary-rgb), 0.10);
     display: flex;
     align-items: center;
     justify-content: center;

@@ -13,10 +13,6 @@
     align-items: center;
     margin: calc(10px + env(safe-area-inset-top, 0px)) 0 0;
     padding: 16px var(--space-md);
-    background: transparent;
-    position: sticky;
-    top: 10px;
-    z-index: 100;
 }
 
 .notificationBtn {
@@ -88,7 +84,7 @@
 
 .searchBar:focus-within {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(212, 116, 140, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-primary-rgb), 0.10);
 }
 
 .searchIcon {
@@ -314,7 +310,7 @@
 .filterExpandBtnActive {
     color: var(--brand-primary);
     border-color: var(--brand-primary);
-    background: rgba(212, 116, 140, 0.05);
+    background: rgba(var(--brand-primary-rgb), 0.05);
 }
 
 .filterExpandBtn:active {

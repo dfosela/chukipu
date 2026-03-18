@@ -20,7 +20,8 @@
       "Bash(npx lint-staged:*)",
       "Bash(xxd)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(xargs sed:*)"
     ]
   }
 }

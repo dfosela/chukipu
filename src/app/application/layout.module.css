@@ -1,0 +1,25 @@
+.desktopShell {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+@media (min-width: 768px) {
+  .desktopShell {
+    width: 430px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg-primary);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.07),
+      0 32px 100px rgba(0, 0, 0, 0.28);
+    /*
+     * KEY: makes position:fixed children position relative to this
+     * element instead of the viewport — headers and BottomNav stay
+     * inside the 430px frame on desktop.
+     */
+    transform: translateZ(0);
+    position: relative;
+    overflow-x: hidden;
+  }
+}
