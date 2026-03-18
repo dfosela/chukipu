@@ -116,6 +116,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
   margin: 0;
   padding: 0;
 }
@@ -153,10 +154,17 @@ button {
   font-family: inherit;
 }
 
+button,
+input,
+textarea,
+select,
+a {
+  outline: none;
+}
+
 input,
 textarea {
   font-family: inherit;
-  outline: none;
 }
 
 a {
