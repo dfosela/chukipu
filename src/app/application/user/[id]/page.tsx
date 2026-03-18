@@ -5,13 +5,89 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { firebaseGet, firebaseUpdate, firebaseBatchUpdate, firebaseCreate, firebaseGetList } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserProfile, Chukipu, Plan, PlanComment } from '@/types/firestore';
+import { UserProfile, Chukipu, Plan, PlanComment, PlanMedia } from '@/types/firestore';
 import { sendNotification } from '@/lib/notifications';
 import { db } from '@/lib/firebase';
 import { ref, onValue } from 'firebase/database';
 
 interface ProfilePlan extends Plan {
     chukipuName: string;
+}
+
+function PlanCollage({ plan, media, onClick }: { plan: ProfilePlan; media: PlanMedia[]; onClick: () => void }) {
+    const photos = media.filter(m => m.type === 'photo');
+    const all = media;
+    const count = all.length;
+
+    if (count === 0) {
+        return (
+            <button className={styles.gridItem} onClick={onClick}>
+                <div className={styles.collage1}>
+                    <div className={styles.gridPlaceholder}>
+                        <span className={styles.gridCategory}>{plan.category || ''}</span>
+                        <span className={styles.gridTitle}>{plan.title}</span>
+                    </div>
+                </div>
+            </button>
+        );
+    }
+
+    const firstPhoto = (photos[0] ?? all[0]).url;
+    const secondPhoto = (photos[1] ?? all[1])?.url;
+    const thirdPhoto = (photos[2] ?? all[2])?.url;
+    const fourthPhoto = (photos[3] ?? all[3])?.url;
+    const extra = count > 4 ? count - 4 : 0;
+
+    if (count === 1) {
+        return (
+            <button className={styles.gridItem} onClick={onClick}>
+                <div className={styles.collage1}>
+                    <img src={firstPhoto} alt="" className={styles.colImg} />
+                </div>
+            </button>
+        );
+    }
+
+    if (count === 2) {
+        return (
+            <button className={styles.gridItem} onClick={onClick}>
+                <div className={styles.collage2}>
+                    <img src={firstPhoto} alt="" className={styles.colImg} />
+                    <img src={secondPhoto!} alt="" className={styles.colImg} />
+                </div>
+            </button>
+        );
+    }
+
+    if (count === 3) {
+        return (
+            <button className={styles.gridItem} onClick={onClick}>
+                <div className={styles.collage3}>
+                    <img src={firstPhoto} alt="" className={`${styles.colImg} ${styles.colBig}`} />
+                    <div className={styles.colStack}>
+                        <img src={secondPhoto!} alt="" className={styles.colImg} />
+                        <img src={thirdPhoto!} alt="" className={styles.colImg} />
+                    </div>
+                </div>
+            </button>
+        );
+    }
+
+    return (
+        <button className={styles.gridItem} onClick={onClick}>
+            <div className={styles.collage4}>
+                <img src={firstPhoto} alt="" className={styles.colImg} />
+                <img src={secondPhoto!} alt="" className={styles.colImg} />
+                <img src={thirdPhoto!} alt="" className={styles.colImg} />
+                <div className={styles.colImgWrap}>
+                    <img src={fourthPhoto!} alt="" className={styles.colImg} />
+                    {extra > 0 && (
+                        <div className={styles.colOverlay}>+{extra}</div>
+                    )}
+                </div>
+            </div>
+        </button>
+    );
 }
 
 export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -27,6 +103,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
 
     const [plans, setPlans] = useState<ProfilePlan[]>([]);
     const [loadingPlans, setLoadingPlans] = useState(true);
+    const [planMediaMap, setPlanMediaMap] = useState<Record<string, PlanMedia[]>>({});
     const [selectedPlan, setSelectedPlan] = useState<ProfilePlan | null>(null);
     const [comments, setComments] = useState<PlanComment[]>([]);
     const [newComment, setNewComment] = useState('');
@@ -146,6 +223,30 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
         };
 
     }, [id, loading, profileData, isOwnProfile, user]);
+
+    // Fetch planMedia for each visible plan
+    useEffect(() => {
+        if (plans.length === 0) return;
+        let cancelled = false;
+        async function fetchMedia() {
+            const entries = await Promise.all(
+                plans.map(async (plan) => {
+                    const media = await firebaseGetList<PlanMedia>(
+                        `planMedia/${plan.id}`,
+                        undefined,
+                        'createdAt',
+                        'desc'
+                    );
+                    return [plan.id, media] as [string, PlanMedia[]];
+                })
+            );
+            if (!cancelled) {
+                setPlanMediaMap(Object.fromEntries(entries));
+            }
+        }
+        fetchMedia();
+        return () => { cancelled = true; };
+    }, [plans]);
 
     const handleFollow = async () => {
         if (!user || followLoading) return;
@@ -465,22 +566,12 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                         </div>
                     ) : (
                         plans.map((plan) => (
-                            <button
-                                key={plan.id}
-                                className={styles.gridItem}
-                                onClick={() => openPlanPreview(plan)}
-                            >
-                                {plan.image ? (
-                                    <div className={styles.gridItemContent}>
-                                        <img src={plan.image} alt={plan.title} className={styles.gridImg} />
-                                        <span className={styles.gridTitle}>{plan.title}</span>
-                                    </div>
-                                ) : (
-                                    <div className={styles.gridPlaceholder}>
-                                        <span className={styles.gridCategory}>{plan.category || ''}</span>
-                                        <span className={styles.gridTitle}>{plan.title}</span>
-                                    </div>
-                                )}
+                            <div key={plan.id} className={styles.gridItemWrap}>
+                                <PlanCollage
+                                    plan={plan}
+                                    media={planMediaMap[plan.id] ?? []}
+                                    onClick={() => openPlanPreview(plan)}
+                                />
                                 {plan.completed && (
                                     <div className={styles.completedBadge}>
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -488,7 +579,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                                         </svg>
                                     </div>
                                 )}
-                            </button>
+                            </div>
                         ))
                     )}
                 </div>
@@ -532,14 +623,18 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
 
                         {/* Image */}
                         <div className={styles.modalImageWrap}>
-                            {selectedPlan.image ? (
-                                <img src={selectedPlan.image} alt={selectedPlan.title} className={styles.modalImage} />
-                            ) : (
-                                <div className={styles.modalImagePlaceholder}>
-                                    <span className={styles.modalPlaceholderCategory}>{selectedPlan.category || ''}</span>
-                                    <span className={styles.modalPlaceholderTitle}>{selectedPlan.title}</span>
-                                </div>
-                            )}
+                            {(() => {
+                                const media = planMediaMap[selectedPlan.id] ?? [];
+                                const firstPhoto = media.find(m => m.type === 'photo') ?? media[0];
+                                return firstPhoto ? (
+                                    <img src={firstPhoto.url} alt={selectedPlan.title} className={styles.modalImage} />
+                                ) : (
+                                    <div className={styles.modalImagePlaceholder}>
+                                        <span className={styles.modalPlaceholderCategory}>{selectedPlan.category || ''}</span>
+                                        <span className={styles.modalPlaceholderTitle}>{selectedPlan.title}</span>
+                                    </div>
+                                );
+                            })()}
                         </div>
 
                         {/* Actions */}

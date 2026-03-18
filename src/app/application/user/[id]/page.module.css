@@ -308,6 +308,89 @@
     opacity: 0.8;
 }
 
+/* Wrapper needed so completedBadge can be positioned over PlanCollage button */
+.gridItemWrap {
+    position: relative;
+}
+
+/* ─── Collage layouts ─── */
+
+.colImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.collage1 {
+    width: 100%;
+    height: 100%;
+}
+
+.collage2 {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+
+.collage3 {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+
+.colBig {
+    grid-row: 1 / 3;
+}
+
+.colStack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    height: 100%;
+}
+
+.colStack .colImg {
+    flex: 1;
+    height: 50%;
+}
+
+.collage4 {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+}
+
+.colImgWrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.colImgWrap .colImg {
+    width: 100%;
+    height: 100%;
+}
+
+.colOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.02em;
+}
+
 .completedBadge {
     position: absolute;
     top: 6px;
