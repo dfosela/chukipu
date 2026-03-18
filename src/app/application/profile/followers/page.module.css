@@ -64,6 +64,19 @@
     animation: slideUp var(--transition-slow) both;
 }
 
+.userItemMain {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+}
+
 .userAvatar {
     width: 48px;
     height: 48px;

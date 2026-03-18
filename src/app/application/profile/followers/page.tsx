@@ -96,15 +96,17 @@ export default function SeguidoresPage() {
                 ) : (
                     followers.map((u, i) => (
                         <div key={u.id} className={styles.userItem} style={{ '--delay': `${i * 0.04}s` } as React.CSSProperties}>
-                            <img
-                                src={u.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${u.displayName}`}
-                                alt={u.displayName}
-                                className={styles.userAvatar}
-                            />
-                            <div className={styles.userInfo}>
-                                <span className={styles.userName}>{u.displayName}</span>
-                                <span className={styles.userUsername}>@{u.username}</span>
-                            </div>
+                            <button className={styles.userItemMain} onClick={() => router.push(`/application/user/${u.id}`)}>
+                                <img
+                                    src={u.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${u.displayName}`}
+                                    alt={u.displayName}
+                                    className={styles.userAvatar}
+                                />
+                                <div className={styles.userInfo}>
+                                    <span className={styles.userName}>{u.displayName}</span>
+                                    <span className={styles.userUsername}>@{u.username}</span>
+                                </div>
+                            </button>
                             <button
                                 className={styles.removeBtn}
                                 onClick={() => handleRemoveFollower(u.id)}

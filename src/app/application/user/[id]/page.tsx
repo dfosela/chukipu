@@ -101,6 +101,8 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
     const [isPending, setIsPending] = useState(false);
     const [followLoading, setFollowLoading] = useState(false);
 
+    const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+
     const [plans, setPlans] = useState<ProfilePlan[]>([]);
     const [loadingPlans, setLoadingPlans] = useState(true);
     const [planMediaMap, setPlanMediaMap] = useState<Record<string, PlanMedia[]>>({});
@@ -484,11 +486,13 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                 <div className={styles.profileHeader}>
                     <div className={styles.avatarWrap}>
                         {profileData.avatar ? (
-                            <img
-                                src={profileData.avatar}
-                                alt={profileData.displayName || 'User'}
-                                className={styles.avatarImg}
-                            />
+                            <button className={styles.avatarBtn} onClick={() => setAvatarModalOpen(true)}>
+                                <img
+                                    src={profileData.avatar}
+                                    alt={profileData.displayName || 'User'}
+                                    className={styles.avatarImg}
+                                />
+                            </button>
                         ) : (
                             <div className={styles.avatarPlaceholder}>
                                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -755,6 +759,24 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                             )}
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Avatar fullscreen modal */}
+            {avatarModalOpen && profileData.avatar && (
+                <div className={styles.avatarModal} onClick={() => setAvatarModalOpen(false)}>
+                    <button className={styles.avatarModalClose} onClick={() => setAvatarModalOpen(false)} aria-label="Cerrar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                    <img
+                        src={profileData.avatar}
+                        alt={profileData.displayName || 'Avatar'}
+                        className={styles.avatarModalImg}
+                        onClick={e => e.stopPropagation()}
+                    />
                 </div>
             )}
         </div>

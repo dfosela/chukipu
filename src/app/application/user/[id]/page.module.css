@@ -88,6 +88,53 @@
     flex-shrink: 0;
 }
 
+.avatarBtn {
+    display: block;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.avatarBtn:active .avatarImg {
+    opacity: 0.85;
+}
+
+/* ─── Avatar fullscreen modal ─── */
+.avatarModal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatarModalClose {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatarModalImg {
+    width: min(85vw, 85vh);
+    height: min(85vw, 85vh);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .avatarImg {
     width: 86px;
     height: 86px;
