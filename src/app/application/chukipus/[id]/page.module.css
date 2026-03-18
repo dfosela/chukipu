@@ -241,6 +241,40 @@
   color: var(--brand-primary);
 }
 
+/* Like button in plan card */
+.cardLikeBtn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cardLikeBtn:hover {
+  transform: scale(1.08);
+}
+
+.cardLikeBtn:active {
+  transform: scale(0.92);
+}
+
+.cardLikeBtnLiked {
+  color: var(--brand-primary);
+  background: rgba(var(--brand-primary-rgb), 0.1);
+}
+
+.cardLikeCount {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .planImageWrap {
   width: 90px;
   flex-shrink: 0;

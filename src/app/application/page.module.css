@@ -516,3 +516,19 @@
   margin: 0;
   height: 100%;
 }
+
+/* ── Like badge (display-only, on plan cards in home feed) ── */
+.planLikeBadge {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
