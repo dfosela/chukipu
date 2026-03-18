@@ -40,6 +40,7 @@ export default function ChukipuDetailPage({
   const [chukipu, setChukipu] = useState<Chukipu | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [members, setMembers] = useState<
     { uid: string; displayName: string; photoURL: string }[]
@@ -153,7 +154,15 @@ export default function ChukipuDetailPage({
     );
   }
 
-  const categories = Array.from(new Set(plans.map((p) => p.category)));
+  const filteredPlans = searchQuery.trim()
+    ? plans.filter(p =>
+        p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : plans;
+
+  const categories = Array.from(new Set(filteredPlans.map((p) => p.category)));
 
   const handleTogglePin = async (plan: Plan) => {
     if (!user || user.uid !== plan.createdBy) return;
@@ -356,6 +365,33 @@ export default function ChukipuDetailPage({
         </button>
       </div>
 
+      {/* Search bar — only when 6+ plans */}
+      {plans.length >= 6 && (
+        <div className={styles.searchWrap}>
+          <div className={styles.searchBox}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="Buscar planes..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button className={styles.searchClear} onClick={() => setSearchQuery('')}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Plans by category */}
       <div className={`page hide-scrollbar`}>
         {plans.length === 0 ? (
@@ -403,12 +439,12 @@ export default function ChukipuDetailPage({
                   />
                   <h2 className={styles.categoryTitle}>{category}</h2>
                   <span className={styles.categoryCount}>
-                    {plans.filter((p) => p.category === category).length}
+                    {filteredPlans.filter((p) => p.category === category).length}
                   </span>
                 </div>
 
                 <div className={styles.plansList}>
-                  {plans
+                  {filteredPlans
                     .filter((p) => p.category === category)
                     .map((plan, pi) => (
                       <PlanCard
