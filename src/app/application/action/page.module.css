@@ -82,8 +82,8 @@
 }
 
 .actionCard {
-    background: rgba(35, 25, 30, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
     border-radius: 32px;
     padding: 20px 16px;
     display: flex;
@@ -99,8 +99,8 @@
 
 .actionCard:hover {
     transform: translateY(-4px);
-    background: rgba(45, 30, 38, 0.6);
-    border-color: rgba(212, 116, 140, 0.2);
+    background: var(--surface-hover);
+    border-color: var(--glass-border);
 }
 
 .actionCard:active {
@@ -111,9 +111,8 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: var(--brand-primary);
     background: var(--brand-gradient);
-    box-shadow: 0 0 20px rgba(212, 116, 140, 0.4);
+    box-shadow: 0 0 20px rgba(var(--brand-primary-rgb), 0.35);
     color: white;
     display: flex;
     align-items: center;
@@ -130,8 +129,8 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: var(--surface);
+    border: 1px solid var(--glass-border);
     color: var(--brand-primary);
     display: flex;
     align-items: center;
@@ -142,7 +141,7 @@
 
 .actionCard:hover .iconBoxDark {
     transform: scale(1.08);
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--surface-hover);
 }
 
 .cardTextContent {

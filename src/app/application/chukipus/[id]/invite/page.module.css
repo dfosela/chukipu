@@ -58,8 +58,8 @@
     width: 88px;
     height: 88px;
     border-radius: 28px;
-    background: rgba(212, 116, 140, 0.10);
-    border: 1.5px solid rgba(212, 116, 140, 0.20);
+    background: rgba(var(--brand-primary-rgb), 0.10);
+    border: 1.5px solid rgba(var(--brand-primary-rgb), 0.20);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,7 +107,7 @@
 
 .codeBox:active {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 3px rgba(212, 116, 140, 0.12);
+    box-shadow: 0 0 0 3px rgba(var(--brand-primary-rgb), 0.12);
 }
 
 .codeText {

@@ -121,10 +121,10 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--brand-primary);
-  background: rgba(212, 116, 140, 0.12);
+  background: rgba(var(--brand-primary-rgb), 0.12);
   padding: 4px 10px;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(212, 116, 140, 0.20);
+  border: 1px solid rgba(var(--brand-primary-rgb), 0.20);
   white-space: nowrap;
 }
 
@@ -364,8 +364,8 @@
   width: 96px;
   height: 96px;
   border-radius: 28px;
-  background: rgba(212, 116, 140, 0.10);
-  border: 1px solid rgba(212, 116, 140, 0.18);
+  background: rgba(var(--brand-primary-rgb), 0.10);
+  border: 1px solid rgba(var(--brand-primary-rgb), 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -428,21 +428,21 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--cat-color, #e8749a);
+  color: var(--cat-color, var(--brand-primary));
 }
 
 .feedCardDot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--cat-color, #e8749a);
+  background: var(--cat-color, var(--brand-primary));
 }
 
 .feedCardCategory {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--cat-color, #e8749a);
+  color: var(--cat-color, var(--brand-primary));
 }
 
 .feedCardPlaceholder {
@@ -459,7 +459,7 @@
   padding: 2px 8px;
   border-radius: var(--radius-full);
   border: 1px solid;
-  color: var(--cat-color, #e8749a);
+  color: var(--cat-color, var(--brand-primary));
   border-color: var(--cat-border, rgba(232, 116, 154, 0.3));
 }
 
@@ -487,7 +487,7 @@
   height: 28px;
   border-radius: 8px;
   background: rgba(232, 116, 154, 0.1);
-  color: #e8749a;
+  color: var(--brand-primary);
 }
 
 .recommendedScrollContainer {
