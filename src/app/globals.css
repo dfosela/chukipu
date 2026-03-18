@@ -71,6 +71,9 @@
 
   /* Stars / ratings */
   --star-color: #F5A623;
+
+  /* Desktop sides background */
+  --bg-desktop-sides: #bab0a1;
 }
 
 /* ── Dark Mode ── */
@@ -109,6 +112,9 @@
   --card-border: rgba(255, 255, 255, 0.09);
   --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.30), 0 1px 4px rgba(0, 0, 0, 0.15);
   --card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
+
+  /* Desktop sides background */
+  --bg-desktop-sides: #080610;
 }
 
 /* ── Reset & Base ── */
@@ -176,10 +182,16 @@ a {
   transition: background var(--transition-slow);
 }
 
-/* Desktop behaviors can be added here without restricting max-width */
+/* Desktop: center the app in a phone-frame at 430px */
 @media (min-width: 768px) {
   body {
-    background: var(--bg-primary);
+    background: var(--bg-desktop-sides);
+  }
+
+  .app-shell {
+    display: flex;
+    justify-content: center;
+    background: var(--bg-desktop-sides);
   }
 }
 
