@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import BottomNav from '@/components/BottomNav/BottomNav';
-import { firebaseGetList, firebaseGet, firebaseUpdate, firebaseBatchUpdate } from '@/lib/firebaseMethods';
+import { firebaseGetList } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { Chukipu, Plan, UserProfile } from '@/types/firestore';
 import { ref, onValue } from 'firebase/database';
@@ -43,17 +43,14 @@ export default function ExplorePage() {
     const router = useRouter();
     const { user } = useAuth();
     const [hasUnread, setHasUnread] = useState(false);
-    const [saved, setSaved] = useState<Set<string>>(new Set());
     const [search, setSearch] = useState('');
     const [activeTab, setActiveTab] = useState<'chukipus' | 'personas'>('chukipus');
     const [activeFilter, setActiveFilter] = useState('Todos');
     const [expandedFilters, setExpandedFilters] = useState(false);
-    const [userRatings, setUserRatings] = useState<Record<string, number>>({});
     const [publicChukipus, setPublicChukipus] = useState<Chukipu[]>([]);
-    const [loading, setLoading] = useState(true);
     const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
     const [usersLoaded, setUsersLoaded] = useState(false);
-    const [publicPlansByCategory, setPublicPlansByCategory] = useState<Record<string, FeedPlan[]>>({});
+    const [rawPlans, setRawPlans] = useState<FeedPlan[]>([]);
     const [plansLoading, setPlansLoading] = useState(true);
 
     useEffect(() => {
@@ -68,21 +65,19 @@ export default function ExplorePage() {
         return () => unsub();
     }, [user]);
 
-    // Realtime listener: chukipus
+    // Realtime listener: chukipus (needed to enrich plans with chukipu names)
     useEffect(() => {
         const chukipusRef = ref(db, 'chukipus');
         const unsubscribe = onValue(chukipusRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 const arr: Chukipu[] = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-                setPublicChukipus(arr.sort((a, b) => (b.ratingAverage || 0) - (a.ratingAverage || 0)));
+                setPublicChukipus(arr);
             } else {
                 setPublicChukipus([]);
             }
-            setLoading(false);
         }, (error) => {
             console.error(error);
-            setLoading(false);
         });
         return () => unsubscribe();
     }, []);
@@ -102,18 +97,15 @@ export default function ExplorePage() {
         const unsubscribePlans = onValue(plansRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
-                // Flatten all plans from all chukipus
-                const allPlans: FeedPlan[] = [];
-                Object.keys(data).forEach(chukipuId => {
-                    const chukipuPlans = data[chukipuId];
-                    Object.keys(chukipuPlans).forEach(planId => {
-                        allPlans.push({ id: planId, chukipuId, chukipuName: '', ...chukipuPlans[planId] });
-                    });
-                });
-                // We'll filter against users once they're loaded — store raw plans
-                setPublicPlansByCategory({ __raw__: allPlans });
+                // Plans are stored flat: plans/{planId}
+                const allPlans: FeedPlan[] = Object.keys(data).map(planId => ({
+                    id: planId,
+                    chukipuName: '',
+                    ...data[planId],
+                }));
+                setRawPlans(allPlans);
             } else {
-                setPublicPlansByCategory({});
+                setRawPlans([]);
             }
             setPlansLoading(false);
         }, (error) => {
@@ -123,55 +115,35 @@ export default function ExplorePage() {
         return () => unsubscribePlans();
     }, []);
 
-    // Once both users and raw plans are ready, compute the categorized map
-    useEffect(() => {
-        if (!usersLoaded) return;
-        const raw = publicPlansByCategory['__raw__'];
-        if (!raw) return;
-
-        const privateUserIds = new Set(allUsers.filter(u => u.isPrivate).map(u => u.id));
-        const chukipuNamesMap: Record<string, string> = {};
-        publicChukipus.forEach(c => { chukipuNamesMap[c.id] = c.name; });
-
-        const filtered: FeedPlan[] = raw.filter((plan: FeedPlan) =>
-            !privateUserIds.has(plan.createdBy) &&
-            plan.createdBy !== user?.uid &&
-            !plan.completed &&
-            plan.showInProfile !== false &&
-            plan.category
-        );
-
-        // Sort newest first
-        filtered.sort((a, b) => b.createdAt - a.createdAt);
-
-        // Enrich with chukipu name
-        filtered.forEach(p => { p.chukipuName = chukipuNamesMap[p.chukipuId] || ''; });
-
-        // Group by category
-        const grouped: Record<string, FeedPlan[]> = {};
-        filtered.forEach(plan => {
-            if (!grouped[plan.category]) grouped[plan.category] = [];
-            grouped[plan.category].push(plan);
-        });
-
-        setPublicPlansByCategory(grouped);
-    }, [usersLoaded, allUsers, publicChukipus, user, plansLoading, publicPlansByCategory]);
-
     const filters = [
         'Todos', 'Película', 'Viaje', 'Escapada', 'Deporte', 'Cultura',
         'Fiesta', 'Salida', 'Actividad', 'En casa'
     ];
 
-    const filteredChukipus = useMemo(() => {
-        if (!usersLoaded) return [];
-        return publicChukipus.filter(c => {
-            const creator = allUsers.find(u => u.id === c.createdBy);
-            const isCreatorPrivate = creator?.isPrivate === true;
-            const matchesSearch = c.name ? c.name.toLowerCase().includes(search.toLowerCase()) : false;
-            const matchesCategory = activeFilter === 'Todos' || c.category === activeFilter;
-            return !isCreatorPrivate && matchesSearch && matchesCategory;
+    // Compute public plans grouped by category (for discovery carousels)
+    const publicPlansByCategory = useMemo(() => {
+        if (!usersLoaded || rawPlans.length === 0) return {};
+        const privateUserIds = new Set(allUsers.filter(u => u.isPrivate).map(u => u.id));
+        const chukipuNamesMap: Record<string, string> = Object.fromEntries(publicChukipus.map(c => [c.id, c.name]));
+
+        const filtered = rawPlans
+            .filter(plan =>
+                !privateUserIds.has(plan.createdBy) &&
+                plan.createdBy !== user?.uid &&
+                !plan.completed &&
+                plan.showInProfile !== false &&
+                plan.category
+            )
+            .sort((a, b) => b.createdAt - a.createdAt)
+            .map(p => ({ ...p, chukipuName: chukipuNamesMap[p.chukipuId] || '' }));
+
+        const grouped: Record<string, FeedPlan[]> = {};
+        filtered.forEach(plan => {
+            if (!grouped[plan.category]) grouped[plan.category] = [];
+            grouped[plan.category].push(plan);
         });
-    }, [publicChukipus, search, activeFilter, allUsers, usersLoaded]);
+        return grouped;
+    }, [rawPlans, allUsers, publicChukipus, user, usersLoaded]);
 
     const filteredUsers = allUsers.filter(u => {
         if (!search.trim()) return true;
@@ -181,42 +153,22 @@ export default function ExplorePage() {
 
     const isSearchOrFilter = search.trim() !== '' || activeFilter !== 'Todos';
 
-    const hasPublicPlans = !plansLoading && Object.keys(publicPlansByCategory).filter(k => k !== '__raw__').some(k => publicPlansByCategory[k].length > 0);
+    // Flat list of all processed public plans (for search/filter mode)
+    const allPublicPlansFlat = useMemo(
+        () => Object.values(publicPlansByCategory).flat(),
+        [publicPlansByCategory]
+    );
 
-    const toggleSave = async (id: string) => {
-        if (!user) return;
-        setSaved(prev => {
-            const next = new Set(prev);
-            if (next.has(id)) next.delete(id); else next.add(id);
-            return next;
+    const filteredPlans = useMemo(() => {
+        const q = search.toLowerCase().trim();
+        return allPublicPlansFlat.filter(p => {
+            const matchesSearch = !q || p.title?.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q);
+            const matchesFilter = activeFilter === 'Todos' || p.category === activeFilter;
+            return matchesSearch && matchesFilter;
         });
-        try {
-            const userSnap = await firebaseGet<{ savedChukipus?: string[] }>(`users/${user.uid}`);
-            const savedList = userSnap?.savedChukipus || [];
-            if (!savedList.includes(id)) {
-                savedList.push(id);
-                await firebaseUpdate(`users/${user.uid}`, { savedChukipus: savedList });
-            }
-        } catch (error) { console.error(error); }
-    };
+    }, [allPublicPlansFlat, search, activeFilter]);
 
-    const handleRate = async (id: string, rating: number) => {
-        if (!user) return;
-        // eslint-disable-next-line react-hooks/purity
-        const ratedAt = Date.now();
-        setUserRatings(prev => ({ ...prev, [id]: rating }));
-        try {
-            const chukipu = await firebaseGet<Chukipu>(`chukipus/${id}`);
-            if (!chukipu) return;
-            const newRatingCount = (chukipu.ratingCount || 0) + 1;
-            const newAverage = (((chukipu.ratingAverage || 0) * (chukipu.ratingCount || 0)) + rating) / newRatingCount;
-            await firebaseBatchUpdate({
-                [`chukipus/${id}/ratingAverage`]: newAverage,
-                [`chukipus/${id}/ratingCount`]: newRatingCount,
-                [`chukipus/${id}/ratings/${user.uid}`]: { rating, createdAt: ratedAt },
-            });
-        } catch (error) { console.error("Failed to rate", error); }
-    };
+    const hasPublicPlans = !plansLoading && allPublicPlansFlat.length > 0;
 
     return (
         <div className={styles.container}>
@@ -320,24 +272,52 @@ export default function ExplorePage() {
                         </div>
 
                         {isSearchOrFilter ? (
-                            /* Search / filter mode: show chukipu list */
+                            /* Search / filter mode: show matching plans */
                             <>
                                 <div className={styles.sectionLabel}>
-                                    <span>{loading ? 'Cargando...' : `${filteredChukipus.length} Chukipus encontrados`}</span>
+                                    <span>{plansLoading ? 'Cargando...' : `${filteredPlans.length} planes encontrados`}</span>
                                 </div>
-                                <div className={styles.feed}>
-                                    {filteredChukipus.map((chukipu, idx) => (
-                                        <ExploreCard
-                                            key={chukipu.id}
-                                            chukipu={chukipu}
-                                            saved={saved.has(chukipu.id) || (user?.uid ? chukipu.members?.includes(user.uid) : false)}
-                                            onToggleSave={() => toggleSave(chukipu.id)}
-                                            userRating={userRatings[chukipu.id] ?? 0}
-                                            onRate={(r) => handleRate(chukipu.id, r)}
-                                            delay={idx * 0.05}
-                                        />
-                                    ))}
-                                </div>
+                                {filteredPlans.length === 0 && !plansLoading ? (
+                                    <div className={styles.discoverEmpty}>
+                                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className={styles.discoverEmptyIcon}>
+                                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                                        </svg>
+                                        <p className={styles.discoverEmptyText}>No se encontraron planes</p>
+                                    </div>
+                                ) : (
+                                    <div className={styles.discoverWrapper}>
+                                        {filteredPlans.map(plan => (
+                                            <div
+                                                key={plan.id}
+                                                className={styles.explorePlanCard}
+                                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
+                                            >
+                                                <div
+                                                    className={styles.explorePlanCardBg}
+                                                    style={{ background: `${categoryColors[plan.category] || '#e8749a'}18` }}
+                                                >
+                                                    <div className={styles.explorePlanCardIcon} style={{ color: categoryColors[plan.category] || '#e8749a' }}>
+                                                        {CATEGORY_ICONS[plan.category] || (
+                                                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                                                                <circle cx="12" cy="12" r="10" />
+                                                            </svg>
+                                                        )}
+                                                    </div>
+                                                    <div className={styles.explorePlanCardOverlay} />
+                                                    <div className={styles.explorePlanCardContent}>
+                                                        <span className={styles.explorePlanCardCategory} style={{ color: categoryColors[plan.category] || '#e8749a' }}>
+                                                            {plan.category.toUpperCase()}
+                                                        </span>
+                                                        <h3 className={styles.explorePlanCardTitle}>{plan.title}</h3>
+                                                        {plan.chukipuName && (
+                                                            <span className={styles.explorePlanCardSub}>{plan.chukipuName}</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </>
                         ) : (
                             /* Discovery mode: category carousels */
@@ -462,74 +442,3 @@ export default function ExplorePage() {
     );
 }
 
-function ExploreCard({
-    chukipu, saved, onToggleSave, userRating, onRate, delay
-}: {
-    chukipu: Chukipu;
-    saved: boolean;
-    onToggleSave: () => void;
-    userRating: number;
-    onRate: (r: number) => void;
-    delay: number;
-}) {
-    const [hoveredStar, setHoveredStar] = useState(0);
-
-    return (
-        <div className={styles.card} style={{ '--delay': `${delay}s`, position: 'relative' } as React.CSSProperties}>
-            {chukipu.image && <Image src={chukipu.image} alt={chukipu.name} className={styles.cardImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />}
-            <div className={styles.cardOverlay} />
-            <div className={styles.ratingBadge}>
-                <span>{(chukipu.ratingAverage ?? 0).toFixed(1)}</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#D4748C" stroke="none">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                </svg>
-            </div>
-            <div className={styles.membersTag}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                {(chukipu.membersCount ?? 0).toLocaleString()}
-            </div>
-            <div className={styles.cardContent}>
-                <span className={styles.cardCategory}>{String(chukipu.planCount)} planes</span>
-                <h3 className={styles.cardTitle}>{chukipu.name}</h3>
-                <div className={styles.cardActions}>
-                    <div className={styles.userStars}>
-                        {[1, 2, 3, 4, 5].map(s => (
-                            <button key={s} className={styles.starBtn}
-                                onMouseEnter={() => setHoveredStar(s)}
-                                onMouseLeave={() => setHoveredStar(0)}
-                                onClick={() => onRate(s)}
-                                aria-label={`Valorar ${s} corazones`}
-                            >
-                                <svg width="18" height="18" viewBox="0 0 24 24"
-                                    fill={s <= (hoveredStar || userRating) ? '#D4748C' : 'rgba(255,255,255,0.2)'}
-                                    stroke={s <= (hoveredStar || userRating) ? '#D4748C' : 'rgba(255,255,255,0.6)'}
-                                    strokeWidth="1.5"
-                                    style={{ transition: 'all 0.1s', transform: s <= (hoveredStar || userRating) ? 'scale(1.15)' : 'scale(1)' }}>
-                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                </svg>
-                            </button>
-                        ))}
-                    </div>
-                    <button
-                        className={`${styles.addBtn} ${saved ? styles.addBtnSaved : ''}`}
-                        onClick={onToggleSave}
-                        aria-label={saved ? 'Quitar de Chukipu' : 'Añadir a Chukipu'}
-                    >
-                        {saved ? (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                            </svg>
-                        ) : (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                        )}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-}
