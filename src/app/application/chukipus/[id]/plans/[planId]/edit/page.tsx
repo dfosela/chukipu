@@ -6,6 +6,8 @@ import styles from '../page.module.css';
 import { firebaseGet, firebaseUpdate, firebaseRemove, firebaseBatchUpdate } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { Plan } from '@/types/firestore';
+import { ref, get } from 'firebase/database';
+import { db } from '@/lib/firebase';
 
 type ExtraFieldDef = {
     key: string;
@@ -269,12 +271,15 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                 const data = await firebaseGet<Plan>(`plans/${planId}`);
                 if (data) {
                     if (user) {
-                        const membersData = await firebaseGet<Record<string, boolean> | string[]>(`chukipus/${chukipuId}/members`);
+                        const membersSnap = await get(ref(db, `chukipus/${chukipuId}/members`));
                         let isMember = false;
-                        if (Array.isArray(membersData)) {
-                            isMember = membersData.includes(user.uid);
-                        } else if (membersData) {
-                            isMember = membersData[user.uid] === true;
+                        if (membersSnap.exists()) {
+                            const val = membersSnap.val();
+                            if (Array.isArray(val)) {
+                                isMember = val.includes(user.uid);
+                            } else {
+                                isMember = val[user.uid] === true;
+                            }
                         }
                         if (!isMember) {
                             router.replace(`/application/chukipus/${chukipuId}/plans/${planId}`);
