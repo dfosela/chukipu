@@ -144,7 +144,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     const likeCount = plan.likesCount || 0;
 
     const handleTogglePin = async () => {
-        if (!isCreator || isPinning) return;
+        if (!isMember || isPinning) return;
         setIsPinning(true);
         const newVal = !plan.showInProfile;
         setPlan(prev => prev ? { ...prev, showInProfile: newVal } : prev);
@@ -159,7 +159,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     };
 
     const handleToggleCompleted = async () => {
-        if (!isCreator) return;
+        if (!isMember) return;
         const newVal = !plan.completed;
         setPlan(prev => prev ? { ...prev, completed: newVal } : prev);
         try {
@@ -171,7 +171,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     };
 
     const handleToggleLike = async () => {
-        if (!user) return;
+        if (!isMember) return;
         const currentLikes = plan.likes || [];
         const isLiked = currentLikes.includes(user.uid);
         const newLikes = isLiked
@@ -271,7 +271,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                 <h1 className={styles.headerTitle}>{plan.title}</h1>
 
                 <div className={styles.headerActions}>
-                    {isCreator && (
+                    {isMember && (
                         <button
                             className={`${styles.pinBtn} ${plan.showInProfile ? styles.pinBtnActive : ''}`}
                             onClick={handleTogglePin}
@@ -313,8 +313,8 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                         </span>
                         <button
                             className={`${styles.statusBadge} ${plan.completed ? styles.statusDone : styles.statusPending}`}
-                            onClick={isCreator ? handleToggleCompleted : undefined}
-                            style={!isCreator ? { cursor: 'default' } : undefined}
+                            onClick={isMember ? handleToggleCompleted : undefined}
+                            style={!isMember ? { cursor: 'default' } : undefined}
                         >
                             {plan.completed ? (
                                 <>

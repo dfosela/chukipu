@@ -50,11 +50,11 @@ vi.mock('@/lib/firebase', () => ({
     auth: {},
 }));
 
-// Mock firebase/database - onValue calls callback synchronously
+// Mock firebase/database - onValue calls callback synchronously with members data
 vi.mock('firebase/database', () => ({
     ref: vi.fn(),
     onValue: vi.fn((_ref, cb) => {
-        cb({ exists: () => false, val: () => null });
+        cb({ exists: () => true, val: () => ({ user123: true, creator123: true }) });
         return vi.fn();
     }),
     get: vi.fn(),
@@ -217,25 +217,8 @@ describe('ChukipuDetailPage', () => {
         });
     });
 
-    it('pin button only renders for creators — if this fails, non-creators see pin button', async () => {
-        // user123 is NOT the creator
-        await act(async () => {
-            renderWithSuspense(<ChukipuDetailPage params={Promise.resolve({ id: 'chuki1' })} />);
-        });
-
-        await screen.findByText('Movie Night');
-
-        const pinBtn = screen.queryByRole('button', { name: /fijar en el perfil/i });
-        expect(pinBtn).toBeNull();
-    });
-
-    it('pin button renders when current user IS the creator', async () => {
-        vi.mocked(useAuth).mockReturnValue({
-            user: { uid: 'creator123' },
-            loading: false,
-        } as ReturnType<typeof useAuth>);
-
-        // Plan with showInProfile: false so the pin button aria-label is "Fijar en el perfil"
+    it('pin button renders for all members — if this fails, members cannot pin plans', async () => {
+        // user123 is NOT the creator but IS a member
         const unpinnedPlan = { ...mockPlan, showInProfile: false };
         vi.mocked(firebaseGetList).mockResolvedValue([unpinnedPlan]);
 
@@ -245,8 +228,27 @@ describe('ChukipuDetailPage', () => {
 
         await screen.findByText('Movie Night');
 
-        // When showInProfile is false, the aria-label is "Fijar en el perfil"
         const pinBtn = screen.getByRole('button', { name: /fijar en el perfil/i });
         expect(pinBtn).toBeInTheDocument();
+    });
+
+    it('pin button does not render for non-members — if this fails, outsiders can pin plans', async () => {
+        // outsider999 is not in the members list
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: 'outsider999' },
+            loading: false,
+        } as ReturnType<typeof useAuth>);
+
+        const unpinnedPlan = { ...mockPlan, showInProfile: false };
+        vi.mocked(firebaseGetList).mockResolvedValue([unpinnedPlan]);
+
+        await act(async () => {
+            renderWithSuspense(<ChukipuDetailPage params={Promise.resolve({ id: 'chuki1' })} />);
+        });
+
+        await screen.findByText('Movie Night');
+
+        const pinBtn = screen.queryByRole('button', { name: /fijar en el perfil/i });
+        expect(pinBtn).toBeNull();
     });
 });

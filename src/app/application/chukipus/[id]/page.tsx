@@ -155,6 +155,8 @@ export default function ChukipuDetailPage({
     );
   }
 
+  const isMember = members.some((m) => m.uid === user?.uid);
+
   const filteredPlans = searchQuery.trim()
     ? plans.filter(p =>
         p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -166,7 +168,7 @@ export default function ChukipuDetailPage({
   const categories = Array.from(new Set(filteredPlans.map((p) => p.category)));
 
   const handleTogglePin = async (plan: Plan) => {
-    if (!user || user.uid !== plan.createdBy) return;
+    if (!isMember) return;
 
     const newShowInProfile = !plan.showInProfile;
 
@@ -192,7 +194,7 @@ export default function ChukipuDetailPage({
   };
 
   const handleToggleCompleted = async (plan: Plan) => {
-    if (!user || user.uid !== plan.createdBy) return;
+    if (!isMember) return;
 
     const newCompleted = !plan.completed;
 
@@ -216,7 +218,7 @@ export default function ChukipuDetailPage({
   };
 
   const handleToggleLike = async (plan: Plan) => {
-    if (!user) return;
+    if (!isMember) return;
     const currentLikes = plan.likes || [];
     const isLiked = currentLikes.includes(user.uid);
     const newLikes = isLiked
@@ -489,7 +491,7 @@ export default function ChukipuDetailPage({
                         onClick={() =>
                           router.push(`/application/chukipus/${id}/plans/${plan.id}`)
                         }
-                        isCreator={user?.uid === plan.createdBy}
+                        isMember={isMember}
                         currentUserId={user?.uid}
                         onTogglePin={(e) => {
                           e.stopPropagation();
@@ -522,7 +524,7 @@ function PlanCard({
   color,
   delay,
   onClick,
-  isCreator,
+  isMember,
   currentUserId,
   onTogglePin,
   onToggleCompleted,
@@ -532,7 +534,7 @@ function PlanCard({
   color: string;
   delay: number;
   onClick: () => void;
-  isCreator?: boolean;
+  isMember?: boolean;
   currentUserId?: string;
   onTogglePin?: (e: React.MouseEvent) => void;
   onToggleCompleted?: (e: React.MouseEvent) => void;
@@ -548,7 +550,7 @@ function PlanCard({
       onClick={onClick}
     >
       <div className={styles.cardActions}>
-        <button
+        {isMember && <button
           className={`${styles.cardLikeBtn} ${isLiked ? styles.cardLikeBtnLiked : ""}`}
           onClick={onToggleLike}
           aria-label={isLiked ? "Quitar like" : "Dar like"}
@@ -566,8 +568,8 @@ function PlanCard({
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
           {likeCount > 0 && <span className={styles.cardLikeCount}>{likeCount}</span>}
-        </button>
-        {isCreator && (
+        </button>}
+        {isMember && (
           <>
             <button
               className={`${styles.cardActionBtn} ${plan.completed ? styles.cardActionDone : ""}`}
