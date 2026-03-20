@@ -106,10 +106,12 @@
 .verChukipuBtn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    margin: 12px 16px 4px;
-    padding: 8px 14px;
-    border-radius: 20px;
+    width: calc(100% - var(--space-md) * 2);
+    margin: var(--space-md) var(--space-md) 4px;
+    padding: 10px 14px;
+    border-radius: 12px;
     background: var(--bg-secondary);
     border: 1px solid var(--glass-border);
     color: var(--brand-primary);
@@ -117,7 +119,6 @@
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-fast);
-    align-self: flex-start;
 }
 
 .verChukipuBtn:active {
