@@ -145,7 +145,6 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
         );
     }
 
-    const isCreator = user?.uid === plan.createdBy;
     const catColor = categoryColors[plan.category] ?? 'var(--brand-primary)';
     const isLiked = !!user && (plan.likes || []).includes(user.uid);
     const likeCount = plan.likesCount || 0;
