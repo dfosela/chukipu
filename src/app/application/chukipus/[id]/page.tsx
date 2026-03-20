@@ -258,7 +258,7 @@ export default function ChukipuDetailPage({
         {/* Back button */}
         <button
           className={styles.backBtn}
-          onClick={() => router.back()}
+          onClick={() => router.push('/application/chukipus')}
           aria-label="Volver"
         >
           <svg
