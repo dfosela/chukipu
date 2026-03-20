@@ -356,8 +356,8 @@ export default function ChukipuDetailPage({
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className={styles.actionBar}>
+      {/* Action buttons — only for members */}
+      {isMember && <div className={styles.actionBar}>
         <button
           className={styles.addPlanBtn}
           onClick={() => router.push(`/application/chukipus/${id}/plans`)}
@@ -396,7 +396,7 @@ export default function ChukipuDetailPage({
           </svg>
           Invitar
         </button>
-      </div>
+      </div>}
 
       {/* Search bar — only when 6+ plans */}
       {plans.length >= 6 && (
@@ -449,12 +449,14 @@ export default function ChukipuDetailPage({
             <p className={styles.emptyDesc}>
               Añade el primer plan para empezar.
             </p>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => router.push(`/application/chukipus/${id}/plans`)}
-            >
-              Añadir plan
-            </button>
+            {isMember && (
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => router.push(`/application/chukipus/${id}/plans`)}
+              >
+                Añadir plan
+              </button>
+            )}
           </div>
         ) : (
           <>
