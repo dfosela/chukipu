@@ -126,7 +126,7 @@ function ChukipuCard({
             onClick={onClick}
         >
             <div className={styles.cardImage} style={{ position: 'relative' }}>
-                {chukipu.image && <Image src={chukipu.image} alt={chukipu.name} fill style={{ objectFit: 'cover' }} />}
+                {chukipu.image && <Image src={chukipu.image} alt={chukipu.name} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />}
                 <div className={styles.cardOverlay} />
             </div>
 

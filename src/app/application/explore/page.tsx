@@ -476,7 +476,7 @@ function ExploreCard({
 
     return (
         <div className={styles.card} style={{ '--delay': `${delay}s`, position: 'relative' } as React.CSSProperties}>
-            {chukipu.image && <Image src={chukipu.image} alt={chukipu.name} className={styles.cardImage} fill style={{ objectFit: 'cover' }} />}
+            {chukipu.image && <Image src={chukipu.image} alt={chukipu.name} className={styles.cardImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />}
             <div className={styles.cardOverlay} />
             <div className={styles.ratingBadge}>
                 <span>{(chukipu.ratingAverage ?? 0).toFixed(1)}</span>

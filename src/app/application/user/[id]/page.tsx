@@ -381,7 +381,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                             >
                                 {plan.image ? (
                                     <div className={styles.gridItemContent} style={{ position: 'relative' }}>
-                                        <Image src={plan.image} alt={plan.title} className={styles.gridImg} fill style={{ objectFit: 'cover' }} />
+                                        <Image src={plan.image} alt={plan.title} className={styles.gridImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                                         <span className={styles.gridTitle}>{plan.title}</span>
                                     </div>
                                 ) : (

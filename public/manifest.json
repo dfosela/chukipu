@@ -3,7 +3,7 @@
   "short_name": "Chukipu",
   "description": "Tu espacio compartido para vivir momentos únicos juntos",
   "start_url": "/application",
-  "scope": "/application/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#13101A",

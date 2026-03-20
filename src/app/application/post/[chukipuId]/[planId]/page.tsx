@@ -207,7 +207,7 @@ export default function PublicacionPage({ params }: { params: Promise<{ chukipuI
                 {/* Image */}
                 <div className={styles.imageWrap} style={{ position: 'relative' }}>
                     {plan.image ? (
-                        <Image src={plan.image} alt={plan.title} className={styles.postImage} fill style={{ objectFit: 'cover' }} />
+                        <Image src={plan.image} alt={plan.title} className={styles.postImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                     ) : (
                         <div className={styles.imagePlaceholder}>
                             <span className={styles.placeholderCategory}>{plan.category || ''}</span>

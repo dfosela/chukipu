@@ -316,7 +316,7 @@ export default function HomePage() {
                 >
                   <div className={styles.nextPlanImageWrap} style={{ position: 'relative' }}>
                     {nextPlan.image ? (
-                      <Image src={nextPlan.image} alt={nextPlan.title} className={styles.nextPlanImage} fill style={{ objectFit: 'cover' }} />
+                      <Image src={nextPlan.image} alt={nextPlan.title} className={styles.nextPlanImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                     ) : (
                       <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[nextPlan.category] || '#e8749a'}20` } as React.CSSProperties}>
                         {CATEGORY_ICONS[nextPlan.category] ? (
@@ -398,7 +398,7 @@ export default function HomePage() {
                             <div className={styles.nextPlanCard} onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}>
                               <div className={styles.nextPlanImageWrap} style={{ aspectRatio: '16/10', position: 'relative' }}>
                                 {plan.image ? (
-                                  <Image src={plan.image} alt={plan.title} className={styles.nextPlanImage} fill style={{ objectFit: 'cover' }} />
+                                  <Image src={plan.image} alt={plan.title} className={styles.nextPlanImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                                 ) : (
                                   <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[plan.category] || '#e8749a'}20` } as React.CSSProperties}>
                                     {CATEGORY_ICONS[plan.category] ? (

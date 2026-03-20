@@ -86,7 +86,7 @@ export default function NuevoChukipuPage() {
                 <div className={styles.photoSection}>
                     <div className={styles.photoPreviewWrap} style={{ position: 'relative' }}>
                         {imagePreview ? (
-                            <Image src={imagePreview} alt="Preview" className={styles.photoPreview} fill style={{ objectFit: 'cover' }} />
+                            <Image src={imagePreview} alt="Preview" className={styles.photoPreview} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                         ) : (
                             <div className={styles.photoPlaceholder}>
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
