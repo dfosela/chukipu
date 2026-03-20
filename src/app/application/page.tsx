@@ -312,7 +312,7 @@ export default function HomePage() {
                 </div>
 
                 <div className={styles.nextPlanCard}
-                  onClick={() => router.push(`/application/chukipus/${nextPlan.chukipuId}/plans/${nextPlan.id}`)}
+                  onClick={() => router.push(`/application/chukipus/${nextPlan.chukipuId}/plans/${nextPlan.id}?from=home`)}
                 >
                   <div className={styles.nextPlanImageWrap} style={{ position: 'relative' }}>
                     {nextPlan.image ? (
@@ -395,7 +395,7 @@ export default function HomePage() {
                       <div className={styles.recommendedScrollContainer}>
                         {plans.map(plan => (
                           <div key={plan.id} className={styles.recommendedCardWrapper}>
-                            <div className={styles.nextPlanCard} onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}>
+                            <div className={styles.nextPlanCard} onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}?from=home`)}>
                               <div className={styles.nextPlanImageWrap} style={{ aspectRatio: '16/10', position: 'relative' }}>
                                 {plan.image ? (
                                   <Image src={plan.image} alt={plan.title} className={styles.nextPlanImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />

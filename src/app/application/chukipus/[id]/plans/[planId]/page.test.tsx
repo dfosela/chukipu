@@ -12,6 +12,7 @@ vi.mock('next/navigation', () => ({
         replace: vi.fn(),
         back: vi.fn(),
     }),
+    useSearchParams: () => ({ get: () => null }),
 }));
 
 // Mock AuthContext

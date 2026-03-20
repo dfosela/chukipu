@@ -290,7 +290,7 @@ export default function ExplorePage() {
                                             <div
                                                 key={plan.id}
                                                 className={styles.explorePlanCard}
-                                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
+                                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}?from=explore`)}
                                             >
                                                 <div
                                                     className={styles.explorePlanCardBg}
@@ -353,7 +353,7 @@ export default function ExplorePage() {
                                                         <div
                                                             key={plan.id}
                                                             className={styles.explorePlanCard}
-                                                            onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
+                                                            onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}?from=explore`)}
                                                         >
                                                             {/* Placeholder with category icon */}
                                                             <div

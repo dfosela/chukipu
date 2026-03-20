@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, use, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
 import {
@@ -52,6 +52,13 @@ function timeAgo(ts: number): string {
 export default function PlanDetailPage({ params }: { params: Promise<{ id: string; planId: string }> }) {
     const { id: chukipuId, planId } = use(params);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const from = searchParams.get('from'); // 'explore' | 'home' | null
+    const backDestination = from === 'explore'
+        ? '/application/explore'
+        : from === 'home'
+            ? '/application'
+            : `/application/chukipus/${chukipuId}`;
     const { user, profile } = useAuth();
 
     const [plan, setPlan] = useState<Plan | null>(null);
@@ -108,7 +115,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
         return (
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <button className={styles.backBtn} onClick={() => router.push(`/application/chukipus/${chukipuId}`)} aria-label="Volver">
+                    <button className={styles.backBtn} onClick={() => router.push(backDestination)} aria-label="Volver">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                             <polyline points="15 18 9 12 15 6" />
                         </svg>
@@ -125,7 +132,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
         return (
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <button className={styles.backBtn} onClick={() => router.push(`/application/chukipus/${chukipuId}`)} aria-label="Volver">
+                    <button className={styles.backBtn} onClick={() => router.push(backDestination)} aria-label="Volver">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                             <polyline points="15 18 9 12 15 6" />
                         </svg>
@@ -262,7 +269,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
         <div className={styles.container}>
             {/* Header */}
             <div className={styles.header}>
-                <button className={styles.backBtn} onClick={() => router.push(`/application/chukipus/${chukipuId}`)} aria-label="Volver">
+                <button className={styles.backBtn} onClick={() => router.push(backDestination)} aria-label="Volver">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                         <polyline points="15 18 9 12 15 6" />
                     </svg>
@@ -294,6 +301,18 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>
+                        </button>
+                    )}
+                    {!isMember && (
+                        <button
+                            className={styles.editHeaderBtn}
+                            onClick={() => router.push(`/application/chukipus/${chukipuId}`)}
+                            aria-label="Ver chukipu"
+                            title="Ver chukipu"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                             </svg>
                         </button>
                     )}
