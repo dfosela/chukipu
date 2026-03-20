@@ -339,7 +339,7 @@
 
 /* Search bar */
 .searchWrap {
-  padding: var(--space-sm) var(--space-md) 0;
+  padding: var(--space-sm) var(--space-md);
   width: 100%;
 }
 

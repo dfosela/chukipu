@@ -70,13 +70,13 @@ export default function ChukipuDetailPage({
             try {
               const userDoc = await firebaseGet<{
                 displayName?: string;
-                photoURL?: string;
+                avatar?: string;
               }>(`users/${uid}`);
               if (userDoc) {
                 return {
                   uid,
                   displayName: userDoc.displayName || "Usuario",
-                  photoURL: userDoc.photoURL || "",
+                  photoURL: userDoc.avatar || "",
                 };
               } else {
                 // Handler for non-existent users
