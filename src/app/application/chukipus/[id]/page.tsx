@@ -58,9 +58,13 @@ export default function ChukipuDetailPage({
       async (snapshot) => {
         if (snapshot.exists()) {
           const membersData = snapshot.val();
-          const uids = Object.keys(membersData).filter(
-            (uid) => membersData[uid] === true,
-          );
+          // members can be stored as { uid: true } or as an array
+          let uids: string[];
+          if (Array.isArray(membersData)) {
+            uids = membersData.filter((v): v is string => typeof v === 'string');
+          } else {
+            uids = Object.keys(membersData).filter((uid) => membersData[uid] === true);
+          }
 
           const usersPromises = uids.map(async (uid) => {
             try {
