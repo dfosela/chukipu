@@ -3,9 +3,10 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import { firebaseGet, firebaseUpdate, firebaseBatchUpdate, firebaseGetList } from '@/lib/firebaseMethods';
+import { firebaseGet, firebaseUpdate, firebaseBatchUpdate } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserProfile, Chukipu, Plan, PlanMedia } from '@/types/firestore';
+import Image from 'next/image';
 import { sendNotification } from '@/lib/notifications';
 import { db } from '@/lib/firebase';
 import { ref, onValue } from 'firebase/database';
@@ -219,6 +220,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
             unsubsChukis();
         };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, loading, profileData, isOwnProfile, user]);
 
     // Fetch planMedia for each visible plan
@@ -391,10 +393,13 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                     <div className={styles.avatarWrap}>
                         {profileData.avatar ? (
                             <button className={styles.avatarBtn} onClick={() => setAvatarModalOpen(true)}>
-                                <img
+                                <Image
                                     src={profileData.avatar}
                                     alt={profileData.displayName || 'User'}
                                     className={styles.avatarImg}
+                                    width={80}
+                                    height={80}
+                                    style={{ objectFit: 'cover' }}
                                 />
                             </button>
                         ) : (
@@ -418,12 +423,12 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                             <span className={styles.statLabel}>Chukipus</span>
                         </button>
                         <div className={styles.divider}></div>
-                        <button className={styles.statItem}>
+                        <button className={styles.statItem} onClick={() => router.push(`/application/user/${id}/followers`)}>
                             <span className={styles.statValue}>{profileData.followersCount || 0}</span>
                             <span className={styles.statLabel}>Seguidores</span>
                         </button>
                         <div className={styles.divider}></div>
-                        <button className={styles.statItem}>
+                        <button className={styles.statItem} onClick={() => router.push(`/application/user/${id}/following`)}>
                             <span className={styles.statValue}>{profileData.followingCount || 0}</span>
                             <span className={styles.statLabel}>Siguiendo</span>
                         </button>

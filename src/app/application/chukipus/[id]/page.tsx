@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
+import Image from "next/image";
 import styles from "./page.module.css";
 import BottomNav from "@/components/BottomNav/BottomNav";
 import {
@@ -57,9 +58,13 @@ export default function ChukipuDetailPage({
       async (snapshot) => {
         if (snapshot.exists()) {
           const membersData = snapshot.val();
-          const uids = Object.keys(membersData).filter(
-            (uid) => membersData[uid] === true,
-          );
+          // members can be stored as { uid: true } or as an array
+          let uids: string[];
+          if (Array.isArray(membersData)) {
+            uids = membersData.filter((v): v is string => typeof v === 'string');
+          } else {
+            uids = Object.keys(membersData).filter((uid) => membersData[uid] === true);
+          }
 
           const usersPromises = uids.map(async (uid) => {
             try {
@@ -154,6 +159,8 @@ export default function ChukipuDetailPage({
     );
   }
 
+  const isMember = members.some((m) => m.uid === user?.uid);
+
   const filteredPlans = searchQuery.trim()
     ? plans.filter(p =>
         p.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -165,7 +172,7 @@ export default function ChukipuDetailPage({
   const categories = Array.from(new Set(filteredPlans.map((p) => p.category)));
 
   const handleTogglePin = async (plan: Plan) => {
-    if (!user || user.uid !== plan.createdBy) return;
+    if (!isMember) return;
 
     const newShowInProfile = !plan.showInProfile;
 
@@ -191,7 +198,7 @@ export default function ChukipuDetailPage({
   };
 
   const handleToggleCompleted = async (plan: Plan) => {
-    if (!user || user.uid !== plan.createdBy) return;
+    if (!isMember) return;
 
     const newCompleted = !plan.completed;
 
@@ -215,7 +222,7 @@ export default function ChukipuDetailPage({
   };
 
   const handleToggleLike = async (plan: Plan) => {
-    if (!user) return;
+    if (!isMember) return;
     const currentLikes = plan.likes || [];
     const isLiked = currentLikes.includes(user.uid);
     const newLikes = isLiked
@@ -242,12 +249,14 @@ export default function ChukipuDetailPage({
   return (
     <div className={styles.container}>
       {/* Hero image */}
-      <div className={styles.hero}>
+      <div className={styles.hero} style={{ position: 'relative' }}>
         {chukipu.image && (
-          <img
+          <Image
             src={chukipu.image}
             alt={chukipu.name}
             className={styles.heroImg}
+            fill
+            style={{ objectFit: 'cover' }}
           />
         )}
         <div className={styles.heroOverlay} />
@@ -255,7 +264,7 @@ export default function ChukipuDetailPage({
         {/* Back button */}
         <button
           className={styles.backBtn}
-          onClick={() => router.back()}
+          onClick={() => router.push('/application/chukipus')}
           aria-label="Volver"
         >
           <svg
@@ -271,8 +280,8 @@ export default function ChukipuDetailPage({
           </svg>
         </button>
 
-        {/* Edit button */}
-        <button
+        {/* Edit button — only for members */}
+        {isMember && <button
           className={styles.editBtn}
           onClick={() => router.push(`/application/chukipus/${id}/edit`)}
           aria-label="Editar Chukipu"
@@ -288,7 +297,7 @@ export default function ChukipuDetailPage({
             <circle cx="12" cy="12" r="2" />
             <circle cx="12" cy="19" r="2" />
           </svg>
-        </button>
+        </button>}
 
         {/* Hero content */}
         <div className={styles.heroContent}>
@@ -326,11 +335,14 @@ export default function ChukipuDetailPage({
                     style={{ zIndex: members.length - i }}
                   >
                     {m.photoURL ? (
-                      <img
+                      <Image
                         src={m.photoURL}
                         alt={m.displayName}
                         title={m.displayName}
                         className={styles.memberAvatar}
+                        width={32}
+                        height={32}
+                        style={{ objectFit: 'cover' }}
                       />
                     ) : (
                       <div
@@ -348,8 +360,8 @@ export default function ChukipuDetailPage({
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className={styles.actionBar}>
+      {/* Action buttons — only for members */}
+      {isMember && <div className={styles.actionBar}>
         <button
           className={styles.addPlanBtn}
           onClick={() => router.push(`/application/chukipus/${id}/plans`)}
@@ -388,7 +400,7 @@ export default function ChukipuDetailPage({
           </svg>
           Invitar
         </button>
-      </div>
+      </div>}
 
       {/* Search bar — only when 6+ plans */}
       {plans.length >= 6 && (
@@ -441,12 +453,14 @@ export default function ChukipuDetailPage({
             <p className={styles.emptyDesc}>
               Añade el primer plan para empezar.
             </p>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => router.push(`/application/chukipus/${id}/plans`)}
-            >
-              Añadir plan
-            </button>
+            {isMember && (
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => router.push(`/application/chukipus/${id}/plans`)}
+              >
+                Añadir plan
+              </button>
+            )}
           </div>
         ) : (
           <>
@@ -483,7 +497,7 @@ export default function ChukipuDetailPage({
                         onClick={() =>
                           router.push(`/application/chukipus/${id}/plans/${plan.id}`)
                         }
-                        isCreator={user?.uid === plan.createdBy}
+                        isMember={isMember}
                         currentUserId={user?.uid}
                         onTogglePin={(e) => {
                           e.stopPropagation();
@@ -516,7 +530,7 @@ function PlanCard({
   color,
   delay,
   onClick,
-  isCreator,
+  isMember,
   currentUserId,
   onTogglePin,
   onToggleCompleted,
@@ -526,7 +540,7 @@ function PlanCard({
   color: string;
   delay: number;
   onClick: () => void;
-  isCreator?: boolean;
+  isMember?: boolean;
   currentUserId?: string;
   onTogglePin?: (e: React.MouseEvent) => void;
   onToggleCompleted?: (e: React.MouseEvent) => void;
@@ -542,7 +556,7 @@ function PlanCard({
       onClick={onClick}
     >
       <div className={styles.cardActions}>
-        <button
+        {isMember && <button
           className={`${styles.cardLikeBtn} ${isLiked ? styles.cardLikeBtnLiked : ""}`}
           onClick={onToggleLike}
           aria-label={isLiked ? "Quitar like" : "Dar like"}
@@ -560,8 +574,8 @@ function PlanCard({
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
           {likeCount > 0 && <span className={styles.cardLikeCount}>{likeCount}</span>}
-        </button>
-        {isCreator && (
+        </button>}
+        {isMember && (
           <>
             <button
               className={`${styles.cardActionBtn} ${plan.completed ? styles.cardActionDone : ""}`}

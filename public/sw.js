@@ -27,6 +27,9 @@ self.addEventListener('fetch', (event) => {
   // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
+  // Don't intercept Next.js internals or navigation requests
+  if (url.pathname.startsWith('/_next/') || request.mode === 'navigate') return;
+
   // Cache-first for static assets
   if (
     request.destination === 'image' ||
@@ -45,6 +48,8 @@ self.addEventListener('fetch', (event) => {
 
   // Network-first for everything else (API, Next.js pages, etc.)
   event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+    fetch(request).catch(() =>
+      caches.match(request).then((cached) => cached || new Response('', { status: 503 }))
+    )
   );
 });

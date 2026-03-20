@@ -2,6 +2,7 @@
 
 import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { firebaseGet, firebaseUpdate, firebaseRemove, uploadFile } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
@@ -135,9 +136,9 @@ export default function EditChukipuPage({ params }: { params: Promise<{ id: stri
 
                 {/* Photo Upload */}
                 <div className={styles.photoSection}>
-                    <div className={styles.photoPreviewWrap}>
+                    <div className={styles.photoPreviewWrap} style={{ position: 'relative' }}>
                         {imagePreview ? (
-                            <img src={imagePreview} alt="Preview" className={styles.photoPreview} />
+                            <Image src={imagePreview} alt="Preview" className={styles.photoPreview} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                         ) : (
                             <div className={styles.photoPlaceholder}>
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

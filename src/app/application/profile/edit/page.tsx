@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import styles from './page.module.css';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { firebaseUpdate, uploadFile } from '@/lib/firebaseMethods';
@@ -86,10 +87,13 @@ export default function EditarPerfilPage() {
                 {/* Avatar */}
                 <div className={styles.avatarSection}>
                     <div className={styles.avatarWrap} onClick={() => fileInputRef.current?.click()}>
-                        <img
+                        <Image
                             src={avatarPreview || fallbackAvatar}
                             alt={displayName}
                             className={styles.avatarImg}
+                            width={80}
+                            height={80}
+                            style={{ objectFit: 'cover' }}
                         />
                         <div className={styles.avatarOverlay}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">

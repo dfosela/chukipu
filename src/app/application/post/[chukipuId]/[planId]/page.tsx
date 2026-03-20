@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { useAuth } from '@/contexts/AuthContext';
 import { firebaseGetList, firebaseGet, firebaseUpdate, firebaseCreate } from '@/lib/firebaseMethods';
@@ -186,10 +187,13 @@ export default function PublicacionPage({ params }: { params: Promise<{ chukipuI
                 {/* Post Header — user info */}
                 <div className={styles.postHeader}>
                     <div className={styles.postUser}>
-                        <img
+                        <Image
                             src={creatorProfile?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${creatorProfile?.displayName || 'U'}`}
                             alt=""
                             className={styles.postUserAvatar}
+                            width={40}
+                            height={40}
+                            style={{ objectFit: 'cover' }}
                         />
                         <div className={styles.postUserInfo}>
                             <span className={styles.postUsername}>{creatorProfile?.username || 'usuario'}</span>
@@ -201,9 +205,9 @@ export default function PublicacionPage({ params }: { params: Promise<{ chukipuI
                 </div>
 
                 {/* Image */}
-                <div className={styles.imageWrap}>
+                <div className={styles.imageWrap} style={{ position: 'relative' }}>
                     {plan.image ? (
-                        <img src={plan.image} alt={plan.title} className={styles.postImage} />
+                        <Image src={plan.image} alt={plan.title} className={styles.postImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                     ) : (
                         <div className={styles.imagePlaceholder}>
                             <span className={styles.placeholderCategory}>{plan.category || ''}</span>
@@ -264,10 +268,13 @@ export default function PublicacionPage({ params }: { params: Promise<{ chukipuI
                     <div className={styles.commentsSection}>
                         {comments.map(comment => (
                             <div key={comment.id} className={styles.commentItem}>
-                                <img
+                                <Image
                                     src={comment.userAvatar || `https://api.dicebear.com/7.x/initials/svg?seed=${comment.userName}`}
                                     alt=""
                                     className={styles.commentAvatar}
+                                    width={32}
+                                    height={32}
+                                    style={{ objectFit: 'cover' }}
                                 />
                                 <div className={styles.commentBody}>
                                     <span className={styles.commentUser}>{comment.userName}</span>
@@ -287,10 +294,13 @@ export default function PublicacionPage({ params }: { params: Promise<{ chukipuI
 
                 {/* Comment input */}
                 <div className={styles.commentInputWrap}>
-                    <img
+                    <Image
                         src={profile?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${profile?.displayName || 'U'}`}
                         alt=""
                         className={styles.commentInputAvatar}
+                        width={32}
+                        height={32}
+                        style={{ objectFit: 'cover' }}
                     />
                     <input
                         ref={commentInputRef}

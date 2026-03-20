@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { firebaseGet, firebaseGetList } from '@/lib/firebaseMethods';
 import { Chukipu, UserProfile } from '@/types/firestore';
@@ -230,7 +231,7 @@ export default function InvitarPage({ params }: { params: Promise<{ id: string }
                                 filteredUsers.map(u => (
                                     <div key={u.id} className={styles.userCard}>
                                         {u.avatar ? (
-                                            <img src={u.avatar} alt={u.displayName} className={styles.userCardAvatar} />
+                                            <Image src={u.avatar} alt={u.displayName} className={styles.userCardAvatar} width={40} height={40} style={{ objectFit: 'cover' }} />
                                         ) : (
                                             <div className={styles.userCardAvatarPlaceholder}>
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5" strokeLinecap="round">

@@ -102,6 +102,29 @@
     transform: scale(0.9);
 }
 
+/* ── Ver Chukipu Button ── */
+.verChukipuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: calc(100% - var(--space-md) * 2);
+    margin: var(--space-md) var(--space-md) 4px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    color: var(--brand-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.verChukipuBtn:active {
+    transform: scale(0.96);
+}
+
 /* ── Page Content ── */
 .pageContent {
     display: flex;

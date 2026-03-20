@@ -1,28 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import styles from './page.module.css';
-import { useAuth } from '@/contexts/AuthContext';
-import { firebaseGet, firebaseUpdate } from '@/lib/firebaseMethods';
+import styles from '../../../profile/followers/page.module.css';
+import { firebaseGet } from '@/lib/firebaseMethods';
 import { UserProfile } from '@/types/firestore';
 
-export default function SeguidoresPage() {
+export default function UserFollowersPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const router = useRouter();
-    const { profile, user } = useAuth();
     const [followers, setFollowers] = useState<UserProfile[]>([]);
-    const [removing, setRemoving] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [username, setUsername] = useState('');
 
     useEffect(() => {
         async function fetchFollowers() {
-            if (!profile) {
-                setLoading(false);
-                return;
-            }
             try {
-                const ids = profile.followers || [];
+                const userData = await firebaseGet<UserProfile>(`users/${id}`);
+                if (!userData) return;
+                setUsername(userData.username || '');
+                const ids = userData.followers || [];
                 const users: UserProfile[] = [];
                 for (const uid of ids) {
                     const u = await firebaseGet<UserProfile>(`users/${uid}`);
@@ -36,35 +34,7 @@ export default function SeguidoresPage() {
             }
         }
         fetchFollowers();
-    }, [profile]);
-
-    const handleRemoveFollower = async (followerId: string) => {
-        if (!user || removing) return;
-        setRemoving(followerId);
-
-        try {
-            const myFollowers = (profile?.followers || []).filter(id => id !== followerId);
-            await firebaseUpdate(`users/${user.uid}`, {
-                followers: myFollowers,
-                followersCount: Math.max(0, myFollowers.length),
-            });
-
-            const followerProfile = await firebaseGet<UserProfile>(`users/${followerId}`);
-            if (followerProfile) {
-                const theirFollowing = (followerProfile.following || []).filter(id => id !== user.uid);
-                await firebaseUpdate(`users/${followerId}`, {
-                    following: theirFollowing,
-                    followingCount: Math.max(0, theirFollowing.length),
-                });
-            }
-
-            setFollowers(prev => prev.filter(u => u.id !== followerId));
-        } catch (err) {
-            console.error('Error removing follower:', err);
-        } finally {
-            setRemoving(null);
-        }
-    };
+    }, [id]);
 
     return (
         <div className={styles.container}>
@@ -74,7 +44,7 @@ export default function SeguidoresPage() {
                         <polyline points="15 18 9 12 15 6" />
                     </svg>
                 </button>
-                <h1 className={styles.title}>Seguidores</h1>
+                <h1 className={styles.title}>{username ? `@${username}` : 'Seguidores'}</h1>
                 <div className={styles.spacer38} />
             </div>
 
@@ -92,7 +62,7 @@ export default function SeguidoresPage() {
                             </svg>
                         </div>
                         <p className={styles.emptyTitle}>Sin seguidores</p>
-                        <p className={styles.emptyDesc}>Cuando alguien te siga, aparecerá aquí.</p>
+                        <p className={styles.emptyDesc}>Aún nadie sigue a este usuario.</p>
                     </div>
                 ) : (
                     followers.map((u, i) => (
@@ -110,13 +80,6 @@ export default function SeguidoresPage() {
                                     <span className={styles.userName}>{u.displayName}</span>
                                     <span className={styles.userUsername}>@{u.username}</span>
                                 </div>
-                            </button>
-                            <button
-                                className={styles.removeBtn}
-                                onClick={() => handleRemoveFollower(u.id)}
-                                disabled={removing === u.id}
-                            >
-                                {removing === u.id ? '...' : 'Quitar'}
                             </button>
                         </div>
                     ))
