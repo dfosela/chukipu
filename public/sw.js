@@ -27,6 +27,9 @@ self.addEventListener('fetch', (event) => {
   // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
+  // Don't intercept Next.js internals or navigation requests
+  if (url.pathname.startsWith('/_next/') || request.mode === 'navigate') return;
+
   // Cache-first for static assets
   if (
     request.destination === 'image' ||
