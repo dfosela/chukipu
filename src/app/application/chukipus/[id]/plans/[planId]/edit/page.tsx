@@ -42,24 +42,25 @@ type CategoryConfig = {
 };
 
 const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
-    peliculas: {
-        label: 'Editar Película',
-        titleLabel: 'Título de la película',
-        titlePlaceholder: 'Ej: Interstellar',
-        category: 'Película',
+    cartelera: {
+        label: 'Editar Cartelera',
+        titleLabel: 'Título',
+        titlePlaceholder: 'Ej: Interstellar, Breaking Bad...',
+        category: 'Cartelera',
+        extraFields: [
+            { key: 'mediaType', label: '¿Qué vais a ver?', type: 'chips', options: ['Película', 'Serie', 'Cortometraje'], required: true },
+            { key: 'episodes', label: 'Episodios', type: 'number', placeholder: 'Ej: 8' },
+        ],
         genres: ['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia ficción', 'Romance', 'Animación', 'Thriller', 'Documental', 'Fantasía', 'Musical', 'Aventura'],
         genresLabel: 'Género',
         genresRequired: true,
-        showDuration: true,
-        durationLabel: 'Duración',
-        durationPlaceholder: 'Ej: 2h 15min',
         showLocation: true,
         locationLabel: 'Dónde verla',
         locationPlaceholder: 'Ej: Cine, Casa, Netflix...',
-        showDate: true,
-        dateLabel: 'Fecha y hora',
-        dateType: 'datetime',
-        showDateEnd: false,
+        showDate: false,
+        showDuration: true,
+        durationLabel: 'Duración',
+        durationPlaceholder: 'Ej: 2h 15min',
     },
     viajes: {
         label: 'Editar Viaje',
@@ -230,7 +231,7 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
 
 // Map category value → config key
 const CATEGORY_TO_SLUG: Record<string, string> = {
-    'Película': 'peliculas',
+    'Cartelera': 'cartelera',
     'Viaje': 'viajes',
     'Fiesta': 'fiesta',
     'Escapada': 'escapadas',
@@ -247,7 +248,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
     const { user } = useAuth();
 
     const [plan, setPlan] = useState<Plan | null>(null);
-    const [config, setConfig] = useState<CategoryConfig>(CATEGORY_CONFIG.peliculas);
+    const [config, setConfig] = useState<CategoryConfig>(CATEGORY_CONFIG.cartelera);
     const [title, setTitle] = useState('');
     const [genre, setGenre] = useState('');
     const [duration, setDuration] = useState('');
@@ -272,8 +273,8 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                         return;
                     }
                     setPlan(data);
-                    const slug = CATEGORY_TO_SLUG[data.category] || 'peliculas';
-                    setConfig(CATEGORY_CONFIG[slug] || CATEGORY_CONFIG.peliculas);
+                    const slug = CATEGORY_TO_SLUG[data.category] || 'cartelera';
+                    setConfig(CATEGORY_CONFIG[slug] || CATEGORY_CONFIG.cartelera);
                     setTitle(data.title);
                     setGenre(data.genre || '');
                     setDuration(data.duration || '');

@@ -16,7 +16,7 @@ import { db } from "@/lib/firebase";
 import { ref, onValue } from "firebase/database";
 
 const categoryColors: Record<string, string> = {
-  Película: "#e8749a",
+  Cartelera: "#e8749a",
   Viaje: "#5b86e5",
   Comida: "#ff7f50",
   Escapada: "#52c788",

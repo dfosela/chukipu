@@ -19,7 +19,7 @@ import { Plan, PlanMedia } from '@/types/firestore';
 import BottomNav from '@/components/BottomNav/BottomNav';
 
 const categoryColors: Record<string, string> = {
-    Película: '#e8749a',
+    Cartelera: '#e8749a',
     Viaje: '#5b86e5',
     Comida: '#ff7f50',
     Escapada: '#52c788',

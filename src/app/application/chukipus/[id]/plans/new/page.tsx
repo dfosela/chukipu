@@ -43,24 +43,25 @@ type CategoryConfig = {
 };
 
 const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
-    peliculas: {
-        label: 'Nueva Película',
-        titleLabel: 'Título de la película',
-        titlePlaceholder: 'Ej: Interstellar',
-        category: 'Película',
+    cartelera: {
+        label: 'Nueva Cartelera',
+        titleLabel: 'Título',
+        titlePlaceholder: 'Ej: Interstellar, Breaking Bad...',
+        category: 'Cartelera',
+        extraFields: [
+            { key: 'mediaType', label: '¿Qué vais a ver?', type: 'chips', options: ['Película', 'Serie', 'Cortometraje'], required: true },
+            { key: 'episodes', label: 'Episodios', type: 'number', placeholder: 'Ej: 8' },
+        ],
         genres: ['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia ficción', 'Romance', 'Animación', 'Thriller', 'Documental', 'Fantasía', 'Musical', 'Aventura'],
         genresLabel: 'Género',
         genresRequired: true,
-        showDuration: true,
-        durationLabel: 'Duración',
-        durationPlaceholder: 'Ej: 2h 15min',
         showLocation: true,
         locationLabel: 'Dónde verla',
         locationPlaceholder: 'Ej: Cine, Casa, Netflix...',
-        showDate: true,
-        dateLabel: 'Fecha y hora',
-        dateType: 'datetime',
-        showDateEnd: false,
+        showDate: false,
+        showDuration: true,
+        durationLabel: 'Duración',
+        durationPlaceholder: 'Ej: 2h 15min',
     },
     viajes: {
         label: 'Nuevo Viaje',
@@ -233,8 +234,8 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
     const { id: chukipuId } = use(params);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const categoriaSlug = searchParams.get('categoria') || 'peliculas';
-    const config = CATEGORY_CONFIG[categoriaSlug] || CATEGORY_CONFIG.peliculas;
+    const categoriaSlug = searchParams.get('categoria') || 'cartelera';
+    const config = CATEGORY_CONFIG[categoriaSlug] || CATEGORY_CONFIG.cartelera;
 
     const { user } = useAuth();
 

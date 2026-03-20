@@ -80,7 +80,7 @@ const mockPlan = {
     chukipuId: 'chuki1',
     title: 'Movie Night',
     description: 'Watch a great film',
-    category: 'Película',
+    category: 'Cartelera',
     createdBy: 'creator123',
     completed: false,
     showInProfile: true,
@@ -122,7 +122,7 @@ describe('ChukipuDetailPage', () => {
         });
 
         expect(await screen.findByText('Movie Night')).toBeInTheDocument();
-        expect(await screen.findByText('Película')).toBeInTheDocument();
+        expect(await screen.findByText('Cartelera')).toBeInTheDocument();
     });
 
     it('renders like button for all users (not just creators) — if this fails, non-creators cannot like', async () => {
