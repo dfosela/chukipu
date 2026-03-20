@@ -150,15 +150,16 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     const likeCount = plan.likesCount || 0;
 
     const handleTogglePin = async () => {
-        if (!isMember || isPinning) return;
+        if (!isMember || isPinning || !user) return;
         setIsPinning(true);
-        const newVal = !plan.showInProfile;
-        setPlan(prev => prev ? { ...prev, showInProfile: newVal } : prev);
+        const isPinned = plan.pinnedBy?.[user.uid] === true;
+        const newVal = !isPinned;
+        setPlan(prev => prev ? { ...prev, pinnedBy: { ...prev.pinnedBy, [user.uid]: newVal } } : prev);
         try {
-            await firebaseUpdate(`plans/${planId}`, { showInProfile: newVal });
+            await firebaseBatchUpdate({ [`plans/${planId}/pinnedBy/${user.uid}`]: newVal ? true : null });
         } catch (err) {
             console.error(err);
-            setPlan(prev => prev ? { ...prev, showInProfile: !newVal } : prev);
+            setPlan(prev => prev ? { ...prev, pinnedBy: { ...prev.pinnedBy, [user.uid]: isPinned } } : prev);
         } finally {
             setIsPinning(false);
         }
@@ -279,13 +280,13 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                 <div className={styles.headerActions}>
                     {isMember && (
                         <button
-                            className={`${styles.pinBtn} ${plan.showInProfile ? styles.pinBtnActive : ''}`}
+                            className={`${styles.pinBtn} ${plan.pinnedBy?.[user?.uid ?? ''] ? styles.pinBtnActive : ''}`}
                             onClick={handleTogglePin}
-                            aria-label={plan.showInProfile ? 'Quitar del perfil' : 'Fijar en el perfil'}
-                            title={plan.showInProfile ? 'Quitar del perfil' : 'Fijar en el perfil'}
+                            aria-label={plan.pinnedBy?.[user?.uid ?? ''] ? 'Quitar del perfil' : 'Fijar en el perfil'}
+                            title={plan.pinnedBy?.[user?.uid ?? ''] ? 'Quitar del perfil' : 'Fijar en el perfil'}
                             disabled={isPinning}
                         >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill={plan.showInProfile ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill={plan.pinnedBy?.[user?.uid ?? ''] ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="12" y1="17" x2="12" y2="22" />
                                 <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z" />
                             </svg>

@@ -53,6 +53,7 @@ export interface Plan {
     completed: boolean;
     createdBy: string;
     showInProfile?: boolean;
+    pinnedBy?: Record<string, boolean>;
     likes?: string[];
     likesCount?: number;
     createdAt: number;

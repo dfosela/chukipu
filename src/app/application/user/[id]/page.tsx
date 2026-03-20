@@ -189,7 +189,8 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
 
                 Object.entries(plansData).forEach(([planId, p]: [string, unknown]) => {
                     const planEntry = p as ProfilePlan;
-                    if (chukipuIds.has(planEntry.chukipuId) && planEntry.createdBy === id && planEntry.showInProfile) {
+                    const isPinnedByUser = planEntry.pinnedBy?.[id] === true || (planEntry.showInProfile && planEntry.createdBy === id);
+                    if (chukipuIds.has(planEntry.chukipuId) && isPinnedByUser) {
                         // Check privacy visibility: if profile is not private, or we follow them, or we are member, or it's us
                         const isProfilePrivate = profileData?.isPrivate;
                         const weFollowThem = myProfile?.following?.includes(id);
