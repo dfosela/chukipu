@@ -222,7 +222,7 @@ export default function ChukipuDetailPage({
   };
 
   const handleToggleLike = async (plan: Plan) => {
-    if (!isMember) return;
+    if (!isMember || !user) return;
     const currentLikes = plan.likes || [];
     const isLiked = currentLikes.includes(user.uid);
     const newLikes = isLiked

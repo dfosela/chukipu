@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import { firebaseGet, firebaseUpdate, firebaseBatchUpdate } from '@/lib/firebaseMethods';
+import { firebaseGet, firebaseGetList, firebaseUpdate, firebaseBatchUpdate } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserProfile, Plan, PlanMedia } from '@/types/firestore';
 import Image from 'next/image';
