@@ -417,6 +417,36 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     </div>
                 </div>
 
+                {/* Required extra fields (before genre) */}
+                {config.extraFields?.filter(f => f.required).map(field => (
+                    <div key={field.key} className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>{field.label}</label>
+                        {field.type === 'chips' ? (
+                            <div className={styles.chipsWrap}>
+                                {field.options?.map(opt => (
+                                    <button
+                                        key={opt}
+                                        type="button"
+                                        className={`${styles.chip} ${details[field.key] === opt ? styles.chipSelected : ''}`}
+                                        onClick={() => setDetail(field.key, details[field.key] === opt ? '' : opt)}
+                                    >
+                                        {opt}
+                                    </button>
+                                ))}
+                            </div>
+                        ) : (
+                            <input
+                                type={field.type}
+                                placeholder={field.placeholder}
+                                value={details[field.key] || ''}
+                                onChange={e => setDetail(field.key, e.target.value)}
+                                className={styles.input}
+                                maxLength={field.maxLength}
+                            />
+                        )}
+                    </div>
+                ))}
+
                 {/* Genre chips */}
                 {config.genres && (
                     <div className={styles.fieldGroup}>
@@ -436,21 +466,6 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                                 </button>
                             ))}
                         </div>
-                    </div>
-                )}
-
-                {/* Duration */}
-                {config.showDuration && (
-                    <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>{config.durationLabel} <span className={styles.optional}>(opcional)</span></label>
-                        <input
-                            type="text"
-                            placeholder={config.durationPlaceholder}
-                            value={duration}
-                            onChange={e => setDuration(e.target.value)}
-                            className={styles.input}
-                            maxLength={30}
-                        />
                     </div>
                 )}
 
@@ -502,12 +517,27 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     </div>
                 )}
 
-                {/* Extra fields */}
-                {config.extraFields?.map(field => (
+                {/* Duration */}
+                {config.showDuration && (
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>{config.durationLabel} <span className={styles.optional}>(opcional)</span></label>
+                        <input
+                            type="text"
+                            placeholder={config.durationPlaceholder}
+                            value={duration}
+                            onChange={e => setDuration(e.target.value)}
+                            className={styles.input}
+                            maxLength={30}
+                        />
+                    </div>
+                )}
+
+                {/* Optional extra fields */}
+                {config.extraFields?.filter(f => !f.required).map(field => (
                     <div key={field.key} className={styles.fieldGroup}>
                         <label className={styles.fieldLabel}>
                             {field.label}
-                            {!field.required && <span className={styles.optional}> (opcional)</span>}
+                            <span className={styles.optional}> (opcional)</span>
                         </label>
                         {field.type === 'textarea' ? (
                             <div className={styles.inputWrap}>
@@ -552,7 +582,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                 {/* Save button */}
                 <button
                     className={styles.saveBtn}
-                    disabled={!title.trim() || isSaving}
+                    disabled={!title.trim() || isSaving || (config.extraFields?.filter(f => f.required).some(f => !(details[f.key] || '').trim()) ?? false) || (config.genresRequired && !genre)}
                     onClick={handleSave}
                 >
                     {isSaving ? 'Guardando...' : 'Guardar cambios'}
