@@ -175,6 +175,33 @@
     opacity: 0.7;
 }
 
+.sectionLabel {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    padding: 4px 4px 0;
+}
+
+.showAllBtn {
+    align-self: center;
+    padding: 10px 24px;
+    border-radius: var(--radius-full);
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    color: var(--brand-primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+    margin-top: 4px;
+}
+
+.showAllBtn:active {
+    opacity: 0.7;
+}
+
 .emptyIcon {
     color: var(--text-tertiary);
     opacity: 0.5;
