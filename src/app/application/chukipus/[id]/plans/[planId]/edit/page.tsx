@@ -2,17 +2,244 @@
 
 import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import styles from '../page.module.css';
-import { firebaseGet, firebaseUpdate, firebaseRemove, firebaseBatchUpdate, uploadFile } from '@/lib/firebaseMethods';
+import { firebaseGet, firebaseUpdate, firebaseRemove, firebaseBatchUpdate } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { Plan } from '@/types/firestore';
 
-const GENRES = [
-    'Acción', 'Comedia', 'Drama', 'Terror',
-    'Ciencia ficción', 'Romance', 'Animación', 'Thriller',
-    'Documental', 'Fantasía', 'Musical', 'Aventura',
-];
+type ExtraFieldDef = {
+    key: string;
+    label: string;
+    required?: boolean;
+    type: 'text' | 'number' | 'textarea' | 'time' | 'chips';
+    options?: string[];
+    placeholder?: string;
+    maxLength?: number;
+};
+
+type CategoryConfig = {
+    label: string;
+    category: string;
+    titleLabel: string;
+    titlePlaceholder: string;
+    genres?: string[];
+    genresLabel?: string;
+    genresRequired?: boolean;
+    showDuration?: boolean;
+    durationLabel?: string;
+    durationPlaceholder?: string;
+    showLocation?: boolean;
+    locationLabel?: string;
+    locationRequired?: boolean;
+    locationPlaceholder?: string;
+    showDate?: boolean;
+    dateLabel?: string;
+    dateRequired?: boolean;
+    dateType?: 'date' | 'datetime';
+    showDateEnd?: boolean;
+    dateEndLabel?: string;
+    extraFields?: ExtraFieldDef[];
+};
+
+const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
+    peliculas: {
+        label: 'Editar Película',
+        titleLabel: 'Título de la película',
+        titlePlaceholder: 'Ej: Interstellar',
+        category: 'Película',
+        genres: ['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia ficción', 'Romance', 'Animación', 'Thriller', 'Documental', 'Fantasía', 'Musical', 'Aventura'],
+        genresLabel: 'Género',
+        genresRequired: true,
+        showDuration: true,
+        durationLabel: 'Duración',
+        durationPlaceholder: 'Ej: 2h 15min',
+        showLocation: true,
+        locationLabel: 'Dónde verla',
+        locationPlaceholder: 'Ej: Cine, Casa, Netflix...',
+        showDate: true,
+        dateLabel: 'Fecha y hora',
+        dateType: 'datetime',
+        showDateEnd: false,
+    },
+    viajes: {
+        label: 'Editar Viaje',
+        titleLabel: 'Destino',
+        titlePlaceholder: 'Ej: París, Japón...',
+        category: 'Viaje',
+        showDate: true,
+        dateLabel: 'Fecha de inicio',
+        dateRequired: true,
+        dateType: 'datetime',
+        showDateEnd: true,
+        dateEndLabel: 'Fecha de fin',
+        extraFields: [
+            { key: 'budget', label: 'Presupuesto', type: 'text', placeholder: 'Ej: 500€', maxLength: 40 },
+            { key: 'transport', label: 'Transporte', type: 'text', placeholder: 'Ej: Avión, Tren, Coche...', maxLength: 60 },
+            { key: 'accommodation', label: 'Alojamiento', type: 'text', placeholder: 'Ej: Hotel, Airbnb, Camping...', maxLength: 60 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
+    },
+    fiesta: {
+        label: 'Editar Fiesta',
+        titleLabel: 'Nombre de la fiesta',
+        titlePlaceholder: 'Ej: Cumpleaños de Ana',
+        category: 'Fiesta',
+        showLocation: true,
+        locationLabel: 'Lugar',
+        locationRequired: true,
+        locationPlaceholder: 'Ej: Casa, Bar, Salón de eventos...',
+        showDate: true,
+        dateLabel: 'Fecha y hora',
+        dateRequired: true,
+        dateType: 'datetime',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'theme', label: 'Temática', type: 'text', placeholder: 'Ej: Años 80, Playa, Halloween...', maxLength: 60 },
+            { key: 'guests', label: 'Número de invitados', type: 'number', placeholder: 'Ej: 20' },
+            { key: 'music', label: 'Música / DJ', type: 'text', placeholder: 'Ej: Spotify, DJ, Directo...', maxLength: 60 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
+    },
+    escapadas: {
+        label: 'Editar Escapada',
+        titleLabel: 'Destino',
+        titlePlaceholder: 'Ej: Sierra de Gredos',
+        category: 'Escapada',
+        showDate: true,
+        dateLabel: 'Fecha de ida',
+        dateRequired: true,
+        dateType: 'datetime',
+        showDateEnd: true,
+        dateEndLabel: 'Fecha de vuelta',
+        showDuration: true,
+        durationLabel: 'Duración',
+        durationPlaceholder: 'Ej: Fin de semana, 3 días...',
+        extraFields: [
+            { key: 'transport', label: 'Transporte', type: 'text', placeholder: 'Ej: Coche, Tren...', maxLength: 60 },
+            { key: 'accommodation', label: 'Alojamiento', type: 'text', placeholder: 'Ej: Hotel, Casa rural...', maxLength: 60 },
+            { key: 'budget', label: 'Presupuesto', type: 'text', placeholder: 'Ej: 200€', maxLength: 40 },
+            { key: 'activities', label: 'Actividades planeadas', type: 'textarea', placeholder: 'Ej: Senderismo, visita al pueblo...', maxLength: 300 },
+        ],
+    },
+    deportes: {
+        label: 'Editar Deporte',
+        titleLabel: 'Deporte',
+        titlePlaceholder: 'Ej: Pádel, Fútbol, Running...',
+        category: 'Deporte',
+        showLocation: true,
+        locationLabel: 'Lugar',
+        locationRequired: true,
+        locationPlaceholder: 'Ej: Polideportivo, Parque...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'duration', label: 'Duración', type: 'text', placeholder: 'Ej: 1h 30min', maxLength: 20 },
+            { key: 'level', label: 'Nivel', type: 'chips', options: ['Amateur', 'Intermedio', 'Profesional'] },
+            { key: 'players', label: 'Participantes', type: 'text', placeholder: 'Ej: Juan, María, Pedro...', maxLength: 100 },
+        ],
+    },
+    salidas: {
+        label: 'Editar Salida',
+        titleLabel: 'Plan de salida',
+        titlePlaceholder: 'Ej: Noche de bares, Concierto...',
+        category: 'Salida',
+        genres: ['Bar', 'Discoteca', 'Concierto', 'Terraza', 'Karaoke', 'Cine', 'Restaurante', 'Otro'],
+        genresLabel: 'Tipo de salida',
+        genresRequired: true,
+        showLocation: true,
+        locationLabel: 'Zona / Lugar',
+        locationPlaceholder: 'Ej: Centro, Malasaña, Chueca...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'datetime',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'endTime', label: 'Hora de fin', type: 'time' },
+            { key: 'people', label: 'Número de personas', type: 'number', placeholder: 'Ej: 6' },
+            { key: 'budget', label: 'Presupuesto', type: 'text', placeholder: 'Ej: 30€ por persona', maxLength: 40 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
+    },
+    actividades: {
+        label: 'Editar Actividad',
+        titleLabel: 'Actividad',
+        titlePlaceholder: 'Ej: Paintball, Karting, Escape Room...',
+        category: 'Actividad',
+        genres: ['Aventura', 'Deportivo', 'Cultural', 'Creativo', 'Exterior', 'Interior', 'Otro'],
+        genresLabel: 'Tipo',
+        showLocation: true,
+        locationLabel: 'Lugar',
+        locationPlaceholder: 'Ej: Centro de actividades, Parque...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'duration', label: 'Duración', type: 'text', placeholder: 'Ej: 2h', maxLength: 20 },
+            { key: 'price', label: 'Precio', type: 'text', placeholder: 'Ej: 25€ por persona', maxLength: 40 },
+            { key: 'people', label: 'Número de personas', type: 'number', placeholder: 'Ej: 4' },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
+    },
+    'en-casa': {
+        label: 'Editar Plan en Casa',
+        titleLabel: 'Plan',
+        titlePlaceholder: 'Ej: Maratón de series, Noche de juegos...',
+        category: 'En casa',
+        genres: ['Series', 'Películas', 'Videojuegos', 'Juegos de mesa', 'Música', 'Manualidades', 'Otro'],
+        genresLabel: 'Tipo de plan',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'people', label: 'Personas', type: 'text', placeholder: 'Ej: Juan, María...', maxLength: 100 },
+            { key: 'snacks', label: 'Snacks / Comida', type: 'text', placeholder: 'Ej: Palomitas, Pizza, Nachos...', maxLength: 100 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
+    },
+    cultura: {
+        label: 'Editar Cultura',
+        titleLabel: 'Evento o lugar',
+        titlePlaceholder: 'Ej: Museo del Prado',
+        category: 'Cultura',
+        genres: ['Museo', 'Teatro', 'Concierto', 'Exposición', 'Festival', 'Monumento', 'Tour', 'Cine', 'Ópera'],
+        genresLabel: 'Tipo de actividad',
+        genresRequired: true,
+        showLocation: true,
+        locationLabel: 'Lugar / Ciudad',
+        locationRequired: true,
+        locationPlaceholder: 'Ej: Madrid, Barcelona...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'time', label: 'Hora', type: 'time' },
+            { key: 'price', label: 'Precio', type: 'text', placeholder: 'Ej: 12€', maxLength: 20 },
+            { key: 'company', label: 'Compañía', type: 'text', placeholder: 'Ej: Con quién vas', maxLength: 80 },
+            { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
+        ],
+    },
+};
+
+// Map category value → config key
+const CATEGORY_TO_SLUG: Record<string, string> = {
+    'Película': 'peliculas',
+    'Viaje': 'viajes',
+    'Fiesta': 'fiesta',
+    'Escapada': 'escapadas',
+    'Deporte': 'deportes',
+    'Salida': 'salidas',
+    'Actividad': 'actividades',
+    'En casa': 'en-casa',
+    'Cultura': 'cultura',
+};
 
 export default function EditPlanPage({ params }: { params: Promise<{ id: string; planId: string }> }) {
     const { id: chukipuId, planId } = use(params);
@@ -20,35 +247,39 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
     const { user } = useAuth();
 
     const [plan, setPlan] = useState<Plan | null>(null);
+    const [config, setConfig] = useState<CategoryConfig>(CATEGORY_CONFIG.peliculas);
     const [title, setTitle] = useState('');
     const [genre, setGenre] = useState('');
     const [duration, setDuration] = useState('');
     const [location, setLocation] = useState('');
     const [date, setDate] = useState('');
     const [dateEnd, setDateEnd] = useState('');
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [details, setDetails] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+
+    const setDetail = (key: string, val: string) =>
+        setDetails(prev => ({ ...prev, [key]: val }));
 
     useEffect(() => {
         async function fetchPlan() {
             try {
                 const data = await firebaseGet<Plan>(`plans/${planId}`);
                 if (data) {
-                    // Only the creator can edit
                     if (user && data.createdBy !== user.uid) {
                         router.replace(`/application/chukipus/${chukipuId}/plans/${planId}`);
                         return;
                     }
                     setPlan(data);
+                    const slug = CATEGORY_TO_SLUG[data.category] || 'peliculas';
+                    setConfig(CATEGORY_CONFIG[slug] || CATEGORY_CONFIG.peliculas);
                     setTitle(data.title);
                     setGenre(data.genre || '');
                     setDuration(data.duration || '');
                     setLocation(data.location || '');
                     setDate(data.date || '');
                     setDateEnd(data.dateEnd || '');
-                    if (data.image) setImagePreview(data.image);
+                    setDetails((data.details as Record<string, string>) || {});
                 }
             } catch (err) {
                 console.error(err);
@@ -59,61 +290,20 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
         fetchPlan();
     }, [chukipuId, planId, user, router]);
 
-    if (loading) {
-        return (
-            <div className={styles.container}>
-                <div className={styles.header}>
-                    <button className={styles.backBtn} onClick={() => router.back()} aria-label="Volver">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                            <polyline points="15 18 9 12 15 6" />
-                        </svg>
-                    </button>
-                    <h1 className={styles.title}>Cargando...</h1>
-                    <div className={styles.spacer38} />
-                </div>
-            </div>
-        );
-    }
-
-    if (!plan) {
-        return (
-            <div className={styles.container}>
-                <div className={styles.header}>
-                    <button className={styles.backBtn} onClick={() => router.back()} aria-label="Volver">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                            <polyline points="15 18 9 12 15 6" />
-                        </svg>
-                    </button>
-                    <h1 className={styles.title}>Error</h1>
-                    <div className={styles.spacer38} />
-                </div>
-                <div className={styles.content}>
-                    <p className={styles.notFoundText}>Plan no encontrado.</p>
-                </div>
-            </div>
-        );
-    }
-
     const handleSave = async () => {
         if (!title.trim() || isSaving) return;
         setIsSaving(true);
-
         try {
-            const updates: Record<string, unknown> = {
+            await firebaseUpdate(`plans/${planId}`, {
                 title: title.trim(),
                 genre,
                 duration: duration.trim(),
                 location: location.trim(),
                 date,
                 dateEnd,
-            };
-
-            if (imageFile) {
-                updates.image = await uploadFile(imageFile, 'plans', planId);
-            }
-
-            await firebaseUpdate(`plans/${planId}`, updates);
-            router.back();
+                details,
+            });
+            router.push(`/application/chukipus/${chukipuId}/plans/${planId}`);
         } catch (err) {
             console.error('Error saving plan:', err);
         } finally {
@@ -123,19 +313,14 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
 
     const handleDelete = async () => {
         if (!confirm('¿Seguro que quieres eliminar este plan?')) return;
-
         try {
             const chukipuSnap = await firebaseGet<{ planCount?: number }>(`chukipus/${chukipuId}`);
             const currentCount = chukipuSnap?.planCount || 1;
-
             await firebaseBatchUpdate({
                 [`plans/${planId}`]: null,
                 [`chukipus/${chukipuId}/planCount`]: Math.max(0, currentCount - 1),
             });
-
-            // Also remove all media for this plan
             await firebaseRemove(`planMedia/${planId}`);
-
             router.push(`/application/chukipus/${chukipuId}`);
         } catch (err) {
             console.error('Error deleting plan:', err);
@@ -143,38 +328,48 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
     };
 
     const handleToggleCompleted = async () => {
+        if (!plan) return;
         try {
-            await firebaseUpdate(`plans/${planId}`, {
-                completed: !plan.completed,
-            });
+            await firebaseUpdate(`plans/${planId}`, { completed: !plan.completed });
             setPlan({ ...plan, completed: !plan.completed });
         } catch (err) {
-            console.error('Error toggling plan:', err);
+            console.error(err);
         }
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setImageFile(file);
-            setImagePreview(URL.createObjectURL(file));
-        }
-    };
+    const backBtn = (
+        <button className={styles.backBtn} onClick={() => router.push(`/application/chukipus/${chukipuId}/plans/${planId}`)} aria-label="Volver">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </button>
+    );
+
+    if (loading) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.header}>{backBtn}<h1 className={styles.title}>Cargando...</h1><div className={styles.spacer38} /></div>
+            </div>
+        );
+    }
+
+    if (!plan) {
+        return (
+            <div className={styles.container}>
+                <div className={styles.header}>{backBtn}<h1 className={styles.title}>Error</h1><div className={styles.spacer38} /></div>
+                <div className={styles.content}><p className={styles.notFoundText}>Plan no encontrado.</p></div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.container}>
-            {/* Header */}
             <div className={styles.header}>
-                <button className={styles.backBtn} onClick={() => router.back()} aria-label="Volver">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                        <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                </button>
+                {backBtn}
                 <h1 className={styles.title}>Editar Plan</h1>
                 <div className={styles.spacer38} />
             </div>
 
-            {/* Content */}
             <div className={styles.content}>
                 {/* Completed toggle */}
                 <button
@@ -191,115 +386,99 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     {plan.completed ? 'Completado' : 'Marcar como completado'}
                 </button>
 
-                {/* Photo Upload (cover image) */}
-                <div className={styles.photoSection}>
-                    <div className={styles.photoPreviewWrap} style={{ position: 'relative' }}>
-                        {imagePreview ? (
-                            <Image src={imagePreview} alt="Preview" className={styles.photoPreview} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
-                        ) : (
-                            <div className={styles.photoPlaceholder}>
-                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                                    <circle cx="8.5" cy="8.5" r="1.5" />
-                                    <polyline points="21 15 16 10 5 21" />
-                                </svg>
-                            </div>
-                        )}
-                        <label className={styles.photoUploadBtn}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="17 8 12 3 7 8" />
-                                <line x1="12" y1="3" x2="12" y2="15" />
-                            </svg>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className={styles.hidden}
-                            />
-                        </label>
-                    </div>
-                    <span className={styles.photoHint}>Imagen de portada {imagePreview ? '(cambiar)' : '(opcional)'}</span>
-                </div>
-
                 {/* Title */}
                 <div className={styles.fieldGroup}>
-                    <label className={styles.fieldLabel}>Título</label>
+                    <label className={styles.fieldLabel}>{config.titleLabel}</label>
                     <div className={styles.inputWrap}>
                         <input
                             type="text"
-                            placeholder="Título del plan"
+                            placeholder={config.titlePlaceholder}
                             value={title}
                             onChange={e => setTitle(e.target.value)}
                             className={styles.input}
                             maxLength={60}
                         />
-                        {title && (
-                            <span className={styles.charCount}>{title.length}/60</span>
-                        )}
+                        {title && <span className={styles.charCount}>{title.length}/60</span>}
                     </div>
                 </div>
 
                 {/* Genre chips */}
-                <div className={styles.fieldGroup}>
-                    <label className={styles.fieldLabel}>Género <span className={styles.optional}>(opcional)</span></label>
-                    <div className={styles.chipsWrap}>
-                        {GENRES.map(g => (
-                            <button
-                                key={g}
-                                type="button"
-                                className={`${styles.chip} ${genre === g ? styles.chipSelected : ''}`}
-                                onClick={() => setGenre(genre === g ? '' : g)}
-                            >
-                                {g}
-                            </button>
-                        ))}
+                {config.genres && (
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>
+                            {config.genresLabel}
+                            {!config.genresRequired && <span className={styles.optional}> (opcional)</span>}
+                        </label>
+                        <div className={styles.chipsWrap}>
+                            {config.genres.map(g => (
+                                <button
+                                    key={g}
+                                    type="button"
+                                    className={`${styles.chip} ${genre === g ? styles.chipSelected : ''}`}
+                                    onClick={() => setGenre(genre === g ? '' : g)}
+                                >
+                                    {g}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Duration */}
-                <div className={styles.fieldGroup}>
-                    <label className={styles.fieldLabel}>Duración <span className={styles.optional}>(opcional)</span></label>
-                    <input
-                        type="text"
-                        placeholder="Ej: 2h 15min"
-                        value={duration}
-                        onChange={e => setDuration(e.target.value)}
-                        className={styles.input}
-                        maxLength={20}
-                    />
-                </div>
+                {config.showDuration && (
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>{config.durationLabel} <span className={styles.optional}>(opcional)</span></label>
+                        <input
+                            type="text"
+                            placeholder={config.durationPlaceholder}
+                            value={duration}
+                            onChange={e => setDuration(e.target.value)}
+                            className={styles.input}
+                            maxLength={30}
+                        />
+                    </div>
+                )}
 
                 {/* Location */}
-                <div className={styles.fieldGroup}>
-                    <label className={styles.fieldLabel}>Lugar <span className={styles.optional}>(opcional)</span></label>
-                    <input
-                        type="text"
-                        placeholder="Ej: Cine, Casa, Netflix..."
-                        value={location}
-                        onChange={e => setLocation(e.target.value)}
-                        className={styles.input}
-                        maxLength={40}
-                    />
-                </div>
+                {config.showLocation && (
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>
+                            {config.locationLabel}
+                            {!config.locationRequired && <span className={styles.optional}> (opcional)</span>}
+                        </label>
+                        <input
+                            type="text"
+                            placeholder={config.locationPlaceholder}
+                            value={location}
+                            onChange={e => setLocation(e.target.value)}
+                            className={styles.input}
+                            maxLength={80}
+                        />
+                    </div>
+                )}
 
                 {/* Date */}
-                <div className={styles.fieldGroup}>
-                    <label className={styles.fieldLabel}>Fecha y hora <span className={styles.optional}>(opcional)</span></label>
-                    <input
-                        type="datetime-local"
-                        value={date}
-                        onChange={e => setDate(e.target.value)}
-                        className={styles.input}
-                    />
-                </div>
+                {config.showDate && (
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>
+                            {config.dateLabel}
+                            {!config.dateRequired && <span className={styles.optional}> (opcional)</span>}
+                        </label>
+                        <input
+                            type={config.dateType === 'datetime' ? 'datetime-local' : 'date'}
+                            value={date}
+                            onChange={e => setDate(e.target.value)}
+                            className={styles.input}
+                        />
+                    </div>
+                )}
 
                 {/* End date */}
-                {date && (
+                {config.showDateEnd && (
                     <div className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>Fecha de fin <span className={styles.optional}>(opcional, si dura más de 1 día)</span></label>
+                        <label className={styles.fieldLabel}>{config.dateEndLabel} <span className={styles.optional}>(opcional)</span></label>
                         <input
-                            type="datetime-local"
+                            type={config.dateType === 'datetime' ? 'datetime-local' : 'date'}
                             value={dateEnd}
                             onChange={e => setDateEnd(e.target.value)}
                             className={styles.input}
@@ -307,6 +486,53 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                         />
                     </div>
                 )}
+
+                {/* Extra fields */}
+                {config.extraFields?.map(field => (
+                    <div key={field.key} className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel}>
+                            {field.label}
+                            {!field.required && <span className={styles.optional}> (opcional)</span>}
+                        </label>
+                        {field.type === 'textarea' ? (
+                            <div className={styles.inputWrap}>
+                                <textarea
+                                    placeholder={field.placeholder}
+                                    value={details[field.key] || ''}
+                                    onChange={e => setDetail(field.key, e.target.value)}
+                                    className={`${styles.input} ${styles.textarea}`}
+                                    maxLength={field.maxLength}
+                                    rows={3}
+                                />
+                                {details[field.key] && field.maxLength && (
+                                    <span className={styles.charCount}>{details[field.key].length}/{field.maxLength}</span>
+                                )}
+                            </div>
+                        ) : field.type === 'chips' ? (
+                            <div className={styles.chipsWrap}>
+                                {field.options?.map(opt => (
+                                    <button
+                                        key={opt}
+                                        type="button"
+                                        className={`${styles.chip} ${details[field.key] === opt ? styles.chipSelected : ''}`}
+                                        onClick={() => setDetail(field.key, details[field.key] === opt ? '' : opt)}
+                                    >
+                                        {opt}
+                                    </button>
+                                ))}
+                            </div>
+                        ) : (
+                            <input
+                                type={field.type}
+                                placeholder={field.placeholder}
+                                value={details[field.key] || ''}
+                                onChange={e => setDetail(field.key, e.target.value)}
+                                className={styles.input}
+                                maxLength={field.maxLength}
+                            />
+                        )}
+                    </div>
+                ))}
 
                 {/* Save button */}
                 <button
