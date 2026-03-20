@@ -43,6 +43,14 @@ vi.mock('@/components/BottomNav/BottomNav', () => ({
     default: () => <div data-testid="bottom-nav">BottomNav</div>,
 }));
 
+// Mock next/image
+vi.mock('next/image', () => ({
+    default: (props: Record<string, unknown>) => {
+        // eslint-disable-next-line @next/next/no-img-element
+        return <img {...props} alt={props.alt as string} />;
+    },
+}));
+
 // Mock Firebase Methods
 vi.mock('@/lib/firebaseMethods', () => ({
     firebaseGetList: vi.fn(),
@@ -115,5 +123,117 @@ describe('HomePage', () => {
         // Wait for the plan to appear
         const planTitles = await screen.findAllByText('Movie Night');
         expect(planTitles[0]).toBeInTheDocument();
+    });
+
+    it('renders like count badge when likesCount > 0 on the next plan card', async () => {
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: 'user123' },
+            loading: false,
+        } as ReturnType<typeof useAuth>);
+
+        vi.mocked(firebaseGetList).mockImplementation(async (collection: string) => {
+            if (collection === 'users') return [];
+            if (collection === 'chukipus') {
+                return [{ id: 'chuki1', name: 'Test Chukipu', createdBy: 'user123', members: ['user123'] }];
+            }
+            if (collection === 'plans') {
+                return [{
+                    id: 'plan1',
+                    chukipuId: 'chuki1',
+                    title: 'Liked Plan',
+                    category: 'Película',
+                    createdBy: 'user123',
+                    createdAt: Date.now(),
+                    likesCount: 42,
+                    likes: ['otherUser', 'anotherUser'],
+                    completed: false,
+                }];
+            }
+            return [];
+        });
+
+        render(<HomePage />);
+
+        // The like badge should display the count (using a unique number)
+        const likeCountElements = await screen.findAllByText('42');
+        expect(likeCountElements.length).toBeGreaterThan(0);
+    });
+
+    it('like display in home feed is NOT a button with click handler (display-only)', async () => {
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: 'user123' },
+            loading: false,
+        } as ReturnType<typeof useAuth>);
+
+        vi.mocked(firebaseGetList).mockImplementation(async (collection: string) => {
+            if (collection === 'users') return [];
+            if (collection === 'chukipus') {
+                return [{ id: 'chuki1', name: 'Test Chukipu', createdBy: 'user123', members: ['user123'] }];
+            }
+            if (collection === 'plans') {
+                return [{
+                    id: 'plan1',
+                    chukipuId: 'chuki1',
+                    title: 'Display Plan With Likes',
+                    category: 'Película',
+                    createdBy: 'user123',
+                    createdAt: Date.now(),
+                    likesCount: 77,
+                    likes: ['u1', 'u2'],
+                    completed: false,
+                }];
+            }
+            return [];
+        });
+
+        render(<HomePage />);
+
+        await screen.findAllByText('Display Plan With Likes');
+
+        // The like badge span should exist (unique count)
+        const likeCountSpans = screen.getAllByText('77');
+        expect(likeCountSpans.length).toBeGreaterThan(0);
+        // All occurrences should be inside a non-button container (display-only)
+        likeCountSpans.forEach(span => {
+            const badgeParent = span.closest('button');
+            expect(badgeParent).toBeNull();
+        });
+    });
+
+    it('does not render like badge when likesCount is 0 or undefined', async () => {
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: 'user123' },
+            loading: false,
+        } as ReturnType<typeof useAuth>);
+
+        vi.mocked(firebaseGetList).mockImplementation(async (collection: string) => {
+            if (collection === 'users') return [];
+            if (collection === 'chukipus') {
+                return [{ id: 'chuki1', name: 'Test Chukipu', createdBy: 'user123', members: ['user123'] }];
+            }
+            if (collection === 'plans') {
+                return [{
+                    id: 'plan1',
+                    chukipuId: 'chuki1',
+                    title: 'Zero Likes Unique Title 999',
+                    category: 'Película',
+                    createdBy: 'user123',
+                    createdAt: Date.now(),
+                    likesCount: 0,
+                    completed: false,
+                }];
+            }
+            return [];
+        });
+
+        render(<HomePage />);
+
+        await screen.findAllByText('Zero Likes Unique Title 999');
+
+        // The like badge (planLikeBadge div) should not be rendered at all when likesCount is 0
+        const allSpans = document.querySelectorAll('span');
+        // Check that none of the spans contain "0" as like count
+        const zeroSpans = Array.from(allSpans).filter(s => s.textContent === '0');
+        expect(zeroSpans.length).toBe(0);
     });
 });
