@@ -146,7 +146,7 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         titleLabel: 'Plan de salida',
         titlePlaceholder: 'Ej: Noche de bares, Concierto...',
         category: 'Salida',
-        genres: ['Bar', 'Discoteca', 'Concierto', 'Terraza', 'Karaoke', 'Cine', 'Restaurante', 'Otro'],
+        genres: ['Bar', 'Discoteca', 'Concierto', 'Terraza', 'Karaoke', 'Cine', 'Restaurante', 'Comida', 'Cena', 'Otro'],
         genresLabel: 'Tipo de salida',
         genresRequired: true,
         showLocation: true,
