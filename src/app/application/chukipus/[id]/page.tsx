@@ -276,8 +276,8 @@ export default function ChukipuDetailPage({
           </svg>
         </button>
 
-        {/* Edit button */}
-        <button
+        {/* Edit button — only for members */}
+        {isMember && <button
           className={styles.editBtn}
           onClick={() => router.push(`/application/chukipus/${id}/edit`)}
           aria-label="Editar Chukipu"
@@ -293,7 +293,7 @@ export default function ChukipuDetailPage({
             <circle cx="12" cy="12" r="2" />
             <circle cx="12" cy="19" r="2" />
           </svg>
-        </button>
+        </button>}
 
         {/* Hero content */}
         <div className={styles.heroContent}>
