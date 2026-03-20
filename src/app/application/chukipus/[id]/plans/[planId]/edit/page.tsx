@@ -268,9 +268,18 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
             try {
                 const data = await firebaseGet<Plan>(`plans/${planId}`);
                 if (data) {
-                    if (user && data.createdBy !== user.uid) {
-                        router.replace(`/application/chukipus/${chukipuId}/plans/${planId}`);
-                        return;
+                    if (user) {
+                        const membersData = await firebaseGet<Record<string, boolean> | string[]>(`chukipus/${chukipuId}/members`);
+                        let isMember = false;
+                        if (Array.isArray(membersData)) {
+                            isMember = membersData.includes(user.uid);
+                        } else if (membersData) {
+                            isMember = membersData[user.uid] === true;
+                        }
+                        if (!isMember) {
+                            router.replace(`/application/chukipus/${chukipuId}/plans/${planId}`);
+                            return;
+                        }
                     }
                     setPlan(data);
                     const slug = CATEGORY_TO_SLUG[data.category] || 'cartelera';

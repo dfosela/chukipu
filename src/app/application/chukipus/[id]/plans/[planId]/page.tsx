@@ -292,7 +292,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                             </svg>
                         </button>
                     )}
-                    {isCreator && (
+                    {isMember && (
                         <button
                             className={styles.editHeaderBtn}
                             onClick={() => router.push(`/application/chukipus/${chukipuId}/plans/${planId}/edit`)}
