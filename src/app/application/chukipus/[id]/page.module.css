@@ -340,6 +340,7 @@
 /* Search bar */
 .searchWrap {
   padding: var(--space-sm) var(--space-md);
+  margin-top: var(--space-md);
   width: 100%;
 }
 
