@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import BottomNav from '@/components/BottomNav/BottomNav';
 import { firebaseGetList } from '@/lib/firebaseMethods';
@@ -81,12 +82,9 @@ function getNextPlan(plans: FeedPlan[]): FeedPlan | null {
   return incomplete[0] || null;
 }
 
-const BATCH_SIZE = 6;
-
 export default function HomePage() {
   const [allPlans, setAllPlans] = useState<FeedPlan[]>([]);
   const [recommendedPlansByCategory, setRecommendedPlansByCategory] = useState<Record<string, FeedPlan[]>>({});
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -210,8 +208,8 @@ export default function HomePage() {
   }, []);
 
   const loadMore = useCallback(() => {
-    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, allPlans.length));
-  }, [allPlans.length]);
+    // pagination placeholder - visible count is managed elsewhere
+  }, []);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -227,9 +225,6 @@ export default function HomePage() {
   }, [loadMore]);
 
   const nextPlan = getNextPlan(allPlans);
-  const feedPlans = allPlans
-    .filter(p => p.id !== nextPlan?.id)
-    .slice(0, visibleCount);
   const isEmpty = allPlans.length === 0;
   const hasRecommended = Object.keys(recommendedPlansByCategory).length > 0;
 
@@ -247,9 +242,9 @@ export default function HomePage() {
         <div className={styles.headerLogoWrap}>
           <div className={styles.headerLogoCenter}>
             {theme === 'dark' ? (
-              <img src="/logos/chukipu-logo-pink.png" alt="Chukipu" className={styles.navMainIcon} />
+              <Image src="/logos/chukipu-logo-pink.png" alt="Chukipu" className={styles.navMainIcon} width={80} height={24} />
             ) : (
-              <img src="/logos/chukipu-logo-brown.png" alt="Chukipu" className={styles.navMainIcon} />
+              <Image src="/logos/chukipu-logo-brown.png" alt="Chukipu" className={styles.navMainIcon} width={80} height={24} />
             )}
           </div>
         </div>
@@ -323,9 +318,9 @@ export default function HomePage() {
                 <div className={styles.nextPlanCard}
                   onClick={() => router.push(`/application/chukipus/${nextPlan.chukipuId}/plans/${nextPlan.id}`)}
                 >
-                  <div className={styles.nextPlanImageWrap}>
+                  <div className={styles.nextPlanImageWrap} style={{ position: 'relative' }}>
                     {nextPlan.image ? (
-                      <img src={nextPlan.image} alt={nextPlan.title} className={styles.nextPlanImage} />
+                      <Image src={nextPlan.image} alt={nextPlan.title} className={styles.nextPlanImage} fill style={{ objectFit: 'cover' }} />
                     ) : (
                       <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[nextPlan.category] || '#e8749a'}20` } as React.CSSProperties}>
                         {CATEGORY_ICONS[nextPlan.category] ? (
@@ -405,9 +400,9 @@ export default function HomePage() {
                         {plans.map(plan => (
                           <div key={plan.id} className={styles.recommendedCardWrapper}>
                             <div className={styles.nextPlanCard} onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}>
-                              <div className={styles.nextPlanImageWrap} style={{ aspectRatio: '16/10' }}>
+                              <div className={styles.nextPlanImageWrap} style={{ aspectRatio: '16/10', position: 'relative' }}>
                                 {plan.image ? (
-                                  <img src={plan.image} alt={plan.title} className={styles.nextPlanImage} />
+                                  <Image src={plan.image} alt={plan.title} className={styles.nextPlanImage} fill style={{ objectFit: 'cover' }} />
                                 ) : (
                                   <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[plan.category] || '#e8749a'}20` } as React.CSSProperties}>
                                     {CATEGORY_ICONS[plan.category] ? (

@@ -2,6 +2,7 @@
 
 import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from '../page.module.css';
 import { firebaseGet, firebaseUpdate, firebaseRemove, firebaseBatchUpdate, uploadFile } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
@@ -192,9 +193,9 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
 
                 {/* Photo Upload (cover image) */}
                 <div className={styles.photoSection}>
-                    <div className={styles.photoPreviewWrap}>
+                    <div className={styles.photoPreviewWrap} style={{ position: 'relative' }}>
                         {imagePreview ? (
-                            <img src={imagePreview} alt="Preview" className={styles.photoPreview} />
+                            <Image src={imagePreview} alt="Preview" className={styles.photoPreview} fill style={{ objectFit: 'cover' }} />
                         ) : (
                             <div className={styles.photoPlaceholder}>
                                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">

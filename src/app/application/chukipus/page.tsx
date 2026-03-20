@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import BottomNav from '@/components/BottomNav/BottomNav';
 import { useEffect } from 'react';
+import Image from 'next/image';
 import { firebaseGet, firebaseGetList } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
 import { Chukipu } from '@/types/firestore';
@@ -12,7 +13,7 @@ import { Chukipu } from '@/types/firestore';
 export default function ChukipusPage() {
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+    const [viewMode] = useState<'grid' | 'list'>('list');
     const [search, setSearch] = useState('');
     const [myChukipus, setMyChukipus] = useState<Chukipu[]>([]);
     const [loading, setLoading] = useState(true);
@@ -107,7 +108,7 @@ export default function ChukipusPage() {
 }
 
 function ChukipuCard({
-    chukipu, listMode, delay, onClick
+    chukipu, delay, onClick
 }: {
     chukipu: Chukipu;
     listMode: boolean;
@@ -124,8 +125,8 @@ function ChukipuCard({
             style={{ '--delay': `${delay}s` } as React.CSSProperties}
             onClick={onClick}
         >
-            <div className={styles.cardImage}>
-                {chukipu.image && <img src={chukipu.image} alt={chukipu.name} />}
+            <div className={styles.cardImage} style={{ position: 'relative' }}>
+                {chukipu.image && <Image src={chukipu.image} alt={chukipu.name} fill style={{ objectFit: 'cover' }} />}
                 <div className={styles.cardOverlay} />
             </div>
 
@@ -178,14 +179,14 @@ function MemberAvatar({ uid }: { uid: string }) {
                         setInitial(u.displayName.charAt(0).toUpperCase());
                     }
                 }
-            } catch (err) { }
+            } catch { }
         }
         fetchUser();
         return () => { isMounted = false; };
     }, [uid]);
 
     if (avatar) {
-        return <img src={avatar} alt="Miembro" />;
+        return <Image src={avatar} alt="Miembro" width={32} height={32} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />;
     }
 
     return (

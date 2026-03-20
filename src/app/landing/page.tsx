@@ -2,23 +2,20 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, useAnimation, AnimatePresence, Variants } from 'framer-motion';
+import Image from 'next/image';
+import { motion, useAnimation, Variants } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
     Users,
     Map,
     Heart,
-    ChevronRight,
     Download,
     Calendar,
     Compass,
     Lock,
-    Smartphone,
     UserPlus,
     Sparkles,
     ArrowRight,
-    Menu,
-    X
 } from 'lucide-react';
 
 import styles from './page.module.css';
@@ -71,6 +68,97 @@ const Button = ({ children, variant = 'primary', className = '', onClick }: { ch
     );
 };
 
+// --- Particle class (module scope) ---
+class Particle {
+    x: number;
+    y: number;
+    size: number;
+    speedX: number;
+    speedY: number;
+    baseX: number;
+    baseY: number;
+    density: number;
+    angle: number;
+    spinSpeed: number;
+    opacity: number;
+    color: string;
+
+    constructor(x: number, y: number, isFar: boolean = false) {
+        this.x = x;
+        this.y = y;
+        this.baseX = x;
+        this.baseY = y;
+        this.size = Math.random() * 10 + 3;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.density = (Math.random() * 30) + 5;
+        this.angle = Math.random() * 360;
+        this.spinSpeed = (Math.random() - 0.5) * 5;
+        this.opacity = (Math.random() * 0.5 + 0.3) * (isFar ? 0.4 : 1);
+
+        const colors = [
+            '#FF4081', '#F50057', '#FF80AB', '#FF1744', '#F5004F',
+            '#FF5252', '#FF4081', '#EC407A', '#F06292', '#E91E63',
+            '#D81B60', '#C2185B', '#FF6E40', '#FF3D00', '#FF8A80'
+        ];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.angle * Math.PI) / 180);
+
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+
+        const d = this.size;
+        ctx.beginPath();
+        ctx.moveTo(0, d / 4);
+        ctx.quadraticCurveTo(0, 0, d / 4, 0);
+        ctx.quadraticCurveTo(d / 2, 0, d / 2, d / 4);
+        ctx.quadraticCurveTo(d / 2, 0, d * 3 / 4, 0);
+        ctx.quadraticCurveTo(d, 0, d, d / 4);
+        ctx.quadraticCurveTo(d, d / 2, d / 2, d * 3 / 4);
+        ctx.quadraticCurveTo(0, d / 2, 0, d / 4);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    update(mouse: { x: number; y: number }) {
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const forceDirectionX = dx / distance;
+        const forceDirectionY = dy / distance;
+        const maxDistance = 200;
+        const force = (maxDistance - distance) / maxDistance;
+        const directionX = forceDirectionX * force * this.density;
+        const directionY = forceDirectionY * force * this.density;
+
+        if (distance < maxDistance) {
+            this.speedX -= directionX * 0.5;
+            this.speedY -= directionY * 0.5;
+        } else {
+            if (this.x !== this.baseX) {
+                const dx = this.x - this.baseX;
+                this.speedX += dx / 80;
+            }
+            if (this.y !== this.baseY) {
+                const dy = this.y - this.baseY;
+                this.speedY += dy / 80;
+            }
+        }
+
+        this.speedX *= 0.85;
+        this.speedY *= 0.85;
+
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.angle += this.spinSpeed;
+    }
+}
+
 // --- Particles Component ---
 const HeartParticles = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -105,97 +193,6 @@ const HeartParticles = () => {
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseout', handleMouseLeave);
 
-        class Particle {
-            x: number;
-            y: number;
-            size: number;
-            speedX: number;
-            speedY: number;
-            baseX: number;
-            baseY: number;
-            density: number;
-            angle: number;
-            spinSpeed: number;
-            opacity: number;
-            color: string;
-
-            constructor(x: number, y: number, isFar: boolean = false) {
-                this.x = x;
-                this.y = y;
-                this.baseX = x;
-                this.baseY = y;
-                this.size = Math.random() * 10 + 3;
-                this.speedX = 0;
-                this.speedY = 0;
-                this.density = (Math.random() * 30) + 5;
-                this.angle = Math.random() * 360;
-                this.spinSpeed = (Math.random() - 0.5) * 5;
-                this.opacity = (Math.random() * 0.5 + 0.3) * (isFar ? 0.4 : 1);
-
-                const colors = [
-                    '#FF4081', '#F50057', '#FF80AB', '#FF1744', '#F5004F',
-                    '#FF5252', '#FF4081', '#EC407A', '#F06292', '#E91E63',
-                    '#D81B60', '#C2185B', '#FF6E40', '#FF3D00', '#FF8A80'
-                ];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            draw() {
-                if (!ctx) return;
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate((this.angle * Math.PI) / 180);
-
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.opacity;
-
-                const d = this.size;
-                ctx.beginPath();
-                ctx.moveTo(0, d / 4);
-                ctx.quadraticCurveTo(0, 0, d / 4, 0);
-                ctx.quadraticCurveTo(d / 2, 0, d / 2, d / 4);
-                ctx.quadraticCurveTo(d / 2, 0, d * 3 / 4, 0);
-                ctx.quadraticCurveTo(d, 0, d, d / 4);
-                ctx.quadraticCurveTo(d, d / 2, d / 2, d * 3 / 4);
-                ctx.quadraticCurveTo(0, d / 2, 0, d / 4);
-                ctx.fill();
-                ctx.restore();
-            }
-
-            update() {
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                const forceDirectionX = dx / distance;
-                const forceDirectionY = dy / distance;
-                const maxDistance = 200;
-                const force = (maxDistance - distance) / maxDistance;
-                const directionX = forceDirectionX * force * this.density;
-                const directionY = forceDirectionY * force * this.density;
-
-                if (distance < maxDistance) {
-                    this.speedX -= directionX * 0.5;
-                    this.speedY -= directionY * 0.5;
-                } else {
-                    if (this.x !== this.baseX) {
-                        const dx = this.x - this.baseX;
-                        this.speedX += dx / 80;
-                    }
-                    if (this.y !== this.baseY) {
-                        const dy = this.y - this.baseY;
-                        this.speedY += dy / 80;
-                    }
-                }
-
-                this.speedX *= 0.85;
-                this.speedY *= 0.85;
-
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.angle += this.spinSpeed;
-            }
-        }
-
         const init = () => {
             particles = [];
             const centerX = canvas.width / 2;
@@ -222,8 +219,8 @@ const HeartParticles = () => {
             if (!ctx || !canvas) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (let i = 0; i < particles.length; i++) {
-                particles[i].draw();
-                particles[i].update();
+                particles[i].draw(ctx);
+                particles[i].update(mouse);
             }
             animationFrameId = requestAnimationFrame(animate);
         };
@@ -443,10 +440,12 @@ export default function App() {
                     {/* Left: Logo */}
                     <div className={styles.navLogoContainer}>
                         <div className={styles.logo}>
-                            <img
+                            <Image
                                 src="/logos/chukipu-logo-pink.png"
                                 alt="Chukipu Logo"
                                 className={styles.navLogoImg}
+                                width={120}
+                                height={36}
                             />
                         </div>
                     </div>
@@ -515,10 +514,12 @@ export default function App() {
                         <FadeIn delay={0.1} direction="right">
                             <div className={styles.mockupCardWrapperLarge}>
                                 <div className={styles.mockupCardLarge}>
-                                    <img
+                                    <Image
                                         src="/img/muckup1.png"
                                         alt="Chukipu App Mockup"
                                         className={styles.mockupImage}
+                                        width={400}
+                                        height={600}
                                     />
                                 </div>
                             </div>
@@ -688,10 +689,12 @@ export default function App() {
             <footer id="footer" className={styles.footer}>
                 <div className={styles.footerContainer}>
                     <div className={styles.logo}>
-                        <img
+                        <Image
                             src="/logos/chukipu-logo-pink.png"
                             alt="Chukipu Logo"
                             className={styles.navLogoImg}
+                            width={120}
+                            height={36}
                         />
                     </div>
                     <div className={styles.footerLinks}>

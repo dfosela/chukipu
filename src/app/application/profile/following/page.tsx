@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { useAuth } from '@/contexts/AuthContext';
 import { firebaseGet, firebaseUpdate } from '@/lib/firebaseMethods';
@@ -96,10 +97,13 @@ export default function SiguiendoPage() {
                 ) : (
                     following.map((u, i) => (
                         <div key={u.id} className={styles.userItem} style={{ '--delay': `${i * 0.04}s` } as React.CSSProperties}>
-                            <img
+                            <Image
                                 src={u.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${u.displayName}`}
                                 alt={u.displayName}
                                 className={styles.userAvatar}
+                                width={40}
+                                height={40}
+                                style={{ objectFit: 'cover' }}
                             />
                             <div className={styles.userInfo}>
                                 <span className={styles.userName}>{u.displayName}</span>

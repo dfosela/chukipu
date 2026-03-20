@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import BottomNav from '@/components/BottomNav/BottomNav';
@@ -158,7 +159,7 @@ export default function ExplorePage() {
         });
 
         setPublicPlansByCategory(grouped);
-    }, [usersLoaded, allUsers, publicChukipus, user, plansLoading]);
+    }, [usersLoaded, allUsers, publicChukipus, user, plansLoading, publicPlansByCategory]);
 
     const filters = [
         'Todos', 'Película', 'Viaje', 'Comida', 'Escapada', 'Deporte',
@@ -437,7 +438,7 @@ export default function ExplorePage() {
                                     style={{ '--delay': `${idx * 0.04}s` } as React.CSSProperties}
                                 >
                                     {u.avatar ? (
-                                        <img src={u.avatar} alt={u.displayName} className={styles.userCardAvatar} />
+                                        <Image src={u.avatar} alt={u.displayName} className={styles.userCardAvatar} width={40} height={40} style={{ objectFit: 'cover' }} />
                                     ) : (
                                         <div className={styles.userCardAvatarPlaceholder}>
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -478,8 +479,8 @@ function ExploreCard({
     const [hoveredStar, setHoveredStar] = useState(0);
 
     return (
-        <div className={styles.card} style={{ '--delay': `${delay}s` } as React.CSSProperties}>
-            {chukipu.image && <img src={chukipu.image} alt={chukipu.name} className={styles.cardImage} />}
+        <div className={styles.card} style={{ '--delay': `${delay}s`, position: 'relative' } as React.CSSProperties}>
+            {chukipu.image && <Image src={chukipu.image} alt={chukipu.name} className={styles.cardImage} fill style={{ objectFit: 'cover' }} />}
             <div className={styles.cardOverlay} />
             <div className={styles.ratingBadge}>
                 <span>{(chukipu.ratingAverage ?? 0).toFixed(1)}</span>

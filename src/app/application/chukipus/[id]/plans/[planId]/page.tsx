@@ -2,6 +2,7 @@
 
 import { useState, use, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import styles from './page.module.css';
 import {
     firebaseGet,
@@ -432,7 +433,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                         <div className={styles.mediaGrid}>
                             {media.map((item) => (
                                 <div key={item.id} className={styles.mediaItem}>
-                                    <div className={styles.mediaAssetWrap}>
+                                    <div className={styles.mediaAssetWrap} style={{ position: 'relative' }}>
                                         {item.type === 'video' ? (
                                             <video
                                                 src={item.url}
@@ -441,10 +442,12 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                                                 playsInline
                                             />
                                         ) : (
-                                            <img
+                                            <Image
                                                 src={item.url}
                                                 alt="Foto del plan"
                                                 className={styles.mediaAsset}
+                                                fill
+                                                style={{ objectFit: 'cover' }}
                                             />
                                         )}
                                         {item.uploadedBy === user?.uid && (
@@ -462,7 +465,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                                     </div>
                                     <div className={styles.mediaFooter}>
                                         {item.uploaderAvatar ? (
-                                            <img src={item.uploaderAvatar} alt={item.uploaderName} className={styles.mediaAvatar} />
+                                            <Image src={item.uploaderAvatar} alt={item.uploaderName} className={styles.mediaAvatar} width={24} height={24} style={{ objectFit: 'cover' }} />
                                         ) : (
                                             <div className={styles.mediaAvatarPlaceholder}>
                                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

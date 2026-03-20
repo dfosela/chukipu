@@ -3,9 +3,10 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import { firebaseGet, firebaseUpdate, firebaseBatchUpdate, firebaseGetList } from '@/lib/firebaseMethods';
+import { firebaseGet, firebaseUpdate, firebaseBatchUpdate } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserProfile, Chukipu, Plan } from '@/types/firestore';
+import { UserProfile, Plan } from '@/types/firestore';
+import Image from 'next/image';
 import { sendNotification } from '@/lib/notifications';
 import { db } from '@/lib/firebase';
 import { ref, onValue } from 'firebase/database';
@@ -140,6 +141,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
             unsubsChukis();
         };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, loading, profileData, isOwnProfile, user]);
 
     const handleFollow = async () => {
@@ -287,10 +289,13 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                 <div className={styles.profileHeader}>
                     <div className={styles.avatarWrap}>
                         {profileData.avatar ? (
-                            <img
+                            <Image
                                 src={profileData.avatar}
                                 alt={profileData.displayName || 'User'}
                                 className={styles.avatarImg}
+                                width={80}
+                                height={80}
+                                style={{ objectFit: 'cover' }}
                             />
                         ) : (
                             <div className={styles.avatarPlaceholder}>
@@ -375,8 +380,8 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                                 onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
                             >
                                 {plan.image ? (
-                                    <div className={styles.gridItemContent}>
-                                        <img src={plan.image} alt={plan.title} className={styles.gridImg} />
+                                    <div className={styles.gridItemContent} style={{ position: 'relative' }}>
+                                        <Image src={plan.image} alt={plan.title} className={styles.gridImg} fill style={{ objectFit: 'cover' }} />
                                         <span className={styles.gridTitle}>{plan.title}</span>
                                     </div>
                                 ) : (

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
+import Image from "next/image";
 import styles from "./page.module.css";
 import BottomNav from "@/components/BottomNav/BottomNav";
 import {
@@ -242,12 +243,14 @@ export default function ChukipuDetailPage({
   return (
     <div className={styles.container}>
       {/* Hero image */}
-      <div className={styles.hero}>
+      <div className={styles.hero} style={{ position: 'relative' }}>
         {chukipu.image && (
-          <img
+          <Image
             src={chukipu.image}
             alt={chukipu.name}
             className={styles.heroImg}
+            fill
+            style={{ objectFit: 'cover' }}
           />
         )}
         <div className={styles.heroOverlay} />
@@ -326,11 +329,14 @@ export default function ChukipuDetailPage({
                     style={{ zIndex: members.length - i }}
                   >
                     {m.photoURL ? (
-                      <img
+                      <Image
                         src={m.photoURL}
                         alt={m.displayName}
                         title={m.displayName}
                         className={styles.memberAvatar}
+                        width={32}
+                        height={32}
+                        style={{ objectFit: 'cover' }}
                       />
                     ) : (
                       <div

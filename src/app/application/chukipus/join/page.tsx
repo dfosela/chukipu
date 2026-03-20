@@ -77,6 +77,7 @@ export default function UnirseChukipuPage() {
                 joinWithCode(codeParam.toUpperCase());
             }, 0);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, user]);
 
     const handleJoin = () => joinWithCode(code);
