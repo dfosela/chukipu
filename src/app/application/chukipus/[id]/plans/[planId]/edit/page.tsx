@@ -257,6 +257,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
     const [details, setDetails] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const setDetail = (key: string, val: string) =>
         setDetails(prev => ({ ...prev, [key]: val }));
@@ -312,7 +313,6 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
     };
 
     const handleDelete = async () => {
-        if (!confirm('¿Seguro que quieres eliminar este plan?')) return;
         try {
             const chukipuSnap = await firebaseGet<{ planCount?: number }>(`chukipus/${chukipuId}`);
             const currentCount = chukipuSnap?.planCount || 1;
@@ -544,7 +544,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                 </button>
 
                 {/* Delete button */}
-                <button className={styles.deleteBtn} onClick={handleDelete}>
+                <button className={styles.deleteBtn} onClick={() => setShowDeleteConfirm(true)}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                         <polyline points="3 6 5 6 21 6" />
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -552,6 +552,19 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     Eliminar plan
                 </button>
             </div>
+
+            {showDeleteConfirm && (
+                <div className={styles.confirmOverlay} onClick={() => setShowDeleteConfirm(false)}>
+                    <div className={styles.confirmSheet} onClick={e => e.stopPropagation()}>
+                        <p className={styles.confirmTitle}>¿Eliminar plan?</p>
+                        <p className={styles.confirmDesc}>Esta acción no se puede deshacer.</p>
+                        <div className={styles.confirmActions}>
+                            <button className={styles.confirmCancel} onClick={() => setShowDeleteConfirm(false)}>Cancelar</button>
+                            <button className={styles.confirmDelete} onClick={handleDelete}>Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

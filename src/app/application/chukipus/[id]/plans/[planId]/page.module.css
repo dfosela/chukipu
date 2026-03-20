@@ -392,6 +392,95 @@
     opacity: 0.7;
 }
 
+/* ── Delete confirm modal ── */
+.confirmOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9998;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    animation: fadeIn 0.18s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.confirmSheet {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface-strong, #2a2a2e);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 24px var(--space-md) calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+    animation: slideUp 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+.confirmTitle {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px;
+    text-align: center;
+}
+
+.confirmDesc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 24px;
+    text-align: center;
+}
+
+.confirmActions {
+    display: flex;
+    gap: 10px;
+}
+
+.confirmCancel {
+    flex: 1;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.confirmCancel:active {
+    opacity: 0.7;
+}
+
+.confirmDelete {
+    flex: 1;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: #e53935;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.confirmDelete:active {
+    opacity: 0.85;
+}
+
 /* ── Media Grid ── */
 .mediaGrid {
     display: flex;
