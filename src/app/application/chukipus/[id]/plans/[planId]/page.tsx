@@ -152,14 +152,15 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     const handleTogglePin = async () => {
         if (!isMember || isPinning || !user) return;
         setIsPinning(true);
-        const isPinned = plan.pinnedBy?.[user.uid] === true;
+        const uid = user.uid;
+        const isPinned = plan.pinnedBy?.[uid] === true;
         const newVal = !isPinned;
-        setPlan(prev => prev ? { ...prev, pinnedBy: { ...prev.pinnedBy, [user.uid]: newVal } } : prev);
+        setPlan(prev => prev ? { ...prev, pinnedBy: { ...prev.pinnedBy, [uid]: newVal } } : prev);
         try {
-            await firebaseBatchUpdate({ [`plans/${planId}/pinnedBy/${user.uid}`]: newVal ? true : null });
+            await firebaseBatchUpdate({ [`plans/${planId}/pinnedBy/${uid}`]: newVal ? true : null });
         } catch (err) {
             console.error(err);
-            setPlan(prev => prev ? { ...prev, pinnedBy: { ...prev.pinnedBy, [user.uid]: isPinned } } : prev);
+            setPlan(prev => prev ? { ...prev, pinnedBy: { ...prev.pinnedBy, [uid]: isPinned } } : prev);
         } finally {
             setIsPinning(false);
         }
@@ -179,11 +180,12 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
     const handleToggleLike = async () => {
         if (!isMember || !user) return;
+        const uid = user.uid;
         const currentLikes = plan.likes || [];
-        const isLiked = currentLikes.includes(user.uid);
+        const isLiked = currentLikes.includes(uid);
         const newLikes = isLiked
-            ? currentLikes.filter(uid => uid !== user.uid)
-            : [...currentLikes, user.uid];
+            ? currentLikes.filter(u => u !== uid)
+            : [...currentLikes, uid];
         const newCount = newLikes.length;
         setPlan(prev => prev ? { ...prev, likes: newLikes, likesCount: newCount } : prev);
         try {

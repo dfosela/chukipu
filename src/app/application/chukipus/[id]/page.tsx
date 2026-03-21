@@ -223,11 +223,12 @@ export default function ChukipuDetailPage({
 
   const handleToggleLike = async (plan: Plan) => {
     if (!isMember || !user) return;
+    const uid = user.uid;
     const currentLikes = plan.likes || [];
-    const isLiked = currentLikes.includes(user.uid);
+    const isLiked = currentLikes.includes(uid);
     const newLikes = isLiked
-      ? currentLikes.filter((uid) => uid !== user.uid)
-      : [...currentLikes, user.uid];
+      ? currentLikes.filter((u) => u !== uid)
+      : [...currentLikes, uid];
     const newCount = newLikes.length;
     setPlans((prev) =>
       prev.map((p) =>
