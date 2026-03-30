@@ -27,6 +27,7 @@ type CategoryConfig = {
     genres?: string[];
     genresLabel?: string;
     genresRequired?: boolean;
+    genresMax?: number;
     showDuration?: boolean;
     durationLabel?: string;
     durationPlaceholder?: string;
@@ -56,6 +57,7 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         genres: ['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia ficción', 'Romance', 'Animación', 'Thriller', 'Documental', 'Fantasía', 'Musical', 'Aventura'],
         genresLabel: 'Género',
         genresRequired: true,
+        genresMax: 2,
         showLocation: true,
         locationLabel: 'Dónde verla',
         locationPlaceholder: 'Ej: Cine, Casa, Netflix...',
@@ -252,7 +254,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
     const [plan, setPlan] = useState<Plan | null>(null);
     const [config, setConfig] = useState<CategoryConfig>(CATEGORY_CONFIG.cartelera);
     const [title, setTitle] = useState('');
-    const [genre, setGenre] = useState('');
+    const [genres, setGenres] = useState<string[]>([]);
     const [duration, setDuration] = useState('');
     const [location, setLocation] = useState('');
     const [date, setDate] = useState('');
@@ -290,7 +292,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     const slug = CATEGORY_TO_SLUG[data.category] || 'cartelera';
                     setConfig(CATEGORY_CONFIG[slug] || CATEGORY_CONFIG.cartelera);
                     setTitle(data.title);
-                    setGenre(data.genre || '');
+                    setGenres(data.genre ? data.genre.split(', ').filter(Boolean) : []);
                     setDuration(data.duration || '');
                     setLocation(data.location || '');
                     setDate(data.date || '');
@@ -312,7 +314,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
         try {
             await firebaseUpdate(`plans/${planId}`, {
                 title: title.trim(),
-                genre,
+                genre: genres.join(', '),
                 duration: duration.trim(),
                 location: location.trim(),
                 date,
@@ -452,19 +454,34 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     <div className={styles.fieldGroup}>
                         <label className={styles.fieldLabel}>
                             {config.genresLabel}
-                            {!config.genresRequired && <span className={styles.optional}> (opcional)</span>}
+                            {config.genresMax && config.genresMax > 1
+                                ? <span className={styles.optional}> (máx. {config.genresMax})</span>
+                                : !config.genresRequired && <span className={styles.optional}> (opcional)</span>
+                            }
                         </label>
                         <div className={styles.chipsWrap}>
-                            {config.genres.map(g => (
-                                <button
-                                    key={g}
-                                    type="button"
-                                    className={`${styles.chip} ${genre === g ? styles.chipSelected : ''}`}
-                                    onClick={() => setGenre(genre === g ? '' : g)}
-                                >
-                                    {g}
-                                </button>
-                            ))}
+                            {config.genres.map(g => {
+                                const isSelected = genres.includes(g);
+                                const atMax = genres.length >= (config.genresMax ?? 1) && !isSelected;
+                                return (
+                                    <button
+                                        key={g}
+                                        type="button"
+                                        className={`${styles.chip} ${isSelected ? styles.chipSelected : ''} ${atMax ? styles.chipDisabled : ''}`}
+                                        onClick={() => {
+                                            const max = config.genresMax ?? 1;
+                                            if (isSelected) {
+                                                setGenres(genres.filter(x => x !== g));
+                                            } else if (genres.length < max) {
+                                                setGenres([...genres, g]);
+                                            }
+                                        }}
+                                        disabled={atMax}
+                                    >
+                                        {g}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -582,7 +599,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                 {/* Save button */}
                 <button
                     className={styles.saveBtn}
-                    disabled={!title.trim() || isSaving || (config.extraFields?.filter(f => f.required).some(f => !(details[f.key] || '').trim()) ?? false) || (config.genresRequired && !genre)}
+                    disabled={!title.trim() || isSaving || (config.extraFields?.filter(f => f.required).some(f => !(details[f.key] || '').trim()) ?? false) || (config.genresRequired && genres.length === 0)}
                     onClick={handleSave}
                 >
                     {isSaving ? 'Guardando...' : 'Guardar cambios'}

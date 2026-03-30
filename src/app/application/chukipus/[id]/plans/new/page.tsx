@@ -26,6 +26,7 @@ type CategoryConfig = {
     genres?: string[];
     genresLabel?: string;
     genresRequired?: boolean;
+    genresMax?: number;
     showDuration?: boolean;
     durationLabel?: string;
     durationPlaceholder?: string;
@@ -55,6 +56,7 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         genres: ['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia ficción', 'Romance', 'Animación', 'Thriller', 'Documental', 'Fantasía', 'Musical', 'Aventura'],
         genresLabel: 'Género',
         genresRequired: true,
+        genresMax: 2,
         showLocation: true,
         locationLabel: 'Dónde verla',
         locationPlaceholder: 'Ej: Cine, Casa, Netflix...',
@@ -240,7 +242,7 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
     const { user } = useAuth();
 
     const [title, setTitle] = useState('');
-    const [genre, setGenre] = useState('');
+    const [genres, setGenres] = useState<string[]>([]);
     const [duration, setDuration] = useState('');
     const [location, setLocation] = useState('');
     const [date, setDate] = useState('');
@@ -268,7 +270,7 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                     description: '',
                     image: '',
                     category: config.category,
-                    genre: genre || '',
+                    genre: genres.join(', '),
                     duration: duration.trim(),
                     location: location.trim(),
                     date,
@@ -306,9 +308,18 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
     const requiredExtras = config.extraFields?.filter(f => f.required) ?? [];
     const optionalExtras = config.extraFields?.filter(f => !f.required) ?? [];
 
+    const toggleGenre = (g: string) => {
+        const max = config.genresMax ?? 1;
+        if (genres.includes(g)) {
+            setGenres(genres.filter(x => x !== g));
+        } else if (genres.length < max) {
+            setGenres([...genres, g]);
+        }
+    };
+
     const isValid =
         title.trim().length > 0 &&
-        (!config.genres || config.genresRequired === false || genre.length > 0) &&
+        (!config.genres || config.genresRequired === false || genres.length > 0) &&
         (!config.locationRequired || location.trim().length > 0) &&
         (!config.dateRequired || date.length > 0) &&
         requiredExtras.every(f => (details[f.key] || '').trim().length > 0);
@@ -412,19 +423,27 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
                     <div className={styles.fieldGroup}>
                         <label className={styles.fieldLabel}>
                             {config.genresLabel || 'Género'}
-                            {config.genresRequired === false && <span className={styles.optional}> (opcional)</span>}
+                            {config.genresMax && config.genresMax > 1
+                                ? <span className={styles.optional}> (máx. {config.genresMax})</span>
+                                : config.genresRequired === false && <span className={styles.optional}> (opcional)</span>
+                            }
                         </label>
                         <div className={styles.chipsWrap}>
-                            {config.genres.map(g => (
-                                <button
-                                    key={g}
-                                    type="button"
-                                    className={`${styles.chip} ${genre === g ? styles.chipSelected : ''}`}
-                                    onClick={() => setGenre(genre === g ? '' : g)}
-                                >
-                                    {g}
-                                </button>
-                            ))}
+                            {config.genres.map(g => {
+                                const isSelected = genres.includes(g);
+                                const atMax = genres.length >= (config.genresMax ?? 1) && !isSelected;
+                                return (
+                                    <button
+                                        key={g}
+                                        type="button"
+                                        className={`${styles.chip} ${isSelected ? styles.chipSelected : ''} ${atMax ? styles.chipDisabled : ''}`}
+                                        onClick={() => toggleGenre(g)}
+                                        disabled={atMax}
+                                    >
+                                        {g}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 )}

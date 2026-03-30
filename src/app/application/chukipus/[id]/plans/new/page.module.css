@@ -244,6 +244,15 @@
     box-shadow: 0 2px 12px rgba(196, 86, 110, 0.30);
 }
 
+.chipDisabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.chipDisabled:active {
+    transform: none;
+}
+
 /* Create button */
 .createBtn {
     width: 100%;

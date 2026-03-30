@@ -825,6 +825,15 @@
     box-shadow: 0 2px 12px rgba(var(--brand-primary-rgb), 0.30);
 }
 
+.chipDisabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.chipDisabled:active {
+    transform: none;
+}
+
 .saveBtn {
     width: 100%;
     margin-top: auto;
