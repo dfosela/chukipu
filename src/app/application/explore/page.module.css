@@ -610,13 +610,13 @@
     display: none;
 }
 
-/* Pseudo-elements for left/right margins — más fiable que padding en Safari con overflow-x */
-.exploreScrollContainer::before,
-.exploreScrollContainer::after {
-    content: '';
-    display: block;
-    min-width: var(--space-md);
-    flex-shrink: 0;
+/* Márgenes laterales con margin en primer/último hijo — compatible con todos los navegadores */
+.exploreScrollContainer .explorePlanCard:first-child {
+    margin-left: var(--space-md);
+}
+
+.exploreScrollContainer .explorePlanCard:last-child {
+    margin-right: var(--space-md);
 }
 
 /* Individual plan card */
