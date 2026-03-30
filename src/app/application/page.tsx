@@ -146,7 +146,7 @@ export default function HomePage() {
 
         const allGlobalPlans = await firebaseGetList<Plan>(
           'plans',
-          (p) => publicChukipusMap.has(p.chukipuId) && p.createdBy !== user.uid && !p.completed && p.showInProfile !== false,
+          (p) => publicChukipusMap.has(p.chukipuId) && p.createdBy !== user.uid,
           'createdAt',
           'desc'
         );

@@ -125,13 +125,22 @@ export default function ExplorePage() {
         if (!usersLoaded || rawPlans.length === 0) return {};
         const privateUserIds = new Set(allUsers.filter(u => u.isPrivate).map(u => u.id));
         const privateChukipuIds = new Set(publicChukipus.filter(c => c.isPrivate).map(c => c.id));
+        const myChukipuIds = new Set(
+            publicChukipus
+                .filter(c => {
+                    const members = c.members;
+                    if (!members || !user) return false;
+                    return Array.isArray(members) ? members.includes(user.uid) : (members as Record<string, boolean>)[user.uid] === true;
+                })
+                .map(c => c.id)
+        );
         const chukipuNamesMap: Record<string, string> = Object.fromEntries(publicChukipus.map(c => [c.id, c.name]));
 
         const filtered = rawPlans
             .filter(plan =>
                 !privateUserIds.has(plan.createdBy) &&
                 !privateChukipuIds.has(plan.chukipuId) &&
-                plan.createdBy !== user?.uid &&
+                !myChukipuIds.has(plan.chukipuId) &&
                 plan.category
             )
             .sort((a, b) => b.createdAt - a.createdAt)
