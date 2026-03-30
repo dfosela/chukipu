@@ -500,6 +500,7 @@
 
 .mediaAsset {
     width: 100%;
+    height: auto;
     max-height: 420px;
     object-fit: cover;
     display: block;
@@ -508,6 +509,12 @@
 /* ── Delete button ── */
 .mediaAssetWrap {
     position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.mediaPhoto {
+    cursor: pointer;
 }
 
 .mediaDeleteBtn {
@@ -916,4 +923,103 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+}
+
+/* ── Lightbox ── */
+.lightboxOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease both;
+}
+
+.lightboxClose {
+    position: absolute;
+    top: calc(16px + env(safe-area-inset-top, 0px));
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10001;
+    transition: background var(--transition-fast);
+}
+
+.lightboxClose:active {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.lightboxContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 56px;
+}
+
+.lightboxImg {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+    animation: popIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.lightboxNav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    z-index: 10001;
+}
+
+.lightboxNav:active {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.lightboxPrev {
+    left: 8px;
+}
+
+.lightboxNext {
+    right: 8px;
+}
+
+.lightboxCounter {
+    position: absolute;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
 }

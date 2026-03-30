@@ -69,6 +69,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     const [isPinning, setIsPinning] = useState(false);
     const [toast, setToast] = useState<{ message: string; onUndo?: () => void } | null>(null);
     const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
     const showToast = useCallback((message: string, onUndo?: () => void) => {
         if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -144,6 +145,8 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
             </div>
         );
     }
+
+    const photoItems = media.filter(m => m.type === 'photo');
 
     const catColor = categoryColors[plan.category] ?? 'var(--brand-primary)';
     const isLiked = !!user && (plan.likes || []).includes(user.uid);
@@ -412,7 +415,11 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                     <div className={styles.feedHeader}>
                         <h2 className={styles.feedTitle}>Fotos y videos</h2>
                         {isMember && (
-                            <label className={styles.addMediaBtn} htmlFor="mediaInput">
+                            <button
+                                className={styles.addMediaBtn}
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isUploading}
+                            >
                                 {isUploading ? (
                                     <div className={styles.uploadSpinner} />
                                 ) : (
@@ -423,10 +430,9 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                                         Añadir
                                     </>
                                 )}
-                            </label>
+                            </button>
                         )}
                         <input
-                            id="mediaInput"
                             ref={fileInputRef}
                             type="file"
                             accept="image/*,video/*"
@@ -451,9 +457,11 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                         </div>
                     ) : (
                         <div className={styles.mediaGrid}>
-                            {media.map((item) => (
+                            {media.map((item) => {
+                                const photoIdx = item.type === 'photo' ? photoItems.findIndex(p => p.id === item.id) : -1;
+                                return (
                                 <div key={item.id} className={styles.mediaItem}>
-                                    <div className={styles.mediaAssetWrap} style={{ position: 'relative' }}>
+                                    <div className={styles.mediaAssetWrap}>
                                         {item.type === 'video' ? (
                                             <video
                                                 src={item.url}
@@ -462,12 +470,12 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                                                 playsInline
                                             />
                                         ) : (
-                                            <Image
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img
                                                 src={item.url}
                                                 alt="Foto del plan"
-                                                className={styles.mediaAsset}
-                                                fill
-                                                style={{ objectFit: 'cover' }}
+                                                className={`${styles.mediaAsset} ${styles.mediaPhoto}`}
+                                                onClick={() => setLightboxIndex(photoIdx)}
                                             />
                                         )}
                                         {item.uploadedBy === user?.uid && (
@@ -497,13 +505,56 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                                         <span className={styles.mediaTime}>{timeAgo(item.createdAt)}</span>
                                     </div>
                                 </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>
             </div>
 
             <BottomNav />
+
+            {/* Lightbox */}
+            {lightboxIndex !== null && photoItems.length > 0 && (
+                <div className={styles.lightboxOverlay} onClick={() => setLightboxIndex(null)}>
+                    <button className={styles.lightboxClose} onClick={() => setLightboxIndex(null)} aria-label="Cerrar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </button>
+                    <div className={styles.lightboxContent} onClick={e => e.stopPropagation()}>
+                        {lightboxIndex > 0 && (
+                            <button
+                                className={`${styles.lightboxNav} ${styles.lightboxPrev}`}
+                                onClick={() => setLightboxIndex(i => Math.max(0, i! - 1))}
+                                aria-label="Anterior"
+                            >
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                    <polyline points="15 18 9 12 15 6" />
+                                </svg>
+                            </button>
+                        )}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={photoItems[lightboxIndex].url}
+                            alt={`Foto ${lightboxIndex + 1}`}
+                            className={styles.lightboxImg}
+                        />
+                        {lightboxIndex < photoItems.length - 1 && (
+                            <button
+                                className={`${styles.lightboxNav} ${styles.lightboxNext}`}
+                                onClick={() => setLightboxIndex(i => Math.min(photoItems.length - 1, i! + 1))}
+                                aria-label="Siguiente"
+                            >
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                    <polyline points="9 18 15 12 9 6" />
+                                </svg>
+                            </button>
+                        )}
+                    </div>
+                    <span className={styles.lightboxCounter}>{lightboxIndex + 1} / {photoItems.length}</span>
+                </div>
+            )}
 
             {/* Toast */}
             {toast && (
