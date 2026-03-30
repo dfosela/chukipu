@@ -152,7 +152,7 @@ export default function ProfilePage() {
 
                 const pinnedPlans = await firebaseGetList<Plan>(
                     'plans',
-                    (p) => chukipuIds.includes(p.chukipuId) && p.createdBy === user.uid && p.showInProfile === true,
+                    (p) => chukipuIds.includes(p.chukipuId) && p.pinnedBy?.[user.uid] === true,
                     'createdAt',
                     'desc'
                 );

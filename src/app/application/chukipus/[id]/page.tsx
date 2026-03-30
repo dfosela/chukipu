@@ -9,6 +9,7 @@ import {
   firebaseGet,
   firebaseGetList,
   firebaseUpdate,
+  firebaseBatchUpdate,
 } from "@/lib/firebaseMethods";
 import { Chukipu, Plan } from "@/types/firestore";
 import { useAuth } from "@/contexts/AuthContext";
@@ -172,26 +173,28 @@ export default function ChukipuDetailPage({
   const categories = Array.from(new Set(filteredPlans.map((p) => p.category)));
 
   const handleTogglePin = async (plan: Plan) => {
-    if (!isMember) return;
+    if (!isMember || !user) return;
 
-    const newShowInProfile = !plan.showInProfile;
+    const uid = user.uid;
+    const isPinned = plan.pinnedBy?.[uid] === true;
+    const newVal = !isPinned;
 
     // Optimistic update
     setPlans((prev) =>
       prev.map((p) =>
-        p.id === plan.id ? { ...p, showInProfile: newShowInProfile } : p,
+        p.id === plan.id ? { ...p, pinnedBy: { ...p.pinnedBy, [uid]: newVal } } : p,
       ),
     );
 
     try {
-      await firebaseUpdate(`plans/${plan.id}`, {
-        showInProfile: newShowInProfile,
+      await firebaseBatchUpdate({
+        [`plans/${plan.id}/pinnedBy/${uid}`]: newVal ? true : null,
       });
     } catch (err) {
-      console.error("Error updating plan visibility:", err);
+      console.error("Error updating plan pin:", err);
       setPlans((prev) =>
         prev.map((p) =>
-          p.id === plan.id ? { ...p, showInProfile: plan.showInProfile } : p,
+          p.id === plan.id ? { ...p, pinnedBy: { ...p.pinnedBy, [uid]: isPinned } } : p,
         ),
       );
     }
@@ -603,20 +606,20 @@ function PlanCard({
               </svg>
             </button>
             <button
-              className={`${styles.cardActionBtn} ${plan.showInProfile ? styles.cardActionPinned : ""}`}
+              className={`${styles.cardActionBtn} ${plan.pinnedBy?.[currentUserId ?? ''] === true ? styles.cardActionPinned : ""}`}
               onClick={onTogglePin}
               aria-label={
-                plan.showInProfile ? "Quitar del perfil" : "Fijar en el perfil"
+                plan.pinnedBy?.[currentUserId ?? ''] === true ? "Quitar del perfil" : "Fijar en el perfil"
               }
               title={
-                plan.showInProfile ? "Quitar del perfil" : "Fijar en el perfil"
+                plan.pinnedBy?.[currentUserId ?? ''] === true ? "Quitar del perfil" : "Fijar en el perfil"
               }
             >
               <svg
                 width="20"
                 height="20"
                 viewBox="0 0 24 24"
-                fill={plan.showInProfile ? "currentColor" : "none"}
+                fill={plan.pinnedBy?.[currentUserId ?? ''] === true ? "currentColor" : "none"}
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
