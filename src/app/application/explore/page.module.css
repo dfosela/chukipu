@@ -599,7 +599,7 @@
 .exploreScrollContainer {
     display: flex;
     gap: 12px;
-    padding: 4px var(--space-md) 16px;
+    padding: 4px 0 16px var(--space-md);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -608,6 +608,14 @@
 
 .exploreScrollContainer::-webkit-scrollbar {
     display: none;
+}
+
+/* Trailing right margin — overflow containers clip padding-right, pseudo-element fixes it */
+.exploreScrollContainer::after {
+    content: '';
+    display: block;
+    min-width: var(--space-md);
+    flex-shrink: 0;
 }
 
 /* Individual plan card */
