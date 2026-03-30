@@ -130,8 +130,6 @@ export default function ExplorePage() {
             .filter(plan =>
                 !privateUserIds.has(plan.createdBy) &&
                 plan.createdBy !== user?.uid &&
-                !plan.completed &&
-                plan.showInProfile !== false &&
                 plan.category
             )
             .sort((a, b) => b.createdAt - a.createdAt)
