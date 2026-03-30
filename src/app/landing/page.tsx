@@ -294,7 +294,9 @@ export default function App() {
 
     const handleInstall = async () => {
         if (!deferredPrompt) {
-            console.warn('[PWA] El botón fue pulsado pero beforeinstallprompt aún no se ha disparado. Posibles causas: la app ya está instalada, el SW aún no está activo, o Chrome está esperando más engagement del usuario.');
+            // PWA install prompt not available (already installed, iOS, or not yet triggered)
+            // Redirect to the app as fallback
+            router.push('/application');
             return;
         }
         console.log('[PWA] Lanzando diálogo de instalación...');
