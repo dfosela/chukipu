@@ -24,5 +24,10 @@
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .desktopShell::-webkit-scrollbar {
+    display: none;
   }
 }
