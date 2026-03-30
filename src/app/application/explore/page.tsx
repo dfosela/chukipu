@@ -362,6 +362,7 @@ export default function ExplorePage() {
                                                     <span className={styles.exploreCategoryName}>{category}</span>
                                                 </div>
                                                 <div className={styles.exploreScrollContainer}>
+                                                    <span className={styles.scrollSpacer} />
                                                     {publicPlansByCategory[category].map(plan => (
                                                         <div
                                                             key={plan.id}
@@ -396,6 +397,7 @@ export default function ExplorePage() {
                                                             </div>
                                                         </div>
                                                     ))}
+                                                    <span className={styles.scrollSpacer} />
                                                 </div>
                                             </div>
                                         ))
