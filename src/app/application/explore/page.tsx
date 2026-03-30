@@ -124,7 +124,12 @@ export default function ExplorePage() {
     const publicPlansByCategory = useMemo(() => {
         if (!usersLoaded || rawPlans.length === 0) return {};
         const privateUserIds = new Set(allUsers.filter(u => u.isPrivate).map(u => u.id));
-        const privateChukipuIds = new Set(publicChukipus.filter(c => c.isPrivate).map(c => c.id));
+        // Chukipus ocultos en explore: los "solo para ti" y los creados por usuarios con perfil privado
+        const hiddenChukipuIds = new Set(
+            publicChukipus
+                .filter(c => c.isPrivate || privateUserIds.has(c.createdBy))
+                .map(c => c.id)
+        );
         const myChukipuIds = new Set(
             publicChukipus
                 .filter(c => {
@@ -138,8 +143,7 @@ export default function ExplorePage() {
 
         const filtered = rawPlans
             .filter(plan =>
-                !privateUserIds.has(plan.createdBy) &&
-                !privateChukipuIds.has(plan.chukipuId) &&
+                !hiddenChukipuIds.has(plan.chukipuId) &&
                 !myChukipuIds.has(plan.chukipuId) &&
                 plan.category
             )
