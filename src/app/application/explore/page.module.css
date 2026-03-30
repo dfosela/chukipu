@@ -599,7 +599,7 @@
 .exploreScrollContainer {
     display: flex;
     gap: 12px;
-    padding: 4px 0 16px var(--space-md);
+    padding: 4px 0 16px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -610,7 +610,8 @@
     display: none;
 }
 
-/* Trailing right margin — overflow containers clip padding-right, pseudo-element fixes it */
+/* Pseudo-elements for left/right margins — más fiable que padding en Safari con overflow-x */
+.exploreScrollContainer::before,
 .exploreScrollContainer::after {
     content: '';
     display: block;
