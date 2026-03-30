@@ -138,15 +138,28 @@ export default function HomePage() {
         const privateUserIds = new Set(allUsers.filter(u => u.isPrivate).map(u => u.id));
 
         const allChukipus = await firebaseGetList<Chukipu>('chukipus');
+
+        const myChukipuIds = new Set(
+          allChukipus
+            .filter(c => {
+              const members = c.members;
+              if (!members) return false;
+              return Array.isArray(members)
+                ? members.includes(user.uid)
+                : (members as Record<string, boolean>)[user.uid] === true;
+            })
+            .map(c => c.id)
+        );
+
         const publicChukipusMap = new Map(
           allChukipus
-            .filter(c => !privateUserIds.has(c.createdBy))
+            .filter(c => !privateUserIds.has(c.createdBy) && !c.isPrivate)
             .map(c => [c.id, c.name])
         );
 
         const allGlobalPlans = await firebaseGetList<Plan>(
           'plans',
-          (p) => publicChukipusMap.has(p.chukipuId) && p.createdBy !== user.uid,
+          (p) => publicChukipusMap.has(p.chukipuId) && !myChukipuIds.has(p.chukipuId),
           'createdAt',
           'desc'
         );
