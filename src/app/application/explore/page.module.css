@@ -523,7 +523,21 @@
 /* ── Discovery mode (no search/filter) ── */
 
 .discoverWrapper {
-    padding-bottom: calc(var(--nav-height) + 32px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 var(--space-md) calc(var(--nav-height) + 32px);
+}
+
+/* Inside the grid, override the fixed horizontal-scroll sizing */
+.discoverWrapper .explorePlanCard {
+    flex: none;
+    width: 100%;
+    scroll-snap-align: none;
+}
+
+.discoverWrapper .explorePlanCardBg {
+    width: 100%;
 }
 
 .discoverEmpty {
