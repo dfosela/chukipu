@@ -146,6 +146,21 @@ export default function ChukipuDetailPage({
     );
   }
 
+  // Block access to private chukipus for non-creators
+  if (!loading && chukipu && chukipu.isPrivate && chukipu.createdBy !== user?.uid) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.notFound}>
+          <p>Chukipu no encontrado</p>
+          <button className="btn btn-primary" onClick={() => router.back()}>
+            Volver
+          </button>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
+
   if (!chukipu) {
     return (
       <div className={styles.container}>
@@ -384,26 +399,28 @@ export default function ChukipuDetailPage({
           </svg>
           Añadir plan
         </button>
-        <button
-          className={styles.inviteBtn}
-          onClick={() => router.push(`/application/chukipus/${id}/invite`)}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
+        {!chukipu.isPrivate && (
+          <button
+            className={styles.inviteBtn}
+            onClick={() => router.push(`/application/chukipus/${id}/invite`)}
           >
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <line x1="19" y1="8" x2="19" y2="14" />
-            <line x1="22" y1="11" x2="16" y2="11" />
-          </svg>
-          Invitar
-        </button>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <line x1="19" y1="8" x2="19" y2="14" />
+              <line x1="22" y1="11" x2="16" y2="11" />
+            </svg>
+            Invitar
+          </button>
+        )}
       </div>}
 
       {/* Search bar — only when 6+ plans */}

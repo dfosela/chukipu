@@ -160,7 +160,9 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
             const chukipuMap: Record<string, string> = {};
             const imMemberOf: Set<string> = new Set();
             Object.entries(chukipusData).forEach(([chukiId, c]: [string, unknown]) => {
-                const chukipuEntry = c as { name?: string; members?: string[] | Record<string, boolean> };
+                const chukipuEntry = c as { name?: string; members?: string[] | Record<string, boolean>; isPrivate?: boolean };
+                // Private chukipus are only visible to their creator — skip when viewing others' profiles
+                if (chukipuEntry.isPrivate) return;
                 if (chukipuEntry.members) {
                     const isTargetMember = Array.isArray(chukipuEntry.members) ? chukipuEntry.members.includes(id) : (chukipuEntry.members as Record<string, boolean>)[id] === true;
                     if (isTargetMember) {

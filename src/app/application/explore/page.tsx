@@ -124,11 +124,13 @@ export default function ExplorePage() {
     const publicPlansByCategory = useMemo(() => {
         if (!usersLoaded || rawPlans.length === 0) return {};
         const privateUserIds = new Set(allUsers.filter(u => u.isPrivate).map(u => u.id));
+        const privateChukipuIds = new Set(publicChukipus.filter(c => c.isPrivate).map(c => c.id));
         const chukipuNamesMap: Record<string, string> = Object.fromEntries(publicChukipus.map(c => [c.id, c.name]));
 
         const filtered = rawPlans
             .filter(plan =>
                 !privateUserIds.has(plan.createdBy) &&
+                !privateChukipuIds.has(plan.chukipuId) &&
                 plan.createdBy !== user?.uid &&
                 plan.category
             )

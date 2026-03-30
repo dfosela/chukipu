@@ -77,7 +77,8 @@ export interface Chukipu {
     image: string;
     createdBy: string;
     members: string[];
-    inviteCode: string;
+    inviteCode?: string;
+    isPrivate?: boolean;
     ratingAverage: number;
     ratingCount: number;
     membersCount: number;
