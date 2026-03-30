@@ -608,7 +608,7 @@
 }
 
 .scrollSpacer {
-    flex: 0 0 var(--space-md);
+    flex: 0 0 calc(var(--space-md) - 12px);
 }
 
 .exploreScrollContainer::-webkit-scrollbar {
