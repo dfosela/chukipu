@@ -298,7 +298,7 @@ export default function ExplorePage() {
                                         <p className={styles.discoverEmptyText}>No se encontraron planes</p>
                                     </div>
                                 ) : (
-                                    <div className={styles.discoverWrapper}>
+                                    <div className={styles.filterGrid}>
                                         {filteredPlans.map(plan => (
                                             <div
                                                 key={plan.id}
@@ -333,7 +333,7 @@ export default function ExplorePage() {
                                 )}
                             </>
                         ) : (
-                            /* Discovery mode: category carousels */
+                            /* Discovery mode (Todos): carruseles por categoría */
                             plansLoading || !usersLoaded ? (
                                 <div className={styles.discoverEmpty}>
                                     <p className={styles.discoverEmptyText}>Cargando...</p>

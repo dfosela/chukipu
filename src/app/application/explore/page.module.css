@@ -520,23 +520,30 @@
     transform: scale(0.96);
 }
 
-/* ── Discovery mode (no search/filter) ── */
+/* ── Discovery mode (Todos — carruseles por categoría) ── */
 
 .discoverWrapper {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: calc(var(--nav-height) + 32px);
+}
+
+/* ── Filter/search mode — grid de 2 columnas ── */
+
+.filterGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     padding: 0 var(--space-md) calc(var(--nav-height) + 32px);
 }
 
-/* Inside the grid, override the fixed horizontal-scroll sizing */
-.discoverWrapper .explorePlanCard {
+.filterGrid .explorePlanCard {
     flex: none;
     width: 100%;
     scroll-snap-align: none;
 }
 
-.discoverWrapper .explorePlanCardBg {
+.filterGrid .explorePlanCardBg {
     width: 100%;
 }
 
