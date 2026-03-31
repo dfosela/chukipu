@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { ref, onValue, push, serverTimestamp } from 'firebase/database';
+import { ref, onValue, push } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/contexts/AuthContext';
 import { FeedbackEntry } from '@/types/firestore';
