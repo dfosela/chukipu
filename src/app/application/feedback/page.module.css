@@ -204,6 +204,8 @@
     font-family: inherit;
     outline: none;
     box-sizing: border-box;
+    overflow-y: auto;
+    max-height: 80dvh;
 }
 
 .textarea:focus {

@@ -198,7 +198,12 @@ export default function FeedbackPage() {
                         className={styles.textarea}
                         placeholder={type === 'bug' ? 'Describe el error que encontraste...' : 'Escribe tu sugerencia...'}
                         value={text}
-                        onChange={e => setText(e.target.value)}
+                        onChange={e => {
+                            setText(e.target.value);
+                            const el = e.target;
+                            el.style.height = 'auto';
+                            el.style.height = `${el.scrollHeight}px`;
+                        }}
                         maxLength={500}
                         rows={4}
                         autoFocus
