@@ -135,7 +135,11 @@ export default function HomePage() {
 
         // Fetch recommended
         const allUsers = await firebaseGetList<UserProfile>('users');
-        const privateUserIds = new Set(allUsers.filter(u => u.isPrivate).map(u => u.id));
+        const currentUserProfile = allUsers.find(u => u.id === user.uid);
+        const followingSet = new Set<string>(currentUserProfile?.following || []);
+        const privateUserIds = new Set(
+          allUsers.filter(u => u.isPrivate && !followingSet.has(u.id)).map(u => u.id)
+        );
 
         const allChukipus = await firebaseGetList<Chukipu>('chukipus');
 
