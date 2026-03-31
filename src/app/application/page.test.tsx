@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import HomePage from './page';
 import { useAuth } from '@/contexts/AuthContext';
@@ -235,5 +235,99 @@ describe('HomePage', () => {
         // Check that none of the spans contain "0" as like count
         const zeroSpans = Array.from(allSpans).filter(s => s.textContent === '0');
         expect(zeroSpans.length).toBe(0);
+    });
+
+    it('recommended plans from private profiles the user follows DO appear', async () => {
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: 'user123' },
+            loading: false,
+        } as ReturnType<typeof useAuth>);
+
+        const usersData = [
+            { id: 'user123', isPrivate: false, following: ['privateUser1'] },
+            { id: 'privateUser1', isPrivate: true },
+        ];
+        const chukipusData = [{ id: 'chuki2', name: 'Private Chukipu', createdBy: 'privateUser1', members: ['privateUser1'] }];
+        const plansData = [{
+            id: 'plan2', chukipuId: 'chuki2',
+            title: 'Plan From Followed Private User',
+            category: 'Viaje', createdBy: 'privateUser1',
+            createdAt: Date.now(), completed: false,
+        }];
+
+        vi.mocked(firebaseGetList).mockImplementation(async (collection: string, filter?: (item: unknown) => boolean) => {
+            let results: unknown[] = [];
+            if (collection === 'users') results = usersData;
+            else if (collection === 'chukipus') results = chukipusData;
+            else if (collection === 'plans') results = plansData;
+            return filter ? results.filter(filter) : results;
+        });
+
+        render(<HomePage />);
+        const found = await screen.findAllByText('Plan From Followed Private User');
+        expect(found.length).toBeGreaterThan(0);
+    });
+
+    it('recommended plans from private profiles the user does NOT follow do NOT appear', async () => {
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: 'user123' },
+            loading: false,
+        } as ReturnType<typeof useAuth>);
+
+        const usersData = [
+            { id: 'user123', isPrivate: false, following: [] },
+            { id: 'privateUser2', isPrivate: true },
+        ];
+        const chukipusData = [{ id: 'chuki3', name: 'Private Chukipu 2', createdBy: 'privateUser2', members: ['privateUser2'] }];
+        const plansData = [{
+            id: 'plan3', chukipuId: 'chuki3',
+            title: 'Plan From Unfollowed Private User',
+            category: 'Viaje', createdBy: 'privateUser2',
+            createdAt: Date.now(), completed: false,
+        }];
+
+        vi.mocked(firebaseGetList).mockImplementation(async (collection: string, filter?: (item: unknown) => boolean) => {
+            let results: unknown[] = [];
+            if (collection === 'users') results = usersData;
+            else if (collection === 'chukipus') results = chukipusData;
+            else if (collection === 'plans') results = plansData;
+            return filter ? results.filter(filter) : results;
+        });
+
+        await act(async () => {
+            render(<HomePage />);
+            await new Promise(r => setTimeout(r, 200));
+        });
+        expect(screen.queryByText('Plan From Unfollowed Private User')).toBeNull();
+    });
+
+    it('plans from chukipus the user is member of do NOT appear in recommended', async () => {
+        vi.mocked(useAuth).mockReturnValue({
+            user: { uid: 'user123' },
+            loading: false,
+        } as ReturnType<typeof useAuth>);
+
+        const usersData = [{ id: 'user123', isPrivate: false, following: [] }];
+        const chukipusData = [{ id: 'myChuki', name: 'My Chukipu', createdBy: 'otherUser', members: ['user123', 'otherUser'] }];
+        const plansData = [{
+            id: 'plan4', chukipuId: 'myChuki',
+            title: 'Plan From My Own Chukipu',
+            category: 'Fiesta', createdBy: 'otherUser',
+            createdAt: Date.now(), completed: false,
+        }];
+
+        vi.mocked(firebaseGetList).mockImplementation(async (collection: string, filter?: (item: unknown) => boolean) => {
+            let results: unknown[] = [];
+            if (collection === 'users') results = usersData;
+            else if (collection === 'chukipus') results = chukipusData;
+            else if (collection === 'plans') results = plansData;
+            return filter ? results.filter(filter) : results;
+        });
+
+        render(<HomePage />);
+        // Plan appears in user's own feed (user is a member of the chukipu)
+        await screen.findByText('Plan From My Own Chukipu');
+        // But the recommended section should not render at all
+        expect(screen.queryByText('Planes recomendados')).toBeNull();
     });
 });
