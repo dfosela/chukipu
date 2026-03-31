@@ -231,6 +231,23 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
             { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
         ],
     },
+    otro: {
+        label: 'Editar Plan',
+        titleLabel: 'Título',
+        titlePlaceholder: 'Ej: Ir al mercado, visitar a los abuelos...',
+        category: 'Otro',
+        showLocation: true,
+        locationLabel: 'Lugar (opcional)',
+        locationRequired: false,
+        locationPlaceholder: 'Ej: Madrid, en casa...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'notes', label: 'Descripción', type: 'textarea', placeholder: 'Describe el plan...', maxLength: 500 },
+        ],
+    },
 };
 
 // Map category value → config key
@@ -244,6 +261,7 @@ const CATEGORY_TO_SLUG: Record<string, string> = {
     'Actividad': 'actividades',
     'En casa': 'en-casa',
     'Cultura': 'cultura',
+    'Otro': 'otro',
 };
 
 export default function EditPlanPage({ params }: { params: Promise<{ id: string; planId: string }> }) {

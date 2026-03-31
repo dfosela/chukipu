@@ -230,6 +230,23 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
             { key: 'notes', label: 'Notas', type: 'textarea', placeholder: 'Añade cualquier nota...', maxLength: 300 },
         ],
     },
+    otro: {
+        label: 'Nuevo Plan',
+        titleLabel: 'Título',
+        titlePlaceholder: 'Ej: Ir al mercado, visitar a los abuelos...',
+        category: 'Otro',
+        showLocation: true,
+        locationLabel: 'Lugar (opcional)',
+        locationRequired: false,
+        locationPlaceholder: 'Ej: Madrid, en casa...',
+        showDate: true,
+        dateLabel: 'Fecha',
+        dateType: 'date',
+        showDateEnd: false,
+        extraFields: [
+            { key: 'notes', label: 'Descripción', type: 'textarea', placeholder: 'Describe el plan...', maxLength: 500 },
+        ],
+    },
 };
 
 export default function NuevoPlanPage({ params }: { params: Promise<{ id: string }> }) {
