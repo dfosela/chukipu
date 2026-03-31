@@ -150,7 +150,8 @@
 .profileActions {
     display: inline-flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px;
+    padding-bottom: 8px;
     animation: fadeIn var(--transition-slow) 0.1s both;
 }
 
