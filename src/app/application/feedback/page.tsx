@@ -68,6 +68,9 @@ export default function FeedbackPage() {
             list.sort((a, b) => b.createdAt - a.createdAt);
             setEntries(list);
             setLoading(false);
+        }, () => {
+            setEntries([]);
+            setLoading(false);
         });
         return () => unsub();
     }, []);
