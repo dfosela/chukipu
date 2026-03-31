@@ -183,7 +183,7 @@ export default function FeedbackPage() {
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                         </svg>
-                        <p>Sé el primero en dejar feedback</p>
+                        <p>Aún no hay sugerencias</p>
                     </div>
                 ) : (
                     <div className={styles.list}>
