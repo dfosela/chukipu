@@ -52,7 +52,7 @@ const navItems = [
         icon: (active: boolean) => (
             <svg viewBox="0 0 24 24" fill={active ? 'none' : 'none'} stroke="currentColor" className={styles.navIcon}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" strokeLinecap="round" strokeWidth="2" stroke={active ? 'currentColor' : 'gray'} fill={active ? 'gray' : 'none'} />
+                <circle cx="12" cy="7" r="4" strokeLinecap="round" strokeWidth="2" fill={active ? 'currentColor' : 'none'} />
             </svg>
         ),
     },
