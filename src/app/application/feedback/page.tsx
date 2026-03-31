@@ -207,7 +207,7 @@ export default function FeedbackPage() {
             )}
 
             {/* List */}
-            <div className={`page hide-scrollbar ${styles.pageContent}`}>
+            <div className={`page hide-scrollbar ${styles.pageContent}`} style={showForm ? { display: 'none' } : {}}>
                 {loading ? (
                     <div className={styles.loadingWrap}>
                         <div className={styles.spinner} />
