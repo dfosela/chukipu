@@ -220,29 +220,27 @@ export default function ProfilePage() {
                         <h2 className={styles.profileName}>{profile?.displayName || 'User'}</h2>
                         {profile?.bio && <p className={styles.profileBio}>{profile.bio}</p>}
                     </div>
-                    <div className={styles.statsRow}>
-                        <button className={styles.statItem}>
-                            <span className={styles.statValue}>{chukipusCount === null ? '...' : chukipusCount}</span>
-                            <span className={styles.statLabel}>Chukipus</span>
-                        </button>
-                        <div className={styles.divider} />
-                        <button className={styles.statItem} onClick={() => router.push('/application/profile/followers')}>
-                            <span className={styles.statValue}>{profile?.followersCount || 0}</span>
-                            <span className={styles.statLabel}>Seguidores</span>
-                        </button>
-                        <div className={styles.divider} />
-                        <button className={styles.statItem} onClick={() => router.push('/application/profile/following')}>
-                            <span className={styles.statValue}>{profile?.followingCount || 0}</span>
-                            <span className={styles.statLabel}>Siguiendo</span>
+                    <div className={styles.profileActions}>
+                        <div className={styles.statsRow}>
+                            <button className={styles.statItem}>
+                                <span className={styles.statValue}>{chukipusCount === null ? '...' : chukipusCount}</span>
+                                <span className={styles.statLabel}>Chukipus</span>
+                            </button>
+                            <div className={styles.divider} />
+                            <button className={styles.statItem} onClick={() => router.push('/application/profile/followers')}>
+                                <span className={styles.statValue}>{profile?.followersCount || 0}</span>
+                                <span className={styles.statLabel}>Seguidores</span>
+                            </button>
+                            <div className={styles.divider} />
+                            <button className={styles.statItem} onClick={() => router.push('/application/profile/following')}>
+                                <span className={styles.statValue}>{profile?.followingCount || 0}</span>
+                                <span className={styles.statLabel}>Siguiendo</span>
+                            </button>
+                        </div>
+                        <button className={styles.editProfileBtn} onClick={() => router.push('/application/profile/edit')}>
+                            Editar perfil
                         </button>
                     </div>
-                </div>
-
-                {/* Edit Profile */}
-                <div className={styles.editBtnWrap}>
-                    <button className={styles.editProfileBtn} onClick={() => router.push('/application/profile/edit')}>
-                        Editar perfil
-                    </button>
                 </div>
 
                 <div className={styles.tabBar} />
