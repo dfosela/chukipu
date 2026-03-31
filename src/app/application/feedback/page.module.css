@@ -37,6 +37,35 @@
     color: var(--text-primary);
 }
 
+.headerTextBtn {
+    height: 38px;
+    padding: 0 4px;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.submitHeaderBtn {
+    height: 34px;
+    padding: 0 16px;
+    border-radius: 10px;
+    background: var(--brand-gradient);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.submitHeaderBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 /* ── Intro Modal ── */
 .modalOverlay {
     position: fixed;
@@ -160,41 +189,6 @@
     border-color: var(--brand-primary);
 }
 
-.formActions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-}
-
-.cancelBtn {
-    height: 36px;
-    padding: 0 16px;
-    border-radius: 10px;
-    border: 1px solid var(--card-border);
-    background: none;
-    color: var(--text-secondary);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.submitBtn {
-    height: 36px;
-    padding: 0 20px;
-    border-radius: 10px;
-    background: var(--brand-gradient);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: opacity 0.15s;
-}
-
-.submitBtn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
 
 /* ── List ── */
 .pageContent {

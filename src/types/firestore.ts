@@ -77,7 +77,7 @@ export interface FeedbackEntry {
     authorId: string;
     authorName: string;
     authorAvatar: string;
-    type: 'feedback' | 'sugerencia' | 'bug';
+    type: 'sugerencia' | 'bug' | 'feedback';
     createdAt: number;
 }
 

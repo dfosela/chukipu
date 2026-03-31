@@ -13,14 +13,14 @@ const INTRO_KEY = 'chukipu_feedback_intro_seen';
 
 const TYPE_LABELS: Record<FeedbackEntry['type'], string> = {
     sugerencia: 'Sugerencia',
-    feedback: 'Feedback',
     bug: 'Error',
+    feedback: 'Feedback',
 };
 
 const TYPE_COLORS: Record<FeedbackEntry['type'], string> = {
     sugerencia: '#5b86e5',
-    feedback: '#52c788',
     bug: '#e8749a',
+    feedback: '#52c788',
 };
 
 function formatDate(ts: number): string {
@@ -49,14 +49,12 @@ export default function FeedbackPage() {
     const [submitting, setSubmitting] = useState(false);
     const textRef = useRef<HTMLTextAreaElement>(null);
 
-    // First-time intro modal
     useEffect(() => {
         if (typeof window !== 'undefined' && !localStorage.getItem(INTRO_KEY)) {
             setShowModal(true);
         }
     }, []);
 
-    // Real-time feedback listener
     useEffect(() => {
         const feedbackRef = ref(db, 'feedback');
         const unsub = onValue(feedbackRef, (snap) => {
@@ -78,6 +76,11 @@ export default function FeedbackPage() {
     const handleCloseModal = () => {
         localStorage.setItem(INTRO_KEY, '1');
         setShowModal(false);
+    };
+
+    const handleCancel = () => {
+        setShowForm(false);
+        setText('');
     };
 
     const handleSubmit = async () => {
@@ -103,13 +106,27 @@ export default function FeedbackPage() {
         <div className={styles.container}>
             {/* Header */}
             <header className={styles.header}>
-                <button className={styles.backBtn} onClick={() => router.back()} aria-label="Volver">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                        <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                </button>
-                <h1 className={styles.title}>Feedback</h1>
-                <div style={{ width: 38 }} />
+                {showForm ? (
+                    <button className={styles.headerTextBtn} onClick={handleCancel}>
+                        Cancelar
+                    </button>
+                ) : (
+                    <button className={styles.backBtn} onClick={() => router.back()} aria-label="Volver">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                    </button>
+                )}
+                <div style={{ flex: 1 }} />
+                {showForm && (
+                    <button
+                        className={styles.submitHeaderBtn}
+                        onClick={handleSubmit}
+                        disabled={!text.trim() || submitting}
+                    >
+                        {submitting ? 'Enviando...' : 'Enviar'}
+                    </button>
+                )}
             </header>
 
             {/* Intro modal */}
@@ -123,7 +140,7 @@ export default function FeedbackPage() {
                         </div>
                         <h2 className={styles.modalTitle}>Tu opinión importa</h2>
                         <p className={styles.modalText}>
-                            Este es el espacio de la comunidad Chukipu. Aquí puedes compartir sugerencias, feedback o reportar errores.
+                            Este es el espacio de la comunidad Chukipu. Aquí puedes compartir sugerencias o reportar errores.
                         </p>
                         <p className={styles.modalText}>
                             Todos los usuarios pueden ver y leer las aportaciones. ¡Ayúdanos a mejorar!
@@ -139,7 +156,7 @@ export default function FeedbackPage() {
             {showForm && (
                 <div className={styles.formWrap}>
                     <div className={styles.typeRow}>
-                        {(['sugerencia', 'feedback', 'bug'] as FeedbackEntry['type'][]).map(t => (
+                        {(['sugerencia', 'bug'] as FeedbackEntry['type'][]).map(t => (
                             <button
                                 key={t}
                                 className={`${styles.typeChip} ${type === t ? styles.typeChipActive : ''}`}
@@ -153,25 +170,13 @@ export default function FeedbackPage() {
                     <textarea
                         ref={textRef}
                         className={styles.textarea}
-                        placeholder="Escribe tu sugerencia, feedback o error..."
+                        placeholder={type === 'bug' ? 'Describe el error que encontraste...' : 'Escribe tu sugerencia...'}
                         value={text}
                         onChange={e => setText(e.target.value)}
                         maxLength={500}
                         rows={4}
                         autoFocus
                     />
-                    <div className={styles.formActions}>
-                        <button className={styles.cancelBtn} onClick={() => { setShowForm(false); setText(''); }}>
-                            Cancelar
-                        </button>
-                        <button
-                            className={styles.submitBtn}
-                            onClick={handleSubmit}
-                            disabled={!text.trim() || submitting}
-                        >
-                            {submitting ? 'Enviando...' : 'Enviar'}
-                        </button>
-                    </div>
                 </div>
             )}
 
@@ -210,9 +215,9 @@ export default function FeedbackPage() {
                                     </div>
                                     <span
                                         className={styles.typeBadge}
-                                        style={{ color: TYPE_COLORS[entry.type], borderColor: `${TYPE_COLORS[entry.type]}40`, background: `${TYPE_COLORS[entry.type]}15` }}
+                                        style={{ color: TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia, borderColor: `${TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia}40`, background: `${TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia}15` }}
                                     >
-                                        {TYPE_LABELS[entry.type]}
+                                        {TYPE_LABELS[entry.type] || entry.type}
                                     </span>
                                 </div>
                                 <p className={styles.cardText}>{entry.text}</p>
@@ -224,7 +229,7 @@ export default function FeedbackPage() {
 
             {/* FAB to open form */}
             {!showForm && (
-                <button className={styles.fab} onClick={() => setShowForm(true)} aria-label="Nuevo feedback">
+                <button className={styles.fab} onClick={() => setShowForm(true)} aria-label="Nueva sugerencia">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
