@@ -7,3 +7,4 @@ export default function ApplicationLayout({
 }) {
   return <div className={styles.desktopShell}>{children}</div>;
 }
+

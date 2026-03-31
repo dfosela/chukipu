@@ -71,6 +71,16 @@ export interface PlanMedia {
     createdAt: number;
 }
 
+export interface FeedbackEntry {
+    id: string;
+    text: string;
+    authorId: string;
+    authorName: string;
+    authorAvatar: string;
+    type: 'feedback' | 'sugerencia' | 'bug';
+    createdAt: number;
+}
+
 export interface Chukipu {
     id: string;
     name: string;
