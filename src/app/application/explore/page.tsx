@@ -309,9 +309,9 @@ export default function ExplorePage() {
                                             >
                                                 <div
                                                     className={styles.explorePlanCardBg}
-                                                    style={{ background: `${categoryColors[plan.category] || '#e8749a'}18` }}
+                                                    style={{ '--cat-color': categoryColors[plan.category] || '#e8749a', '--cat-bg': `${categoryColors[plan.category] || '#e8749a'}18` } as React.CSSProperties}
                                                 >
-                                                    <div className={styles.explorePlanCardIcon} style={{ color: categoryColors[plan.category] || '#e8749a' }}>
+                                                    <div className={styles.explorePlanCardIcon}>
                                                         {CATEGORY_ICONS[plan.category] || (
                                                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                                                                 <circle cx="12" cy="12" r="10" />
@@ -320,7 +320,7 @@ export default function ExplorePage() {
                                                     </div>
                                                     <div className={styles.explorePlanCardOverlay} />
                                                     <div className={styles.explorePlanCardContent}>
-                                                        <span className={styles.explorePlanCardCategory} style={{ color: categoryColors[plan.category] || '#e8749a' }}>
+                                                        <span className={styles.explorePlanCardCategory}>
                                                             {plan.category.toUpperCase()}
                                                         </span>
                                                         <h3 className={styles.explorePlanCardTitle}>{plan.title}</h3>
@@ -353,8 +353,8 @@ export default function ExplorePage() {
                                         .filter(cat => cat !== '__raw__' && publicPlansByCategory[cat].length > 0)
                                         .map(category => (
                                             <div key={category} className={styles.exploreCategorySection}>
-                                                <div className={styles.exploreCategoryHeader}>
-                                                    <div className={styles.exploreCategoryIcon} style={{ color: categoryColors[category] || '#e8749a' }}>
+                                                <div className={styles.exploreCategoryHeader} style={{ '--cat-color': categoryColors[category] || '#e8749a' } as React.CSSProperties}>
+                                                    <div className={styles.exploreCategoryIcon}>
                                                         {CATEGORY_ICONS[category] || (
                                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                                                 <circle cx="12" cy="12" r="10" />
@@ -374,9 +374,9 @@ export default function ExplorePage() {
                                                             {/* Placeholder with category icon */}
                                                             <div
                                                                 className={styles.explorePlanCardBg}
-                                                                style={{ background: `${categoryColors[plan.category] || '#e8749a'}18` }}
+                                                                style={{ '--cat-color': categoryColors[plan.category] || '#e8749a', '--cat-bg': `${categoryColors[plan.category] || '#e8749a'}18` } as React.CSSProperties}
                                                             >
-                                                                <div className={styles.explorePlanCardIcon} style={{ color: categoryColors[plan.category] || '#e8749a' }}>
+                                                                <div className={styles.explorePlanCardIcon}>
                                                                     {CATEGORY_ICONS[plan.category] || (
                                                                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                                                                             <circle cx="12" cy="12" r="10" />
@@ -387,7 +387,6 @@ export default function ExplorePage() {
                                                                 <div className={styles.explorePlanCardContent}>
                                                                     <span
                                                                         className={styles.explorePlanCardCategory}
-                                                                        style={{ color: categoryColors[plan.category] || '#e8749a' }}
                                                                     >
                                                                         {plan.category.toUpperCase()}
                                                                     </span>

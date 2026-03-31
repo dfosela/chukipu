@@ -136,7 +136,7 @@ export default function EditChukipuPage({ params }: { params: Promise<{ id: stri
 
                 {/* Photo Upload */}
                 <div className={styles.photoSection}>
-                    <div className={styles.photoPreviewWrap} style={{ position: 'relative' }}>
+                    <div className={styles.photoPreviewWrap}>
                         {imagePreview ? (
                             <Image src={imagePreview} alt="Preview" className={styles.photoPreview} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                         ) : (

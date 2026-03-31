@@ -361,6 +361,16 @@
   padding: var(--space-xl);
 }
 
+.emptyStatePadded {
+  padding: 32px var(--space-md);
+}
+
+.catIconWrap {
+  display: flex;
+  transform: scale(1.6);
+  color: var(--cat-color, #e8749a);
+}
+
 .emptyIcon {
   width: 96px;
   height: 96px;
@@ -467,6 +477,22 @@
 /* ── Recommended Section ── */
 .recommendedSection {
   margin-top: 24px;
+}
+
+.recommendedSection .sectionHeader {
+  padding-bottom: 8px;
+}
+
+.recommendedSection .nextPlanContent {
+  padding: 16px;
+}
+
+.recommendedSection .nextPlanTitle {
+  font-size: 18px;
+}
+
+.recommendedSection .nextPlanLocation {
+  font-size: 12px;
 }
 
 .recommendedCategoryHeader {

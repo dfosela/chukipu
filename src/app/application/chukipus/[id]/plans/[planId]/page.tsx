@@ -335,9 +335,8 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                             {plan.category}
                         </span>
                         <button
-                            className={`${styles.statusBadge} ${plan.completed ? styles.statusDone : styles.statusPending}`}
+                            className={`${styles.statusBadge} ${plan.completed ? styles.statusDone : styles.statusPending}${!isMember ? ` ${styles.noPointer}` : ''}`}
                             onClick={isMember ? handleToggleCompleted : undefined}
-                            style={!isMember ? { cursor: 'default' } : undefined}
                         >
                             {plan.completed ? (
                                 <>

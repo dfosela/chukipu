@@ -268,7 +268,7 @@ export default function ChukipuDetailPage({
   return (
     <div className={styles.container}>
       {/* Hero image */}
-      <div className={styles.hero} style={{ position: 'relative' }}>
+      <div className={styles.hero}>
         {chukipu.image && (
           <Image
             src={chukipu.image}

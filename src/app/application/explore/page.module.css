@@ -587,6 +587,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    color: var(--cat-color, #e8749a);
 }
 
 .exploreCategoryName {
@@ -639,6 +640,7 @@
     justify-content: center;
     border-radius: 14px;
     overflow: hidden;
+    background: var(--cat-bg, #e8749a18);
 }
 
 .explorePlanCardIcon {
@@ -647,6 +649,7 @@
     justify-content: center;
     transform: scale(1.5);
     opacity: 0.6;
+    color: var(--cat-color, #e8749a);
 }
 
 .explorePlanCardOverlay {
@@ -674,6 +677,7 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: var(--cat-color, #e8749a);
 }
 
 .explorePlanCardTitle {

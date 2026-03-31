@@ -42,7 +42,7 @@ function PlanCollage({ plan, media, onClick }: { plan: ProfilePlan; media: PlanM
     if (count === 1) {
         return (
             <button className={styles.gridItem} onClick={onClick}>
-                <div className={styles.collage1} style={{ position: 'relative' }}>
+                <div className={styles.collage1}>
                     <Image src={firstPhoto} alt="" className={styles.colImg} fill sizes="200px" style={{ objectFit: 'cover' }} />
                 </div>
             </button>
@@ -53,8 +53,8 @@ function PlanCollage({ plan, media, onClick }: { plan: ProfilePlan; media: PlanM
         return (
             <button className={styles.gridItem} onClick={onClick}>
                 <div className={styles.collage2}>
-                    <div style={{ position: 'relative' }}><Image src={firstPhoto} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
-                    <div style={{ position: 'relative' }}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
+                    <div className={styles.colImgCell}><Image src={firstPhoto} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
+                    <div className={styles.colImgCell}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
                 </div>
             </button>
         );
@@ -64,10 +64,10 @@ function PlanCollage({ plan, media, onClick }: { plan: ProfilePlan; media: PlanM
         return (
             <button className={styles.gridItem} onClick={onClick}>
                 <div className={styles.collage3}>
-                    <div style={{ position: 'relative' }} className={styles.colBig}><Image src={firstPhoto} alt="" className={styles.colImg} fill sizes="130px" style={{ objectFit: 'cover' }} /></div>
+                    <div className={`${styles.colImgCell} ${styles.colBig}`}><Image src={firstPhoto} alt="" className={styles.colImg} fill sizes="130px" style={{ objectFit: 'cover' }} /></div>
                     <div className={styles.colStack}>
-                        <div style={{ position: 'relative' }}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="70px" style={{ objectFit: 'cover' }} /></div>
-                        <div style={{ position: 'relative' }}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="70px" style={{ objectFit: 'cover' }} /></div>
+                        <div className={styles.colImgCell}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="70px" style={{ objectFit: 'cover' }} /></div>
+                        <div className={styles.colImgCell}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="70px" style={{ objectFit: 'cover' }} /></div>
                     </div>
                 </div>
             </button>
@@ -77,10 +77,10 @@ function PlanCollage({ plan, media, onClick }: { plan: ProfilePlan; media: PlanM
     return (
         <button className={styles.gridItem} onClick={onClick}>
             <div className={styles.collage4}>
-                <div style={{ position: 'relative' }}><Image src={firstPhoto} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
-                <div style={{ position: 'relative' }}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
-                <div style={{ position: 'relative' }}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
-                <div className={styles.colImgWrap} style={{ position: 'relative' }}>
+                <div className={styles.colImgCell}><Image src={firstPhoto} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
+                <div className={styles.colImgCell}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
+                <div className={styles.colImgCell}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} /></div>
+                <div className={styles.colImgWrap}>
                     <Image src={fourthPhoto!} alt="" className={styles.colImg} fill sizes="100px" style={{ objectFit: 'cover' }} />
                     {extra > 0 && (
                         <div className={styles.colOverlay}>+{extra}</div>
@@ -510,7 +510,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                             <line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
                     </button>
-                    <div className={styles.avatarModalImg} style={{ position: 'relative' }} onClick={e => e.stopPropagation()}>
+                    <div className={styles.avatarModalImg} onClick={e => e.stopPropagation()}>
                         <Image src={profileData.avatar} alt={profileData.displayName || 'Avatar'} fill sizes="100vw" style={{ objectFit: 'contain' }} />
                     </div>
                 </div>

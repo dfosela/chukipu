@@ -5,6 +5,18 @@
     background: var(--bg-primary);
 }
 
+.spacer {
+    flex: 1;
+}
+
+.hidden {
+    display: none;
+}
+
+.emptyIllustration {
+    opacity: 0.3;
+}
+
 /* ── Header ── */
 .header {
     display: flex;
@@ -191,6 +203,12 @@
     transition: all 0.15s;
 }
 
+.typeChipActive {
+    background: var(--type-color);
+    color: #fff;
+    border-color: var(--type-color);
+}
+
 .textarea {
     width: 100%;
     border-radius: 12px;
@@ -321,7 +339,9 @@
     font-weight: 600;
     padding: 3px 8px;
     border-radius: 50px;
-    border: 1px solid;
+    border: 1px solid var(--type-border);
+    background: var(--type-bg);
+    color: var(--type-color);
     white-space: nowrap;
     flex-shrink: 0;
 }

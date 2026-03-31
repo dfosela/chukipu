@@ -299,7 +299,7 @@ export default function HomePage() {
           <div ref={feedRef} className={`${styles.feedWrapper} page hide-scrollbar`}>
 
             {isEmpty && (
-              <div className={styles.emptyState} style={{ padding: '32px 16px' }}>
+              <div className={`${styles.emptyState} ${styles.emptyStatePadded}`}>
                 <div className={styles.emptyIcon}>
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -331,13 +331,13 @@ export default function HomePage() {
                 <div className={styles.nextPlanCard}
                   onClick={() => router.push(`/application/chukipus/${nextPlan.chukipuId}/plans/${nextPlan.id}?from=home`)}
                 >
-                  <div className={styles.nextPlanImageWrap} style={{ position: 'relative' }}>
+                  <div className={styles.nextPlanImageWrap}>
                     {nextPlan.image ? (
                       <Image src={nextPlan.image} alt={nextPlan.title} className={styles.nextPlanImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                     ) : (
-                      <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[nextPlan.category] || '#e8749a'}20` } as React.CSSProperties}>
+                      <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[nextPlan.category] || '#e8749a'}20`, '--cat-color': categoryColors[nextPlan.category] || '#e8749a' } as React.CSSProperties}>
                         {CATEGORY_ICONS[nextPlan.category] ? (
-                          <div style={{ color: categoryColors[nextPlan.category] || '#e8749a', transform: 'scale(1.6)', display: 'flex' }}>
+                          <div className={styles.catIconWrap}>
                             {CATEGORY_ICONS[nextPlan.category]}
                           </div>
                         ) : (
@@ -387,8 +387,8 @@ export default function HomePage() {
 
             {/* Recommended section */}
             {hasRecommended && (
-              <div className={styles.recommendedSection} style={{ marginTop: 24 }}>
-                <div className={styles.sectionHeader} style={{ paddingBottom: 8 }}>
+              <div className={styles.recommendedSection}>
+                <div className={styles.sectionHeader}>
                   <div>
                     <h2 className={styles.sectionTitle}>Planes recomendados</h2>
                     <p className={styles.sectionSub}>Descubre nuevas ideas</p>
@@ -413,13 +413,13 @@ export default function HomePage() {
                         {plans.map(plan => (
                           <div key={plan.id} className={styles.recommendedCardWrapper}>
                             <div className={styles.nextPlanCard} onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}?from=home`)}>
-                              <div className={styles.nextPlanImageWrap} style={{ aspectRatio: '16/10', position: 'relative' }}>
+                              <div className={styles.nextPlanImageWrap}>
                                 {plan.image ? (
                                   <Image src={plan.image} alt={plan.title} className={styles.nextPlanImage} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                                 ) : (
-                                  <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[plan.category] || '#e8749a'}20` } as React.CSSProperties}>
+                                  <div className={styles.nextPlanPlaceholder} style={{ '--cat-bg': `${categoryColors[plan.category] || '#e8749a'}20`, '--cat-color': categoryColors[plan.category] || '#e8749a' } as React.CSSProperties}>
                                     {CATEGORY_ICONS[plan.category] ? (
-                                      <span style={{ color: categoryColors[plan.category] || '#e8749a', display: 'flex', transform: 'scale(1.6)' }}>
+                                      <span className={styles.catIconWrap}>
                                         {CATEGORY_ICONS[plan.category]}
                                       </span>
                                     ) : (
@@ -439,13 +439,13 @@ export default function HomePage() {
                                     <span>{plan.likesCount}</span>
                                   </div>
                                 )}
-                                <div className={styles.nextPlanContent} style={{ padding: 16 }}>
+                                <div className={styles.nextPlanContent}>
                                   <span className={styles.nextPlanCategory} style={{ '--cat-color': categoryColors[plan.category] || '#e8749a' } as React.CSSProperties}>
                                     {plan.category.toUpperCase()}
                                   </span>
-                                  <h3 className={styles.nextPlanTitle} style={{ fontSize: 18 }}>{plan.title}</h3>
+                                  <h3 className={styles.nextPlanTitle}>{plan.title}</h3>
                                   {plan.date && (
-                                    <div className={styles.nextPlanDate} style={{ fontSize: 13 }}>
+                                    <div className={styles.nextPlanDate}>
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                         <rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" />
                                         <line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
@@ -454,7 +454,7 @@ export default function HomePage() {
                                     </div>
                                   )}
                                   {plan.location && (
-                                    <div className={styles.nextPlanLocation} style={{ fontSize: 12 }}>
+                                    <div className={styles.nextPlanLocation}>
                                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" />
                                       </svg>

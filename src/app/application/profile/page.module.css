@@ -242,8 +242,14 @@
 
 /* 1 photo – full cell */
 .collage1 {
+    position: relative;
     width: 100%;
     height: 100%;
+}
+
+.colImgCell {
+    position: relative;
+    overflow: hidden;
 }
 
 /* 2 photos – side by side */

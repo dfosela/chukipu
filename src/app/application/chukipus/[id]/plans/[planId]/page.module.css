@@ -225,6 +225,10 @@
     transition: all var(--transition-fast);
 }
 
+.noPointer {
+    cursor: default;
+}
+
 .statusPending {
     background: rgba(92, 58, 47, 0.08);
     color: var(--text-secondary);

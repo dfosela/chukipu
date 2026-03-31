@@ -51,7 +51,7 @@ function PlanCollage({ group, onClick }: { group: PinnedPlanGroup; onClick: () =
     if (count === 1) {
         return (
             <button className={styles.gridItem} onClick={onClick}>
-                <div className={styles.collage1} style={{ position: 'relative' }}>
+                <div className={styles.collage1}>
                     <Image src={firstPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                 </div>
             </button>
@@ -62,8 +62,8 @@ function PlanCollage({ group, onClick }: { group: PinnedPlanGroup; onClick: () =
         return (
             <button className={styles.gridItem} onClick={onClick}>
                 <div className={styles.collage2}>
-                    <div style={{ position: 'relative', flex: 1 }}><Image src={firstPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
-                    <div style={{ position: 'relative', flex: 1 }}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                    <div className={styles.colImgCell}><Image src={firstPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                    <div className={styles.colImgCell}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
                 </div>
             </button>
         );
@@ -73,10 +73,10 @@ function PlanCollage({ group, onClick }: { group: PinnedPlanGroup; onClick: () =
         return (
             <button className={styles.gridItem} onClick={onClick}>
                 <div className={styles.collage3}>
-                    <div style={{ position: 'relative', flex: 2 }}><Image src={firstPhoto!} alt="" className={`${styles.colImg} ${styles.colBig}`} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                    <div className={styles.colImgCell}><Image src={firstPhoto!} alt="" className={`${styles.colImg} ${styles.colBig}`} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
                     <div className={styles.colStack}>
-                        <div style={{ position: 'relative', flex: 1 }}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
-                        <div style={{ position: 'relative', flex: 1 }}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                        <div className={styles.colImgCell} style={{ flex: 1 }}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                        <div className={styles.colImgCell} style={{ flex: 1 }}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
                     </div>
                 </div>
             </button>
@@ -87,10 +87,10 @@ function PlanCollage({ group, onClick }: { group: PinnedPlanGroup; onClick: () =
     return (
         <button className={styles.gridItem} onClick={onClick}>
             <div className={styles.collage4}>
-                <div style={{ position: 'relative' }}><Image src={firstPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
-                <div style={{ position: 'relative' }}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
-                <div style={{ position: 'relative' }}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
-                <div className={styles.colImgWrap} style={{ position: 'relative' }}>
+                <div className={styles.colImgCell}><Image src={firstPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                <div className={styles.colImgCell}><Image src={secondPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                <div className={styles.colImgCell}><Image src={thirdPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} /></div>
+                <div className={styles.colImgWrap}>
                     <Image src={fourthPhoto!} alt="" className={styles.colImg} fill sizes="(max-width: 768px) 100vw, 430px" style={{ objectFit: 'cover' }} />
                     {extra > 0 && (
                         <div className={styles.colOverlay}>+{extra}</div>

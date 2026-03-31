@@ -123,7 +123,7 @@ export default function FeedbackPage() {
                         <polyline points="15 18 9 12 15 6" />
                     </svg>
                 </button>
-                <div style={{ flex: 1 }} />
+                <div className={styles.spacer} />
                 {showForm && (
                     <button
                         className={styles.submitHeaderBtn}
@@ -186,7 +186,7 @@ export default function FeedbackPage() {
                             <button
                                 key={t}
                                 className={`${styles.typeChip} ${type === t ? styles.typeChipActive : ''}`}
-                                style={type === t ? { background: TYPE_COLORS[t], color: '#fff', borderColor: TYPE_COLORS[t] } : {}}
+                                style={{ '--type-color': TYPE_COLORS[t] } as React.CSSProperties}
                                 onClick={() => setType(t)}
                             >
                                 {TYPE_LABELS[t]}
@@ -212,14 +212,14 @@ export default function FeedbackPage() {
             )}
 
             {/* List */}
-            <div className={`page hide-scrollbar ${styles.pageContent}`} style={showForm ? { display: 'none' } : {}}>
+            <div className={`page hide-scrollbar ${styles.pageContent}${showForm ? ` ${styles.hidden}` : ''}`}>
                 {loading ? (
                     <div className={styles.loadingWrap}>
                         <div className={styles.spinner} />
                     </div>
                 ) : entries.length === 0 ? (
                     <div className={styles.empty}>
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={styles.emptyIllustration}>
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                         </svg>
                         <p>Aún no hay sugerencias</p>
@@ -246,7 +246,7 @@ export default function FeedbackPage() {
                                     </div>
                                     <span
                                         className={styles.typeBadge}
-                                        style={{ color: TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia, borderColor: `${TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia}40`, background: `${TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia}15` }}
+                                        style={{ '--type-color': TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia, '--type-bg': `${TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia}15`, '--type-border': `${TYPE_COLORS[entry.type] || TYPE_COLORS.sugerencia}40` } as React.CSSProperties}
                                     >
                                         {TYPE_LABELS[entry.type] || entry.type}
                                     </span>
