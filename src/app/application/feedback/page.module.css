@@ -233,6 +233,8 @@
 
 /* ── List ── */
 .pageContent {
+    display: flex;
+    flex-direction: column;
     padding-bottom: 100px;
 }
 
@@ -254,12 +256,12 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .empty {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    height: 60dvh;
     color: var(--text-tertiary);
     font-size: 14px;
 }
@@ -357,10 +359,10 @@
 /* ── FAB ── */
 .fab {
     position: fixed;
-    bottom: calc(var(--nav-height) + var(--nav-bottom-safe) + 16px);
-    right: var(--space-lg);
-    width: 52px;
-    height: 52px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+    right: 20px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     background: var(--brand-gradient);
     color: #fff;
