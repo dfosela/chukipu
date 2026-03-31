@@ -38,7 +38,7 @@ function formatDate(ts: number): string {
 
 export default function FeedbackPage() {
     const router = useRouter();
-    const { user, userProfile } = useAuth();
+    const { user, profile: userProfile } = useAuth();
 
     const [entries, setEntries] = useState<FeedbackEntry[]>([]);
     const [loading, setLoading] = useState(true);
