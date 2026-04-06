@@ -482,20 +482,12 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                         </div>
                     ) : (
                         plans.map((plan) => (
-                            <div key={plan.id} className={styles.gridItemWrap}>
-                                <PlanCollage
-                                    plan={plan}
-                                    media={planMediaMap[plan.id] ?? []}
-                                    onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
-                                />
-                                {plan.completed && (
-                                    <div className={styles.completedBadge}>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                    </div>
-                                )}
-                            </div>
+                            <PlanCollage
+                                key={plan.id}
+                                plan={plan}
+                                media={planMediaMap[plan.id] ?? []}
+                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
+                            />
                         ))
                     )}
                 </div>

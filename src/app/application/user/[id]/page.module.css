@@ -359,11 +359,6 @@
     opacity: 0.8;
 }
 
-/* Wrapper needed so completedBadge can be positioned over PlanCollage button */
-.gridItemWrap {
-    position: relative;
-}
-
 /* ─── Collage layouts ─── */
 
 .colImg {
