@@ -18,6 +18,28 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Plan, PlanMedia } from '@/types/firestore';
 import BottomNav from '@/components/BottomNav/BottomNav';
 
+const DETAIL_LABELS: Record<string, string> = {
+    budget: 'Presupuesto',
+    transport: 'Transporte',
+    accommodation: 'Alojamiento',
+    notes: 'Notas',
+    theme: 'Temática',
+    guests: 'Invitados',
+    music: 'Música',
+    activities: 'Actividades',
+    time: 'Hora',
+    duration: 'Duración',
+    level: 'Nivel',
+    players: 'Participantes',
+    endTime: 'Hora de fin',
+    people: 'Personas',
+    snacks: 'Snacks',
+    price: 'Precio',
+    company: 'Compañía',
+    mediaType: 'Tipo',
+    episodes: 'Episodios',
+};
+
 const categoryColors: Record<string, string> = {
     Cartelera: '#e8749a',
     Viaje: '#5b86e5',
@@ -399,6 +421,27 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
                                 <span className={styles.infoText}>{formatDate(plan.dateEnd)}</span>
                             </div>
                         )}
+                        {plan.description?.trim() && (
+                            <div className={styles.infoRow}>
+                                <svg className={styles.infoIcon} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                    <line x1="17" y1="10" x2="3" y2="10" /><line x1="21" y1="6" x2="3" y2="6" /><line x1="21" y1="14" x2="3" y2="14" /><line x1="17" y1="18" x2="3" y2="18" />
+                                </svg>
+                                <span className={styles.infoText}>{plan.description}</span>
+                            </div>
+                        )}
+                        {plan.details && Object.entries(plan.details)
+                            .filter(([, v]) => v?.toString().trim())
+                            .map(([key, value]) => (
+                                <div key={key} className={styles.infoRow}>
+                                    <svg className={styles.infoIcon} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                        <circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" />
+                                    </svg>
+                                    <span className={styles.infoText}>
+                                        <span className={styles.infoLabel}>{DETAIL_LABELS[key] || key}:</span> {value}
+                                    </span>
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
 

@@ -326,11 +326,24 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
         fetchPlan();
     }, [chukipuId, planId, user, router]);
 
+    const handleCategoryChange = (slug: string) => {
+        const newConfig = CATEGORY_CONFIG[slug];
+        if (!newConfig || newConfig.category === config.category) return;
+        setConfig(newConfig);
+        setGenres([]);
+        setDuration('');
+        setLocation('');
+        setDate('');
+        setDateEnd('');
+        setDetails({});
+    };
+
     const handleSave = async () => {
         if (!title.trim() || isSaving) return;
         setIsSaving(true);
         try {
             await firebaseUpdate(`plans/${planId}`, {
+                category: config.category,
                 title: title.trim(),
                 genre: genres.join(', '),
                 duration: duration.trim(),
@@ -420,6 +433,23 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     </div>
                     {plan.completed ? 'Completado' : 'Marcar como completado'}
                 </button>
+
+                {/* Category */}
+                <div className={styles.fieldGroup}>
+                    <label className={styles.fieldLabel}>Categoría</label>
+                    <div className={styles.chipsWrap}>
+                        {Object.entries(CATEGORY_CONFIG).map(([slug, cfg]) => (
+                            <button
+                                key={slug}
+                                type="button"
+                                className={`${styles.chip} ${config.category === cfg.category ? styles.chipSelected : ''}`}
+                                onClick={() => handleCategoryChange(slug)}
+                            >
+                                {cfg.category}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
                 {/* Title */}
                 <div className={styles.fieldGroup}>
@@ -617,7 +647,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                 {/* Save button */}
                 <button
                     className={styles.saveBtn}
-                    disabled={!title.trim() || isSaving || (config.extraFields?.filter(f => f.required).some(f => !(details[f.key] || '').trim()) ?? false) || (config.genresRequired && genres.length === 0)}
+                    disabled={!title.trim() || isSaving}
                     onClick={handleSave}
                 >
                     {isSaving ? 'Guardando...' : 'Guardar cambios'}
