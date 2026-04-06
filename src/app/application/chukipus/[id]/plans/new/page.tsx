@@ -303,8 +303,12 @@ export default function NuevoPlanPage({ params }: { params: Promise<{ id: string
             });
 
             if (chukipuSnap && chukipuSnap.members) {
-                const membersToNotify = chukipuSnap.members.filter((uid: string) => uid !== user.uid);
-                await Promise.all(membersToNotify.map((uid: string) =>
+                const rawMembers = chukipuSnap.members;
+                const memberUids: string[] = Array.isArray(rawMembers)
+                    ? rawMembers
+                    : Object.keys(rawMembers as Record<string, boolean>);
+                const membersToNotify = memberUids.filter(uid => uid !== user.uid);
+                await Promise.all(membersToNotify.map(uid =>
                     sendNotification(uid, {
                         type: 'plan',
                         title: 'Nuevo plan',
