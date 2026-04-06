@@ -51,12 +51,11 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         titlePlaceholder: 'Ej: Interstellar, Breaking Bad...',
         category: 'Cartelera',
         extraFields: [
-            { key: 'mediaType', label: '¿Qué vais a ver?', type: 'chips', options: ['Película', 'Serie', 'Cortometraje'], required: true },
+            { key: 'mediaType', label: '¿Qué vais a ver?', type: 'chips', options: ['Película', 'Serie', 'Cortometraje'] },
             { key: 'episodes', label: 'Episodios', type: 'number', placeholder: 'Ej: 8' },
         ],
         genres: ['Acción', 'Comedia', 'Drama', 'Terror', 'Ciencia ficción', 'Romance', 'Animación', 'Thriller', 'Documental', 'Fantasía', 'Musical', 'Aventura'],
         genresLabel: 'Género',
-        genresRequired: true,
         genresMax: 2,
         showLocation: true,
         locationLabel: 'Dónde verla',
@@ -73,7 +72,6 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         category: 'Viaje',
         showDate: true,
         dateLabel: 'Fecha de inicio',
-        dateRequired: true,
         dateType: 'datetime',
         showDateEnd: true,
         dateEndLabel: 'Fecha de fin',
@@ -91,11 +89,9 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         category: 'Fiesta',
         showLocation: true,
         locationLabel: 'Lugar',
-        locationRequired: true,
         locationPlaceholder: 'Ej: Casa, Bar, Salón de eventos...',
         showDate: true,
         dateLabel: 'Fecha y hora',
-        dateRequired: true,
         dateType: 'datetime',
         showDateEnd: false,
         extraFields: [
@@ -112,7 +108,6 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         category: 'Escapada',
         showDate: true,
         dateLabel: 'Fecha de ida',
-        dateRequired: true,
         dateType: 'datetime',
         showDateEnd: true,
         dateEndLabel: 'Fecha de vuelta',
@@ -133,7 +128,6 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         category: 'Deporte',
         showLocation: true,
         locationLabel: 'Lugar',
-        locationRequired: true,
         locationPlaceholder: 'Ej: Polideportivo, Parque...',
         showDate: true,
         dateLabel: 'Fecha',
@@ -153,7 +147,6 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         category: 'Salida',
         genres: ['Bar', 'Discoteca', 'Concierto', 'Terraza', 'Karaoke', 'Cine', 'Restaurante', 'Comida', 'Cena', 'Otro'],
         genresLabel: 'Tipo de salida',
-        genresRequired: true,
         showLocation: true,
         locationLabel: 'Zona / Lugar',
         locationPlaceholder: 'Ej: Centro, Malasaña, Chueca...',
@@ -215,10 +208,8 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         category: 'Cultura',
         genres: ['Museo', 'Teatro', 'Concierto', 'Exposición', 'Festival', 'Monumento', 'Tour', 'Cine', 'Ópera'],
         genresLabel: 'Tipo de actividad',
-        genresRequired: true,
         showLocation: true,
         locationLabel: 'Lugar / Ciudad',
-        locationRequired: true,
         locationPlaceholder: 'Ej: Madrid, Barcelona...',
         showDate: true,
         dateLabel: 'Fecha',
@@ -237,8 +228,7 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
         titlePlaceholder: 'Ej: Ir al mercado, visitar a los abuelos...',
         category: 'Otro',
         showLocation: true,
-        locationLabel: 'Lugar (opcional)',
-        locationRequired: false,
+        locationLabel: 'Lugar',
         locationPlaceholder: 'Ej: Madrid, en casa...',
         showDate: true,
         dateLabel: 'Fecha',
@@ -467,35 +457,6 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                     </div>
                 </div>
 
-                {/* Required extra fields (before genre) */}
-                {config.extraFields?.filter(f => f.required).map(field => (
-                    <div key={field.key} className={styles.fieldGroup}>
-                        <label className={styles.fieldLabel}>{field.label}</label>
-                        {field.type === 'chips' ? (
-                            <div className={styles.chipsWrap}>
-                                {field.options?.map(opt => (
-                                    <button
-                                        key={opt}
-                                        type="button"
-                                        className={`${styles.chip} ${details[field.key] === opt ? styles.chipSelected : ''}`}
-                                        onClick={() => setDetail(field.key, details[field.key] === opt ? '' : opt)}
-                                    >
-                                        {opt}
-                                    </button>
-                                ))}
-                            </div>
-                        ) : (
-                            <input
-                                type={field.type}
-                                placeholder={field.placeholder}
-                                value={details[field.key] || ''}
-                                onChange={e => setDetail(field.key, e.target.value)}
-                                className={styles.input}
-                                maxLength={field.maxLength}
-                            />
-                        )}
-                    </div>
-                ))}
 
                 {/* Genre chips */}
                 {config.genres && (
@@ -504,7 +465,7 @@ export default function EditPlanPage({ params }: { params: Promise<{ id: string;
                             {config.genresLabel}
                             {config.genresMax && config.genresMax > 1
                                 ? <span className={styles.optional}> (máx. {config.genresMax})</span>
-                                : !config.genresRequired && <span className={styles.optional}> (opcional)</span>
+                                : <span className={styles.optional}> (opcional)</span>
                             }
                         </label>
                         <div className={styles.chipsWrap}>
