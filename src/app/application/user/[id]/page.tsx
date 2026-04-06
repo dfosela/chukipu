@@ -420,35 +420,33 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                         {profileData.bio && <p className={styles.profileBio}>{profileData.bio}</p>}
                     </div>
 
-                    <div className={styles.statsRow}>
-                        <button className={styles.statItem}>
-                            <span className={styles.statValue}>{profileData.chukipusCount || 0}</span>
-                            <span className={styles.statLabel}>Chukipus</span>
-                        </button>
-                        <div className={styles.divider}></div>
-                        <button className={styles.statItem} onClick={() => router.push(`/application/user/${id}/followers`)}>
-                            <span className={styles.statValue}>{profileData.followersCount || 0}</span>
-                            <span className={styles.statLabel}>Seguidores</span>
-                        </button>
-                        <div className={styles.divider}></div>
-                        <button className={styles.statItem} onClick={() => router.push(`/application/user/${id}/following`)}>
-                            <span className={styles.statValue}>{profileData.followingCount || 0}</span>
-                            <span className={styles.statLabel}>Siguiendo</span>
+                    <div className={styles.profileActions}>
+                        <div className={styles.statsRow}>
+                            <button className={styles.statItem}>
+                                <span className={styles.statValue}>{profileData.chukipusCount || 0}</span>
+                                <span className={styles.statLabel}>Chukipus</span>
+                            </button>
+                            <div className={styles.divider}></div>
+                            <button className={styles.statItem} onClick={() => router.push(`/application/user/${id}/followers`)}>
+                                <span className={styles.statValue}>{profileData.followersCount || 0}</span>
+                                <span className={styles.statLabel}>Seguidores</span>
+                            </button>
+                            <div className={styles.divider}></div>
+                            <button className={styles.statItem} onClick={() => router.push(`/application/user/${id}/following`)}>
+                                <span className={styles.statValue}>{profileData.followingCount || 0}</span>
+                                <span className={styles.statLabel}>Siguiendo</span>
+                            </button>
+                        </div>
+                        <button
+                            className={`${styles.followBtn} ${isFollowing ? styles.followBtnFollowing : isPending ? styles.followBtnPending : ''}`}
+                            onClick={handleFollow}
+                            disabled={followLoading}
+                        >
+                            {followLoading ? (
+                                <div className={styles.btnSpinner} />
+                            ) : isFollowing ? 'Siguiendo' : isPending ? 'Pendiente' : 'Seguir'}
                         </button>
                     </div>
-                </div>
-
-                {/* Follow Button */}
-                <div className={styles.followBtnWrap}>
-                    <button
-                        className={`${styles.followBtn} ${isFollowing ? styles.followBtnFollowing : isPending ? styles.followBtnPending : ''}`}
-                        onClick={handleFollow}
-                        disabled={followLoading}
-                    >
-                        {followLoading ? (
-                            <div className={styles.btnSpinner} />
-                        ) : isFollowing ? 'Siguiendo' : isPending ? 'Pendiente' : 'Seguir'}
-                    </button>
                 </div>
 
                 {/* Tab bar */}
@@ -486,7 +484,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                                 key={plan.id}
                                 plan={plan}
                                 media={planMediaMap[plan.id] ?? []}
-                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}?from=user&userId=${id}`)}
+                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
                             />
                         ))
                     )}
