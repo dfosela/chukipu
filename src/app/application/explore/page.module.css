@@ -242,13 +242,20 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-md);
-    padding: var(--space-2xl) var(--space-xl);
+    padding: var(--space-xl);
     color: var(--text-tertiary);
+    text-align: center;
+    min-height: 55vh;
 }
 
 .emptyUsers p {
     font-size: 14px;
     font-weight: 500;
+}
+
+.emptyUsers span {
+    font-size: 13px;
+    color: var(--text-tertiary);
 }
 
 /* Filters */

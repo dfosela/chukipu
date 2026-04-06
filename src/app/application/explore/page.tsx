@@ -410,6 +410,16 @@ export default function ExplorePage() {
                 ) : (
                     /* Personas tab */
                     <>
+                        {!search.trim() ? (
+                            <div className={styles.emptyUsers}>
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                                </svg>
+                                <p>Busca a cualquier persona</p>
+                                <span>Encuentra amigos por nombre o @usuario</span>
+                            </div>
+                        ) : (
+                        <>
                         <div className={styles.sectionLabel}>
                             <span>{!usersLoaded ? 'Cargando...' : `${filteredUsers.length} personas`}</span>
                         </div>
@@ -449,6 +459,8 @@ export default function ExplorePage() {
                                 </button>
                             ))}
                         </div>
+                        </>
+                        )}
                     </>
                 )}
             </div>
