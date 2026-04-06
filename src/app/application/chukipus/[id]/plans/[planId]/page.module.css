@@ -271,11 +271,6 @@
     color: var(--text-secondary);
 }
 
-.infoLabel {
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
 /* ── Feed Section ── */
 .feedSection {
     margin: 0 var(--space-md) var(--space-xl);
