@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Allow: /landing
+Disallow: /application/
+Disallow: /api/
