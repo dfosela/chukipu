@@ -182,7 +182,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     };
 
     const handleToggleLike = async () => {
-        if (!isMember || !user) return;
+        if (!user) return;
         const uid = user.uid;
         const currentLikes = plan.likes || [];
         const isLiked = currentLikes.includes(uid);
