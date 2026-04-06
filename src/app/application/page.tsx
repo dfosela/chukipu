@@ -410,6 +410,7 @@ export default function HomePage() {
                         {category}
                       </div>
                       <div className={styles.recommendedScrollContainer}>
+                        <span className={styles.scrollSpacer} />
                         {plans.map(plan => (
                           <div key={plan.id} className={styles.recommendedCardWrapper}>
                             <div className={styles.nextPlanCard} onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}?from=home`)}>
@@ -466,6 +467,7 @@ export default function HomePage() {
                             </div>
                           </div>
                         ))}
+                        <span className={styles.scrollSpacer} />
                       </div>
                     </div>
                   );
