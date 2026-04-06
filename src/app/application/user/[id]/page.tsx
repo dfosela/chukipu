@@ -486,7 +486,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                                 key={plan.id}
                                 plan={plan}
                                 media={planMediaMap[plan.id] ?? []}
-                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}`)}
+                                onClick={() => router.push(`/application/chukipus/${plan.chukipuId}/plans/${plan.id}?from=user&userId=${id}`)}
                             />
                         ))
                     )}

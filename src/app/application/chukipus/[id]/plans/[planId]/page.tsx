@@ -53,12 +53,15 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
     const { id: chukipuId, planId } = use(params);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const from = searchParams.get('from'); // 'explore' | 'home' | null
+    const from = searchParams.get('from'); // 'explore' | 'home' | 'user' | null
+    const userId = searchParams.get('userId');
     const backDestination = from === 'explore'
         ? '/application/explore'
         : from === 'home'
             ? '/application'
-            : `/application/chukipus/${chukipuId}`;
+            : from === 'user' && userId
+                ? `/application/user/${userId}`
+                : `/application/chukipus/${chukipuId}`;
     const { user, profile } = useAuth();
 
     const [plan, setPlan] = useState<Plan | null>(null);
