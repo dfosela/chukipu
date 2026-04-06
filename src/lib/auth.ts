@@ -3,6 +3,7 @@ import {
     signInWithEmailAndPassword,
     signInWithPopup,
     GoogleAuthProvider,
+    OAuthProvider,
     signOut,
     sendPasswordResetEmail,
     User as FirebaseUser
@@ -13,6 +14,7 @@ import { UserProfile } from '../types/firestore';
 import { AppError } from '../errors/AppError';
 
 const googleProvider = new GoogleAuthProvider();
+const appleProvider = new OAuthProvider('apple.com');
 
 async function ensureUserProfile(uid: string, displayName: string, avatar: string): Promise<void> {
     const existing = await firebaseGet<UserProfile>(`users/${uid}`);
@@ -70,6 +72,23 @@ export async function loginWithGoogle(): Promise<FirebaseUser> {
         return user;
     } catch (error) {
         throw AppError.fromError(error, 'Failed to login with Google');
+    }
+}
+
+export async function loginWithApple(): Promise<FirebaseUser> {
+    try {
+        const userCredential = await signInWithPopup(auth, appleProvider);
+        const user = userCredential.user;
+
+        await ensureUserProfile(
+            user.uid,
+            user.displayName || '',
+            user.photoURL || '',
+        );
+
+        return user;
+    } catch (error) {
+        throw AppError.fromError(error, 'Failed to login with Apple');
     }
 }
 
