@@ -18,27 +18,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Plan, PlanMedia } from '@/types/firestore';
 import BottomNav from '@/components/BottomNav/BottomNav';
 
-const DETAIL_LABELS: Record<string, string> = {
-    budget: 'Presupuesto',
-    transport: 'Transporte',
-    accommodation: 'Alojamiento',
-    notes: 'Notas',
-    theme: 'Temática',
-    guests: 'Invitados',
-    music: 'Música',
-    activities: 'Actividades',
-    time: 'Hora',
-    duration: 'Duración',
-    level: 'Nivel',
-    players: 'Participantes',
-    endTime: 'Hora de fin',
-    people: 'Personas',
-    snacks: 'Snacks',
-    price: 'Precio',
-    company: 'Compañía',
-    mediaType: 'Tipo',
-    episodes: 'Episodios',
-};
 
 function DetailIcon({ detailKey }: { detailKey: string }) {
     const props = { className: '', width: '15', height: '15', viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: '2', strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
