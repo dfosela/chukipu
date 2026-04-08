@@ -1,6 +1,6 @@
 'use client';
 
-import { getMessaging, getToken, isSupported } from 'firebase/messaging';
+import { getMessaging, getToken, isSupported, onMessage } from 'firebase/messaging';
 import { ref, set } from 'firebase/database';
 import { app, db } from './firebase';
 
@@ -29,6 +29,28 @@ export async function registerPushTokenIfGranted(uid: string): Promise<void> {
     } catch (err) {
         console.error('[FCM] Error registering push token:', err);
     }
+}
+
+/**
+ * Sets up onMessage listener for foreground notifications.
+ * Call once after login when permission is granted.
+ */
+export function setupOnMessage(): void {
+    if (typeof window === 'undefined') return;
+
+    isSupported().then((supported) => {
+        if (!supported || Notification.permission !== 'granted') return;
+
+        const messaging = getMessaging(app);
+        onMessage(messaging, (payload) => {
+            const title = payload.notification?.title || 'Chukipu';
+            const body = payload.notification?.body || '';
+            new Notification(title, {
+                body,
+                icon: '/logos/chukipuPWA_Android.png',
+            });
+        });
+    }).catch((err) => console.error('[FCM] onMessage setup failed:', err));
 }
 
 /**
