@@ -6,6 +6,7 @@ import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { firebaseGet } from '../lib/firebaseMethods';
 import { UserProfile } from '../types/firestore';
+import { registerPushToken } from '../lib/fcm';
 
 interface AuthContextType {
     user: FirebaseUser | null;
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     setUser(firebaseUser);
                     const userProfile = await firebaseGet<UserProfile>(`users/${firebaseUser.uid}`);
                     setProfile(userProfile);
+                    registerPushToken(firebaseUser.uid); // fire-and-forget
                 } else {
                     setUser(null);
                     setProfile(null);

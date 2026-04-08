@@ -38,4 +38,11 @@ export async function sendNotification(
     } catch (err) {
         console.error('[sendNotification] Error writing notification:', err);
     }
+
+    // Push notification (fire-and-forget, no blocking)
+    fetch('/api/push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toUid, title: payload.title, body: payload.body }),
+    }).catch(() => {});
 }
