@@ -6,7 +6,7 @@ import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '../lib/firebase';
 import { firebaseGet } from '../lib/firebaseMethods';
 import { UserProfile } from '../types/firestore';
-import { registerPushTokenIfGranted } from '../lib/fcm';
+import { registerPushTokenIfGranted, setupOnMessage } from '../lib/fcm';
 
 interface AuthContextType {
     user: FirebaseUser | null;
@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     const userProfile = await firebaseGet<UserProfile>(`users/${firebaseUser.uid}`);
                     setProfile(userProfile);
                     registerPushTokenIfGranted(firebaseUser.uid); // fire-and-forget, no popup
+                    setupOnMessage();
                 } else {
                     setUser(null);
                     setProfile(null);
