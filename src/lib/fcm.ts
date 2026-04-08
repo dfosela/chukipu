@@ -31,12 +31,16 @@ export async function registerPushTokenIfGranted(uid: string): Promise<void> {
     }
 }
 
+let onMessageInitialized = false;
+
 /**
  * Sets up onMessage listener for foreground notifications.
  * Call once after login when permission is granted.
+ * Guarded to prevent duplicate listeners from multiple onAuthStateChanged fires.
  */
 export function setupOnMessage(): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || onMessageInitialized) return;
+    onMessageInitialized = true;
 
     isSupported().then((supported) => {
         if (!supported || Notification.permission !== 'granted') return;
