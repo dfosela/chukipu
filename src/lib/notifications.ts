@@ -44,5 +44,5 @@ export async function sendNotification(
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ toUid, title: payload.title, body: payload.body }),
-    }).catch(() => {});
+    }).catch((err) => console.error('[sendNotification] Push delivery failed:', err));
 }
