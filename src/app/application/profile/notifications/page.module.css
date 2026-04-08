@@ -146,6 +146,24 @@ input:checked+.slider:before {
         transform: translateY(0);
     }
 }
+.enablePushBtn {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    background: var(--brand-gradient);
+    color: var(--text-on-brand);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity var(--transition-fast);
+}
+
+.enablePushBtn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 /* ── Utility classes (spacers, hidden elements, animation delays) ── */
 .spacer38 { width: 38px; flex-shrink: 0; }
 .spacer40 { width: 40px; flex-shrink: 0; }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ref, onValue, update } from 'firebase/database';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { requestPushPermission } from '@/lib/fcm';
 import styles from './page.module.css';
 
 export default function NotificacionesPage() {
@@ -14,6 +15,13 @@ export default function NotificacionesPage() {
     });
     const [loading, setLoading] = useState(true);
     const [userId, setUserId] = useState<string | null>(null);
+    const [pushPermission, setPushPermission] = useState<NotificationPermission>(() => {
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+            return Notification.permission;
+        }
+        return 'default';
+    });
+    const [requestingPush, setRequestingPush] = useState(false);
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -44,6 +52,15 @@ export default function NotificacionesPage() {
 
         return () => unsubscribe();
     }, [userId]);
+
+    const handleEnablePush = async () => {
+        if (!userId || requestingPush) return;
+        if (pushPermission === 'denied') return; // browser blocked, can't re-ask
+        setRequestingPush(true);
+        const result = await requestPushPermission(userId);
+        setPushPermission(result === 'granted' ? 'granted' : Notification.permission);
+        setRequestingPush(false);
+    };
 
     const handleToggle = async (key: keyof typeof preferences) => {
         if (!userId) return;
@@ -83,6 +100,36 @@ export default function NotificacionesPage() {
                     </div>
                 ) : (
                     <>
+                        <div className={styles.section}>
+                            <h3 className={styles.sectionTitle}>NOTIFICACIONES DEL DISPOSITIVO</h3>
+                            <div className={styles.settingItem}>
+                                <div className={styles.settingTextWrap}>
+                                    <span className={styles.settingLabel}>Notificaciones push</span>
+                                    <span className={styles.settingValue}>
+                                        {pushPermission === 'granted'
+                                            ? 'Activadas'
+                                            : pushPermission === 'denied'
+                                                ? 'Bloqueadas — actívalas en ajustes del navegador'
+                                                : 'Recibe avisos aunque la app esté cerrada'}
+                                    </span>
+                                </div>
+                                {pushPermission !== 'granted' && (
+                                    <button
+                                        className={styles.enablePushBtn}
+                                        onClick={handleEnablePush}
+                                        disabled={pushPermission === 'denied' || requestingPush}
+                                    >
+                                        {requestingPush ? '...' : pushPermission === 'denied' ? 'Bloqueado' : 'Activar'}
+                                    </button>
+                                )}
+                                {pushPermission === 'granted' && (
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ color: 'var(--brand-primary)', flexShrink: 0 }}>
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                )}
+                            </div>
+                        </div>
+
                         <div className={styles.section}>
                             <h3 className={styles.sectionTitle}>PREFERENCIAS PUSH</h3>
 
