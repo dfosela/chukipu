@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
         const accessToken = await getAccessToken();
         if (!accessToken) {
             console.error('[push] Failed to get access token');
-            return NextResponse.json({ ok: true });
+            return NextResponse.json({ ok: false, error: 'auth_failed' }, { status: 500 });
         }
 
         // Read FCM tokens from Realtime Database via REST
@@ -71,12 +71,12 @@ export async function POST(req: NextRequest) {
 
         if (!dbRes.ok) {
             console.error('[push] Failed to read FCM tokens from RTDB:', dbRes.status, await dbRes.text());
-            return NextResponse.json({ ok: true });
+            return NextResponse.json({ ok: false, error: 'db_read_failed' }, { status: 502 });
         }
         const tokensObj = await dbRes.json() as Record<string, string> | null;
         if (!tokensObj) {
             console.error('[push] No FCM tokens found for uid:', toUid);
-            return NextResponse.json({ ok: true });
+            return NextResponse.json({ ok: true, sent: 0 });
         }
         console.log('[push] Sending to', Object.keys(tokensObj).length, 'token(s) for uid:', toUid);
 
@@ -122,9 +122,9 @@ export async function POST(req: NextRequest) {
             }
         }));
 
-        return NextResponse.json({ ok: true });
+        return NextResponse.json({ ok: true, sent: tokens.length });
     } catch (err) {
         console.error('[push] Error:', err);
-        return NextResponse.json({ ok: true });
+        return NextResponse.json({ ok: false, error: 'internal' }, { status: 500 });
     }
 }
