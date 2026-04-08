@@ -11,10 +11,9 @@ async function saveToken(uid: string): Promise<void> {
     const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
     const messaging = getMessaging(app);
     const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: swReg });
-    if (token) {
-        const tokenKey = token.slice(-20);
-        await set(ref(db, `users/${uid}/fcmTokens/${tokenKey}`), token);
-    }
+    if (!token) throw new Error('getToken() returned empty — check VAPID key');
+    const tokenKey = token.slice(-20);
+    await set(ref(db, `users/${uid}/fcmTokens/${tokenKey}`), token);
 }
 
 /**
