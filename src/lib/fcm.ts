@@ -36,7 +36,7 @@ export async function registerPushTokenIfGranted(uid: string): Promise<void> {
  * Pide permiso al usuario y registra el token.
  * Llamar solo desde una acción explícita del usuario (botón en ajustes).
  */
-export async function requestPushPermission(uid: string): Promise<'granted' | 'denied' | 'unsupported'> {
+export async function requestPushPermission(uid: string): Promise<string> {
     if (typeof window === 'undefined') return 'unsupported';
     try {
         const supported = await isSupported();
@@ -49,6 +49,6 @@ export async function requestPushPermission(uid: string): Promise<'granted' | 'd
         return 'granted';
     } catch (err) {
         console.error('[FCM] Error requesting push permission:', err);
-        return 'denied';
+        return String(err);
     }
 }

@@ -58,7 +58,10 @@ export async function POST(req: NextRequest) {
         };
 
         const accessToken = await getAccessToken();
-        if (!accessToken) return NextResponse.json({ ok: true });
+        if (!accessToken) {
+            console.error('[push] Failed to get access token');
+            return NextResponse.json({ ok: true });
+        }
 
         // Read FCM tokens from Realtime Database via REST
         const dbRes = await fetch(
@@ -66,9 +69,16 @@ export async function POST(req: NextRequest) {
             { headers: { Authorization: `Bearer ${accessToken}` } }
         );
 
-        if (!dbRes.ok) return NextResponse.json({ ok: true });
+        if (!dbRes.ok) {
+            console.error('[push] Failed to read FCM tokens from RTDB:', dbRes.status, await dbRes.text());
+            return NextResponse.json({ ok: true });
+        }
         const tokensObj = await dbRes.json() as Record<string, string> | null;
-        if (!tokensObj) return NextResponse.json({ ok: true });
+        if (!tokensObj) {
+            console.error('[push] No FCM tokens found for uid:', toUid);
+            return NextResponse.json({ ok: true });
+        }
+        console.log('[push] Sending to', Object.keys(tokensObj).length, 'token(s) for uid:', toUid);
 
         const tokens = Object.entries(tokensObj);
 
@@ -100,7 +110,8 @@ export async function POST(req: NextRequest) {
 
             // Remove stale / invalid tokens
             if (!fcmRes.ok) {
-                const err = await fcmRes.json() as { error?: { status?: string } };
+                const err = await fcmRes.json() as { error?: { status?: string; message?: string } };
+                console.error('[push] FCM send failed:', err?.error?.status, err?.error?.message);
                 const status = err?.error?.status;
                 if (status === 'NOT_FOUND' || status === 'UNREGISTERED') {
                     await fetch(

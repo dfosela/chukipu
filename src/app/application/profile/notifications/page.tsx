@@ -22,6 +22,7 @@ export default function NotificacionesPage() {
         return 'default';
     });
     const [requestingPush, setRequestingPush] = useState(false);
+    const [pushDebug, setPushDebug] = useState<string | null>(null);
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
@@ -55,10 +56,17 @@ export default function NotificacionesPage() {
 
     const handleEnablePush = async () => {
         if (!userId || requestingPush) return;
-        if (pushPermission === 'denied') return; // browser blocked, can't re-ask
+        if (pushPermission === 'denied') return;
         setRequestingPush(true);
+        setPushDebug('Registrando...');
         const result = await requestPushPermission(userId);
-        setPushPermission(result === 'granted' ? 'granted' : Notification.permission);
+        if (result === 'granted') {
+            setPushPermission('granted');
+            setPushDebug('Token guardado correctamente');
+        } else {
+            setPushPermission(Notification.permission);
+            setPushDebug(`Error: ${result}`);
+        }
         setRequestingPush(false);
     };
 
@@ -123,12 +131,22 @@ export default function NotificacionesPage() {
                                     </button>
                                 )}
                                 {pushPermission === 'granted' && (
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ color: 'var(--brand-primary)', flexShrink: 0 }}>
-                                        <polyline points="20 6 9 17 4 12" />
-                                    </svg>
+                                    <button
+                                        className={styles.enablePushBtn}
+                                        onClick={handleEnablePush}
+                                        disabled={requestingPush}
+                                    >
+                                        {requestingPush ? '...' : 'Reactivar'}
+                                    </button>
                                 )}
                             </div>
                         </div>
+
+                        {pushDebug && (
+                            <div style={{ margin: '0 var(--space-md) var(--space-md)', padding: '10px 14px', background: 'var(--card-bg)', borderRadius: 'var(--radius-md)', fontSize: 13, color: 'var(--text-secondary)', wordBreak: 'break-all' }}>
+                                {pushDebug}
+                            </div>
+                        )}
 
                         <div className={styles.section}>
                             <h3 className={styles.sectionTitle}>PREFERENCIAS PUSH</h3>
