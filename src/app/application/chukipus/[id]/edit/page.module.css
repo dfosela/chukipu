@@ -290,11 +290,11 @@
     width: 100%;
     padding: 16px;
     border-radius: var(--radius-full);
-    background: rgba(232, 72, 90, 0.1);
-    color: #e8485a;
+    background: rgba(var(--color-danger-rgb), 0.1);
+    color: var(--color-danger);
     font-size: 16px;
     font-weight: 600;
-    border: 1px solid rgba(232, 72, 90, 0.2);
+    border: 1px solid rgba(var(--color-danger-rgb), 0.2);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -305,7 +305,7 @@
 }
 
 .deleteBtn:hover {
-    background: rgba(232, 72, 90, 0.15);
+    background: rgba(var(--color-danger-rgb), 0.15);
 }
 
 .deleteBtn:active {

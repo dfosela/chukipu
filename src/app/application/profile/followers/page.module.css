@@ -115,9 +115,9 @@
     flex-shrink: 0;
     padding: 8px 16px;
     border-radius: var(--radius-full);
-    background: rgba(239, 68, 68, 0.08);
-    border: 1.5px solid rgba(239, 68, 68, 0.2);
-    color: #ef4444;
+    background: rgba(var(--color-danger-rgb), 0.08);
+    border: 1.5px solid rgba(var(--color-danger-rgb), 0.2);
+    color: var(--color-danger);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -127,7 +127,7 @@
 
 .removeBtn:active {
     transform: scale(0.95);
-    background: rgba(239, 68, 68, 0.15);
+    background: rgba(var(--color-danger-rgb), 0.15);
 }
 
 .removeBtn:disabled {

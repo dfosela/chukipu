@@ -72,6 +72,10 @@
   /* Stars / ratings */
   --star-color: #F5A623;
 
+  /* Danger / destructive actions */
+  --color-danger: #8c4a3e;
+  --color-danger-rgb: 140, 74, 62;
+
   /* Desktop sides background */
   --bg-desktop-sides: #bab0a1;
 }
@@ -112,6 +116,10 @@
   --card-border: rgba(255, 255, 255, 0.09);
   --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.30), 0 1px 4px rgba(0, 0, 0, 0.15);
   --card-shadow-hover: 0 8px 40px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
+
+  /* Danger / destructive actions */
+  --color-danger: #d4788a;
+  --color-danger-rgb: 212, 120, 138;
 
   /* Desktop sides background */
   --bg-desktop-sides: #080610;

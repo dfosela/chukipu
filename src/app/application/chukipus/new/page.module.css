@@ -271,7 +271,7 @@
 /* Error message */
 .errorMsg {
     font-size: 13px;
-    color: #e8485a;
+    color: var(--color-danger);
     text-align: center;
     margin-top: 4px;
     animation: fadeIn 0.3s both;

@@ -123,9 +123,9 @@
     max-width: 300px;
     height: 54px;
     border-radius: 27px;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1.5px solid rgba(239, 68, 68, 0.2);
-    color: #ef4444;
+    background: rgba(var(--color-danger-rgb), 0.08);
+    border: 1.5px solid rgba(var(--color-danger-rgb), 0.2);
+    color: var(--color-danger);
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
@@ -137,7 +137,7 @@
 }
 
 .logoutBtn:active {
-    background: rgba(239, 68, 68, 0.14);
+    background: rgba(var(--color-danger-rgb), 0.14);
     transform: scale(0.98);
 }
 
