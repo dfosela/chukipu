@@ -53,7 +53,7 @@ export default function EditarPerfilPage() {
             };
 
             if (avatarFile) {
-                updates.avatar = await uploadFile(avatarFile, 'avatars', `${user.uid}-${Date.now()}`);
+                updates.avatar = await uploadFile(avatarFile, 'avatars', user.uid);
             }
 
             await firebaseUpdate(`users/${user.uid}`, updates);
