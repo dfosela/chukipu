@@ -247,6 +247,32 @@ const HeartParticles = () => {
     );
 };
 
+// --- iOS Install Modal ---
+const IOSInstallModal = ({ onClose }: { onClose: () => void }) => (
+    <div className={styles.iosModalOverlay} onClick={onClose}>
+        <div className={styles.iosModal} onClick={e => e.stopPropagation()}>
+            <button className={styles.iosModalClose} onClick={onClose} aria-label="Cerrar">×</button>
+            <h3 className={styles.iosModalTitle}>Instala Chukipu en tu iPhone</h3>
+            <p className={styles.iosModalDesc}>Sigue estos pasos desde Safari:</p>
+            <ol className={styles.iosModalSteps}>
+                <li className={styles.iosModalStep}>
+                    <span className={styles.iosModalStepNum}>1</span>
+                    <span>Toca el botón <strong>Compartir</strong> <span className={styles.iosShareIcon}>⎙</span> en la barra inferior de Safari</span>
+                </li>
+                <li className={styles.iosModalStep}>
+                    <span className={styles.iosModalStepNum}>2</span>
+                    <span>Desplázate y selecciona <strong>&ldquo;Añadir a pantalla de inicio&rdquo;</strong></span>
+                </li>
+                <li className={styles.iosModalStep}>
+                    <span className={styles.iosModalStepNum}>3</span>
+                    <span>Pulsa <strong>&ldquo;Añadir&rdquo;</strong> en la esquina superior derecha</span>
+                </li>
+            </ol>
+            <p className={styles.iosModalNote}>Abre Chukipu desde el icono de tu pantalla de inicio para la mejor experiencia.</p>
+        </div>
+    </div>
+);
+
 // --- Main App Component ---
 
 export default function App() {
@@ -254,6 +280,7 @@ export default function App() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
     const [deferredPrompt, setDeferredPrompt] = useState<Event & { prompt: () => void; userChoice: Promise<{ outcome: string }> } | null>(null);
+    const [showIOSModal, setShowIOSModal] = useState(false);
 
     useEffect(() => {
         // If already running as installed PWA, redirect to the app
@@ -294,8 +321,12 @@ export default function App() {
 
     const handleInstall = async () => {
         if (!deferredPrompt) {
-            // PWA install prompt not available (already installed, iOS, or not yet triggered)
-            // Redirect to the app as fallback
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as Window & { MSStream?: unknown }).MSStream;
+            if (isIOS) {
+                setShowIOSModal(true);
+                return;
+            }
+            // Not iOS and no prompt available (already installed or not triggered yet)
             router.push('/application');
             return;
         }
@@ -686,6 +717,9 @@ export default function App() {
                     </FadeIn>
                 </div>
             </section>
+
+            {/* iOS Install Modal */}
+            {showIOSModal && <IOSInstallModal onClose={() => setShowIOSModal(false)} />}
 
             {/* Footer */}
             <footer id="footer" className={styles.footer}>
