@@ -210,7 +210,7 @@ export default function ExplorePage() {
                             <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                         </svg>
                         <input
-                            type="search"
+                            type="text"
                             placeholder={activeTab === 'chukipus' ? 'Buscar planes, chukipus...' : 'Buscar por nombre o @usuario...'}
                             value={search}
                             onChange={e => setSearch(e.target.value)}
