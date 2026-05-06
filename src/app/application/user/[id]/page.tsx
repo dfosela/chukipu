@@ -102,6 +102,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
     const [isPending, setIsPending] = useState(false);
     const [followLoading, setFollowLoading] = useState(false);
 
+    const [followError, setFollowError] = useState<string | null>(null);
     const [avatarModalOpen, setAvatarModalOpen] = useState(false);
 
     const [plans, setPlans] = useState<ProfilePlan[]>([]);
@@ -253,24 +254,33 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
     const handleFollow = async () => {
         if (!user || followLoading) return;
         setFollowLoading(true);
+        setFollowError(null);
 
         try {
             const myData = await firebaseGet<UserProfile>(`users/${user.uid}`);
             const theirData = await firebaseGet<UserProfile>(`users/${id}`);
-            if (!myData || !theirData) return;
+            if (!myData || !theirData) {
+                setFollowError('No se pudo cargar el perfil. Inténtalo de nuevo.');
+                return;
+            }
+
+            const toArray = (val: string[] | Record<string, string> | null | undefined): string[] => {
+                if (!val) return [];
+                if (Array.isArray(val)) return val;
+                return Object.values(val);
+            };
 
             if (isFollowing) {
-                // Unfollow
-                const myFollowing = (myData.following || []).filter(uid => uid !== id);
-                const theirFollowers = (theirData.followers || []).filter(uid => uid !== user.uid);
+                const myFollowing = toArray(myData.following).filter(uid => uid !== id);
+                const theirFollowers = toArray(theirData.followers).filter(uid => uid !== user.uid);
 
+                await firebaseUpdate(`users/${user.uid}`, {
+                    following: myFollowing,
+                    followingCount: myFollowing.length,
+                });
                 await firebaseBatchUpdate({
-                    [`users/${user.uid}/following`]: myFollowing,
-                    [`users/${user.uid}/followingCount`]: myFollowing.length,
-                    [`users/${user.uid}/updatedAt`]: Date.now(),
                     [`users/${id}/followers`]: theirFollowers,
                     [`users/${id}/followersCount`]: theirFollowers.length,
-                    [`users/${id}/updatedAt`]: Date.now(),
                 });
 
                 setIsFollowing(false);
@@ -280,22 +290,14 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                     followersCount: theirFollowers.length,
                 } : prev);
             } else if (isPending) {
-                // Cancel request
-                const theirRequests = (theirData.followRequests || []).filter(uid => uid !== user.uid);
-                await firebaseUpdate(`users/${id}`, {
-                    followRequests: theirRequests,
-                });
+                const theirRequests = toArray(theirData.followRequests).filter(uid => uid !== user.uid);
+                await firebaseBatchUpdate({ [`users/${id}/followRequests`]: theirRequests });
                 setIsPending(false);
             } else {
-                // Follow or Send Request
                 if (theirData.isPrivate) {
-                    const theirRequests = [...(theirData.followRequests || []), user.uid];
-                    await firebaseUpdate(`users/${id}`, {
-                        followRequests: theirRequests,
-                    });
+                    const theirRequests = [...toArray(theirData.followRequests), user.uid];
+                    await firebaseBatchUpdate({ [`users/${id}/followRequests`]: theirRequests });
                     setIsPending(true);
-
-                    // Send notification
                     await sendNotification(id, {
                         type: 'follow_request',
                         title: 'Solicitud de seguimiento',
@@ -303,16 +305,16 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                         relatedId: user.uid,
                     });
                 } else {
-                    const myFollowing = [...(myData.following || []), id];
-                    const theirFollowers = [...(theirData.followers || []), user.uid];
+                    const myFollowing = [...toArray(myData.following), id];
+                    const theirFollowers = [...toArray(theirData.followers), user.uid];
 
+                    await firebaseUpdate(`users/${user.uid}`, {
+                        following: myFollowing,
+                        followingCount: myFollowing.length,
+                    });
                     await firebaseBatchUpdate({
-                        [`users/${user.uid}/following`]: myFollowing,
-                        [`users/${user.uid}/followingCount`]: myFollowing.length,
-                        [`users/${user.uid}/updatedAt`]: Date.now(),
                         [`users/${id}/followers`]: theirFollowers,
                         [`users/${id}/followersCount`]: theirFollowers.length,
-                        [`users/${id}/updatedAt`]: Date.now(),
                     });
 
                     setIsFollowing(true);
@@ -322,7 +324,6 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                         followersCount: theirFollowers.length,
                     } : prev);
 
-                    // Send notification
                     await sendNotification(id, {
                         type: 'follow',
                         title: 'Nuevo seguidor',
@@ -334,7 +335,8 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
 
             await refreshProfile();
         } catch (err) {
-            console.error(err);
+            console.error('Error en follow/unfollow:', err);
+            setFollowError('No se pudo completar la acción. Comprueba tu conexión.');
         } finally {
             setFollowLoading(false);
         }
@@ -446,6 +448,9 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                                 <div className={styles.btnSpinner} />
                             ) : isFollowing ? 'Siguiendo' : isPending ? 'Pendiente' : 'Seguir'}
                         </button>
+                        {followError && (
+                            <p className={styles.followError}>{followError}</p>
+                        )}
                     </div>
                 </div>
 

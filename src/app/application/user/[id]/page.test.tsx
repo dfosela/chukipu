@@ -3,12 +3,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React, { Suspense } from 'react';
 import UserProfilePage from './page';
 import { useAuth } from '@/contexts/AuthContext';
-import { firebaseGet, firebaseBatchUpdate } from '@/lib/firebaseMethods';
+import { firebaseGet, firebaseUpdate, firebaseBatchUpdate } from '@/lib/firebaseMethods';
 
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
 
-// Mock next/navigation
 vi.mock('next/navigation', () => ({
     useRouter: () => ({
         push: mockPush,
@@ -17,22 +16,18 @@ vi.mock('next/navigation', () => ({
     }),
 }));
 
-// Mock AuthContext
 vi.mock('@/contexts/AuthContext', () => ({
     useAuth: vi.fn(),
 }));
 
-// Mock ThemeContext
 vi.mock('@/contexts/ThemeContext', () => ({
     useTheme: () => ({ theme: 'light' }),
 }));
 
-// Mock BottomNav
 vi.mock('@/components/BottomNav/BottomNav', () => ({
     default: () => <div data-testid="bottom-nav">BottomNav</div>,
 }));
 
-// Mock next/image
 vi.mock('next/image', () => ({
     default: (props: Record<string, unknown>) => {
         // eslint-disable-next-line @next/next/no-img-element
@@ -40,7 +35,6 @@ vi.mock('next/image', () => ({
     },
 }));
 
-// Mock Firebase Methods
 vi.mock('@/lib/firebaseMethods', () => ({
     firebaseGet: vi.fn(),
     firebaseGetList: vi.fn(),
@@ -48,13 +42,11 @@ vi.mock('@/lib/firebaseMethods', () => ({
     firebaseBatchUpdate: vi.fn(),
 }));
 
-// Mock Firebase
 vi.mock('@/lib/firebase', () => ({
     db: {},
     auth: {},
 }));
 
-// Mock firebase/database - onValue calls callback synchronously with empty data
 vi.mock('firebase/database', () => ({
     ref: vi.fn(),
     onValue: vi.fn((_ref, cb) => {
@@ -64,7 +56,6 @@ vi.mock('firebase/database', () => ({
     get: vi.fn(),
 }));
 
-// Mock notifications
 vi.mock('@/lib/notifications', () => ({
     sendNotification: vi.fn(),
 }));
@@ -134,6 +125,7 @@ describe('UserProfilePage', () => {
             return null;
         });
 
+        vi.mocked(firebaseUpdate).mockResolvedValue(undefined);
         vi.mocked(firebaseBatchUpdate).mockResolvedValue(undefined);
     });
 
@@ -144,8 +136,103 @@ describe('UserProfilePage', () => {
 
         expect(await screen.findByText('anagarcia')).toBeInTheDocument();
         expect(await screen.findByText('Ana García')).toBeInTheDocument();
-        expect(await screen.findByText('10')).toBeInTheDocument(); // followersCount
-        expect(await screen.findByText('5')).toBeInTheDocument();  // followingCount
+        expect(await screen.findByText('10')).toBeInTheDocument();
+        expect(await screen.findByText('5')).toBeInTheDocument();
+    });
+
+    it('shows "Seguir" button when not following — if this fails, follow button is missing', async () => {
+        await act(async () => {
+            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
+        });
+
+        expect(await screen.findByText('Seguir')).toBeInTheDocument();
+    });
+
+    it('shows "Siguiendo" button when already following — if this fails, following state is not shown', async () => {
+        vi.mocked(firebaseGet).mockImplementation(async (path: string) => {
+            if (path === 'users/otherUser') return { ...mockProfileData };
+            if (path === 'users/currentUser') return { ...mockMyProfile, following: ['otherUser'] };
+            return null;
+        });
+
+        await act(async () => {
+            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
+        });
+
+        await screen.findByText('Ana García');
+
+        const followButton = (await screen.findAllByText('Siguiendo')).find(
+            el => el.tagName === 'BUTTON' && el.textContent === 'Siguiendo'
+        );
+        expect(followButton).toBeDefined();
+    });
+
+    it('clicking "Seguir" changes button to "Siguiendo" — if this fails, follow action does not update the UI', async () => {
+        await act(async () => {
+            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
+        });
+
+        await screen.findByText('Seguir');
+
+        await act(async () => {
+            fireEvent.click(screen.getByText('Seguir'));
+        });
+
+        await waitFor(() => {
+            const followButton = screen.getAllByText('Siguiendo').find(
+                el => el.tagName === 'BUTTON' && el.textContent === 'Siguiendo'
+            );
+            expect(followButton).toBeDefined();
+        });
+    });
+
+    it('follow action writes own following and other followers correctly — if this fails, follow writes wrong data to Firebase', async () => {
+        await act(async () => {
+            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
+        });
+
+        await screen.findByText('Seguir');
+
+        await act(async () => {
+            fireEvent.click(screen.getByText('Seguir'));
+        });
+
+        await waitFor(() => {
+            // Current user's following is written with firebaseUpdate (includes updatedAt — own record)
+            expect(firebaseUpdate).toHaveBeenCalledWith(
+                'users/currentUser',
+                expect.objectContaining({ following: ['otherUser'], followingCount: 1 })
+            );
+            // Other user's followers is written with firebaseBatchUpdate (no updatedAt — avoids permission error)
+            expect(firebaseBatchUpdate).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    'users/otherUser/followers': ['currentUser'],
+                    'users/otherUser/followersCount': 1,
+                })
+            );
+        });
+    });
+
+    it('shows error message when follow fails — if this fails, errors are silently swallowed', async () => {
+        vi.mocked(firebaseUpdate).mockRejectedValue(new Error('PERMISSION_DENIED'));
+        vi.mocked(firebaseBatchUpdate).mockRejectedValue(new Error('PERMISSION_DENIED'));
+
+        await act(async () => {
+            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
+        });
+
+        await screen.findByText('Seguir');
+
+        await act(async () => {
+            fireEvent.click(screen.getByText('Seguir'));
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText(/No se pudo completar la acción/)).toBeInTheDocument();
+        });
+
+        // Button should still say "Seguir" (not stuck in loading or changed to Siguiendo)
+        expect(screen.getByText('Seguir')).toBeInTheDocument();
     });
 
     it('Seguidores count button navigates to followers page — if this fails, followers nav is broken', async () => {
@@ -155,8 +242,7 @@ describe('UserProfilePage', () => {
 
         await screen.findByText('Ana García');
 
-        const allButtons = screen.getAllByRole('button');
-        const segBtn = allButtons.find(btn => btn.textContent?.includes('Seguidores'));
+        const segBtn = screen.getAllByRole('button').find(btn => btn.textContent?.includes('Seguidores'));
         expect(segBtn).toBeDefined();
         fireEvent.click(segBtn!);
 
@@ -170,71 +256,14 @@ describe('UserProfilePage', () => {
 
         await screen.findByText('Ana García');
 
-        const allButtons = screen.getAllByRole('button');
-        const siguiendoBtn = allButtons.find(btn => btn.textContent?.includes('Siguiendo'));
+        const siguiendoBtn = screen.getAllByRole('button').find(btn => btn.textContent?.includes('Siguiendo'));
         expect(siguiendoBtn).toBeDefined();
         fireEvent.click(siguiendoBtn!);
 
         expect(mockPush).toHaveBeenCalledWith('/application/user/otherUser/following');
     });
 
-    it('shows "Seguir" button when not following — if this fails, follow button is missing for unfollowed users', async () => {
-        await act(async () => {
-            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
-        });
-
-        await screen.findByText('Ana García');
-
-        const followBtn = await screen.findByText('Seguir');
-        expect(followBtn).toBeInTheDocument();
-    });
-
-    it('shows "Siguiendo" button when already following — if this fails, following state is not shown', async () => {
-        const myProfileFollowing = { ...mockMyProfile, following: ['otherUser'] };
-        vi.mocked(firebaseGet).mockImplementation(async (path: string) => {
-            if (path === 'users/otherUser') return { ...mockProfileData };
-            if (path === 'users/currentUser') return myProfileFollowing;
-            return null;
-        });
-
-        await act(async () => {
-            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
-        });
-
-        await screen.findByText('Ana García');
-
-        // The follow button specifically should say "Siguiendo" (not the stat label)
-        // We find the follow button by its class structure: it is inside followBtnWrap
-        // Use getAllByText and check at least one matches
-        const siguiendoElements = await screen.findAllByText('Siguiendo');
-        // At minimum one should be the follow button (not just a stat label)
-        expect(siguiendoElements.length).toBeGreaterThan(0);
-        // Find the actual follow button - it's a button directly inside followBtnWrap
-        const followButton = siguiendoElements.find(el => {
-            // The follow button's text is directly its text content
-            return el.tagName === 'BUTTON' && el.textContent === 'Siguiendo';
-        });
-        expect(followButton).toBeDefined();
-    });
-
-    it('clicking follow button calls firebaseBatchUpdate — if this fails, follow action is broken', async () => {
-        await act(async () => {
-            renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
-        });
-
-        await screen.findByText('Ana García');
-
-        const followBtn = await screen.findByText('Seguir');
-        await act(async () => {
-            fireEvent.click(followBtn);
-        });
-
-        await waitFor(() => {
-            expect(firebaseBatchUpdate).toHaveBeenCalled();
-        });
-    });
-
-    it('redirects to own profile page if viewing own profile', async () => {
+    it('redirects to own profile page if viewing own profile — if this fails, self-view redirect is broken', async () => {
         await act(async () => {
             renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'currentUser' })} />);
         });
@@ -244,14 +273,12 @@ describe('UserProfilePage', () => {
         });
     });
 
-    it('shows empty plans grid message when user has no plans', async () => {
+    it('shows empty plans grid when user has no plans — if this fails, empty state UI is broken', async () => {
         await act(async () => {
             renderWithSuspense(<UserProfilePage params={Promise.resolve({ id: 'otherUser' })} />);
         });
 
         await screen.findByText('Ana García');
-
-        // The plans loading depends on onValue — our mock returns empty data
         expect(await screen.findByText('Sin planes publicados')).toBeInTheDocument();
     });
 });
