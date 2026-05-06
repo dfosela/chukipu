@@ -4,9 +4,9 @@ import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
-import { firebaseGet, firebaseUpdate, firebaseRemove, uploadFile } from '@/lib/firebaseMethods';
+import { firebaseGet, firebaseGetList, firebaseUpdate, firebaseRemove, uploadFile } from '@/lib/firebaseMethods';
 import { useAuth } from '@/contexts/AuthContext';
-import { Chukipu } from '@/types/firestore';
+import { Chukipu, Plan } from '@/types/firestore';
 
 export default function EditChukipuPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
@@ -98,7 +98,14 @@ export default function EditChukipuPage({ params }: { params: Promise<{ id: stri
         if (!confirm('¿Seguro que quieres eliminar este Chukipu?')) return;
 
         try {
+            const plans = await firebaseGetList<Plan>('plans', (p) => p.chukipuId === id);
+            await Promise.all(plans.map(async (plan) => {
+                await firebaseRemove(`planMedia/${plan.id}`);
+                await firebaseRemove(`plans/${plan.id}`);
+            }));
+
             await firebaseRemove(`chukipus/${id}`);
+
             if (user) {
                 const userSnap = await firebaseGet<{ chukipusCount?: number }>(`users/${user.uid}`);
                 const currentCount = userSnap?.chukipusCount || 1;
