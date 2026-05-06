@@ -15,6 +15,13 @@ interface ProfilePlan extends Plan {
     chukipuName: string;
 }
 
+const toArray = (val: unknown): string[] => {
+    if (!val) return [];
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'object') return Object.values(val as Record<string, string>);
+    return [];
+};
+
 function PlanCollage({ plan, media, onClick }: { plan: ProfilePlan; media: PlanMedia[]; onClick: () => void }) {
     const photos = media.filter(m => m.type === 'photo');
     const all = media;
@@ -127,10 +134,14 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                     user ? firebaseGet<UserProfile>(`users/${user.uid}`) : null,
                 ]);
                 setProfileData(data);
-                if (myData?.following?.includes(id)) {
+                // Check both directions: B's followers list (written by B, always allowed)
+                // OR A's following list (may be stale if write was blocked by Firebase rules)
+                const theirFollowers = toArray(data?.followers);
+                const myFollowing = toArray(myData?.following);
+                if (theirFollowers.includes(user?.uid || '') || myFollowing.includes(id)) {
                     setIsFollowing(true);
                 }
-                if (data?.followRequests?.includes(user?.uid || '')) {
+                if (toArray(data?.followRequests).includes(user?.uid || '')) {
                     setIsPending(true);
                 }
             } catch (err) {
@@ -264,12 +275,6 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                 return;
             }
 
-            const toArray = (val: string[] | Record<string, string> | null | undefined): string[] => {
-                if (!val) return [];
-                if (Array.isArray(val)) return val;
-                return Object.values(val);
-            };
-
             if (isFollowing) {
                 const myFollowing = toArray(myData.following).filter(uid => uid !== id);
                 const theirFollowers = toArray(theirData.followers).filter(uid => uid !== user.uid);
@@ -295,7 +300,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                 setIsPending(false);
             } else {
                 if (theirData.isPrivate) {
-                    const theirRequests = [...toArray(theirData.followRequests), user.uid];
+                    const theirRequests = [...new Set([...toArray(theirData.followRequests), user.uid])];
                     await firebaseBatchUpdate({ [`users/${id}/followRequests`]: theirRequests });
                     setIsPending(true);
                     await sendNotification(id, {
@@ -305,8 +310,8 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
                         relatedId: user.uid,
                     });
                 } else {
-                    const myFollowing = [...toArray(myData.following), id];
-                    const theirFollowers = [...toArray(theirData.followers), user.uid];
+                    const myFollowing = [...new Set([...toArray(myData.following), id])];
+                    const theirFollowers = [...new Set([...toArray(theirData.followers), user.uid])];
 
                     await firebaseUpdate(`users/${user.uid}`, {
                         following: myFollowing,

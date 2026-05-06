@@ -137,7 +137,7 @@ export default function NotificationsPage() {
             const requestsRef = ref(db, `users/${user.uid}/followRequests`);
             const unsubscribeDb = onValue(requestsRef, async (snapshot) => {
                 const val = snapshot.val();
-                const uids = toArray(val);
+                const uids = [...new Set(toArray(val))];
 
                 if (uids.length === 0) {
                     setFollowRequests([]);
@@ -179,8 +179,8 @@ export default function NotificationsPage() {
             if (!myData || !theirData) return;
 
             const myRequests = toArray(myData.followRequests).filter(uid => uid !== request.uid);
-            const myFollowers = [...toArray(myData.followers), request.uid];
-            const theirFollowing = [...toArray(theirData.following), user.uid];
+            const myFollowers = [...new Set([...toArray(myData.followers), request.uid])];
+            const theirFollowing = [...new Set([...toArray(theirData.following), user.uid])];
 
             // Own record: remove request, add follower
             await firebaseUpdate(`users/${user.uid}`, {
