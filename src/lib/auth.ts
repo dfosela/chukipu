@@ -61,15 +61,7 @@ export async function loginWithEmail(email: string, pass: string): Promise<Fireb
 export async function loginWithGoogle(): Promise<FirebaseUser> {
     try {
         const userCredential = await signInWithPopup(auth, googleProvider);
-        const user = userCredential.user;
-
-        await ensureUserProfile(
-            user.uid,
-            user.displayName || '',
-            user.photoURL || '',
-        );
-
-        return user;
+        return userCredential.user;
     } catch (error) {
         throw AppError.fromError(error, 'Failed to login with Google');
     }
@@ -78,15 +70,7 @@ export async function loginWithGoogle(): Promise<FirebaseUser> {
 export async function loginWithApple(): Promise<FirebaseUser> {
     try {
         const userCredential = await signInWithPopup(auth, appleProvider);
-        const user = userCredential.user;
-
-        await ensureUserProfile(
-            user.uid,
-            user.displayName || '',
-            user.photoURL || '',
-        );
-
-        return user;
+        return userCredential.user;
     } catch (error) {
         throw AppError.fromError(error, 'Failed to login with Apple');
     }

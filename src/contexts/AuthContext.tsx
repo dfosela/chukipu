@@ -26,6 +26,7 @@ export const useAuth = () => useContext(AuthContext);
 
 const PUBLIC_ROUTES = ['/application/login', '/landing'];
 const ROOT_ROUTE = '/';
+const ONBOARDING_ROUTE = '/application/onboarding';
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -68,22 +69,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (loading) return;
 
         const isPublic = pathname === ROOT_ROUTE || PUBLIC_ROUTES.some(route => pathname.startsWith(route));
+        const isOnboarding = pathname.startsWith(ONBOARDING_ROUTE);
 
         if (!user && !isPublic) {
             router.replace('/application/login');
         } else if (user && pathname === '/application/login') {
             router.replace('/application');
+        } else if (user && !profile && !isOnboarding) {
+            router.replace(ONBOARDING_ROUTE);
+        } else if (user && profile && isOnboarding) {
+            router.replace('/application');
         }
-    }, [user, loading, pathname, router]);
+    }, [user, profile, loading, pathname, router]);
 
     if (loading) {
         return null;
     }
 
     const isPublic = pathname === ROOT_ROUTE || PUBLIC_ROUTES.some(route => pathname.startsWith(route));
-    if (!user && !isPublic) {
-        return null;
-    }
+    const isOnboarding = pathname.startsWith(ONBOARDING_ROUTE);
+
+    if (!user && !isPublic) return null;
+    if (user && !profile && !isOnboarding) return null;
 
     return (
         <AuthContext.Provider value={{ user, profile, loading, refreshProfile }}>
