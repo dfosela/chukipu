@@ -189,11 +189,7 @@ export default function ProfilePage() {
         <div className={styles.container}>
             {/* Header */}
             <header className={styles.header}>
-                <button className={styles.headerBtn} onClick={() => router.back()} aria-label="Atrás">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
-                    </svg>
-                </button>
+                <div className={styles.headerBtn} />
                 <h1 className={styles.pageTitle}>{profile?.username || 'perfil'}</h1>
                 <button className={styles.headerBtn} onClick={() => router.push('/application/profile/settings')} aria-label="Configuración">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -264,7 +260,7 @@ export default function ProfilePage() {
                             <PlanCollage
                                 key={group.planId}
                                 group={group}
-                                onClick={() => router.push(`/application/chukipus/${group.chukipuId}/plans/${group.planId}`)}
+                                onClick={() => router.push(`/application/chukipus/${group.chukipuId}/plans/${group.planId}?from=profile`)}
                             />
                         ))
                     )}
